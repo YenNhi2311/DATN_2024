@@ -1,0 +1,105 @@
+.filter-sidebar {
+    background-color: #f9f9f9;
+    padding: 20px;
+    width: 250px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.filter-sidebar h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.filter-sidebar h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.filter-category label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.filter-category input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.brand-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.brand-btn {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.brand-btn.active {
+    background-color: #28a745;
+    color: #fff;
+    border-color: #28a745;
+}
+
+.filter-price .price-slider input[type="range"] {
+    width: 100%;
+}
+
+.apply-filter-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.apply-filter-btn:hover {
+    background-color: #218838;
+}
+
+.filter-brand {
+    margin-top: 20px;
+    height: 200px;
+    overflow: auto;
+}
+
+.brand-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Khoảng cách giữa các nút */
+}
+
+.brand-btn {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    /* Chiều rộng của nút sẽ chiếm toàn bộ chiều ngang của cột */
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.brand-btn.active {
+    background-color: #007bff;
+    /* Màu nền khi nút được chọn */
+    color: #fff;
+    border: 1px solid #007bff;
+}
+
+.brand-btn:hover {
+    background-color: #007bff;
+    color: white;
+}

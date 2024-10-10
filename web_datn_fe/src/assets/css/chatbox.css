@@ -1,0 +1,205 @@
+.chatbox {
+    position: fixed;
+    bottom: 0;
+    right: 80px;
+    width: 320px;
+    max-height: 500px;
+    /* Chiều dài tối đa của chatbox */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #34465d;
+    color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox-avatar {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid grey;
+}
+
+.chatbox-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.chatbox-name {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.chatbox-status {
+    font-size: 12px;
+    color: #cfcfcf;
+}
+
+.chatbox-actions i {
+    font-size: 18px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.chatbox-actions i:hover {
+    color: #ddd;
+}
+
+.chatbox-close {
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.chatbox-close:hover {
+    color: #ff4d4f;
+}
+
+.chatbox-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #f8f8f8;
+}
+
+.chatbox-message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+.chatbox-message-left {
+    background-color: #f0f0f0;
+    align-self: flex-start;
+    flex-direction: row;
+}
+
+.chatbox-message-right {
+    background-color: #d4edda;
+    align-self: flex-end;
+    flex-direction: row-reverse;
+    margin-left: auto;
+}
+
+.chatbox-message-avatar {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid grey;
+}
+
+.chatbox-message-right .chatbox-message-avatar {
+    margin-left: 10px;
+    margin-right: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid grey;
+}
+
+.chatbox-message-content {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.chatbox-message-sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.chatbox-message-text {
+    display: block;
+
+}
+
+.chatbox-message-time {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    align-self: flex-end;
+}
+
+.chatbox-input {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+
+.chatbox-input form {
+    display: flex;
+    width: 100%;
+
+}
+
+.chatbox-input input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px;
+    margin-right: 20px;
+    background-color: #fff;
+}
+
+.chatbox-input input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 5px rgba(108, 99, 255, 0.5);
+}
+
+.chatbox-input button {
+    background-color: #34465d;
+    color: white;
+    border: none;
+    font-size: 20px;
+    border-radius: 50%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    object-fit: cover;
+    transition: background-color 0.3s ease;
+    /* Chỉ chuyển đổi màu nền */
+}
+
+.chatbox-input button:hover {
+    background-color: #5753b4;
+    object-fit: cover;
+    animation: spin 1s linear infinite;
+    /* Thêm hiệu ứng xoay liên tục */
+}
+
+/* Định nghĩa keyframes cho hiệu ứng xoay */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

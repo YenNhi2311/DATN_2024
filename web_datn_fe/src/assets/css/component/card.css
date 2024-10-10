@@ -1,0 +1,222 @@
+.pro {
+    width: 19%;
+    min-width: 250px;
+    padding: 10px 12px;
+    border: 1px solid #cce7d0;
+    cursor: pointer;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.02);
+    margin: 15px;
+    transition: box-shadow 0.2s ease, opacity 0.3s ease;
+    position: relative;
+    height: 385px;
+    background-color: #fff;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.pro img {
+    width: 100%;
+    border-radius: 50px;
+    transition: transform 0.3s ease;
+    z-index: 1;
+    position: relative;
+}
+
+.pro:hover {
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.06);
+    opacity: 0.8;
+}
+
+.pro:hover img {
+    transform: scale(1.05);
+}
+
+.icon-container {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    /* Đảm bảo icon nằm trên các phần tử khác */
+    pointer-events: none;
+
+}
+
+.pro:hover .icon-container {
+    opacity: 0.8;
+    pointer-events: all;
+}
+
+.icon-container a {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    z-index: 3;
+    pointer-events: all;
+    text-decoration: none;
+}
+
+.icon-container a:hover {
+    background-color: #1877f3;
+    color: #fff;
+    /* Áp dụng animation khi hover */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+        /* Bắt đầu từ góc 0 độ */
+    }
+
+    to {
+        transform: rotate(360deg);
+        /* Kết thúc ở góc 360 độ */
+    }
+}
+
+.des span {
+    color: #606060;
+    font-size: 15px;
+    margin: 0px;
+}
+
+.des h6 {
+    color: #1a1a1a;
+    font-size: 15px;
+    margin: 0px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.des i {
+    color: rgb(243, 181, 25);
+    font-size: 12px;
+}
+
+.des .price {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    align-items: center;
+}
+
+.des .price h4 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.des .star {
+    padding-top: 30px;
+}
+
+.des .price h4.sale-price {
+    color: #fff;
+    font-size: 14px;
+    background-color: #34465d;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.sale {
+    position: absolute;
+    left: -5px;
+    top: 30px;
+    z-index: 2;
+    padding: 5px 30px;
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+/* Product page*/
+.product-page {
+    display: flex;
+    padding: 20px;
+
+}
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Hiển thị 4 sản phẩm mỗi hàng */
+    grid-column-gap: 60px;
+    /* Giảm khoảng cách giữa các sản phẩm theo chiều ngang */
+    grid-row-gap: -10px;
+    /* Giảm khoảng cách giữa các hàng sản phẩm theo chiều dọc */
+    width: 80%;
+    /* Chiếm 80% không gian màn hình */
+    justify-content: space-between;
+}
+
+.filter-sidebar {
+    width: 20%;
+    /* Giữ nguyên sidebar chiếm 20% */
+}
+
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    align-items: center;
+}
+
+.sort-options button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.sort-options button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.topbar .pagination {
+    display: flex;
+    align-items: center;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination select {
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+
+}

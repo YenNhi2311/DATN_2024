@@ -1,0 +1,49 @@
+.weather-widget {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 300px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.weather-widget h5 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.weather-widget p {
+  font-size: 1rem;
+  color: #555;
+  margin: 4px 0;
+}
+
+.weather-widget .temperature {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.weather-widget .description {
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+
+  .weather-widget {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .weather-widget h5 {
+    font-size: 1rem;
+  }
+
+  .weather-widget p {
+    font-size: 0.875rem;
+  }
+}

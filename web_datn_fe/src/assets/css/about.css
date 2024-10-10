@@ -1,0 +1,32 @@
+.about-page {
+    padding-top: 20px;
+}
+
+.info-card {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e7e7e7;
+    padding: 10px 15px;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.info-card p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.info-card p i {
+    margin-right: 8px;
+    color: #ff4500;
+}

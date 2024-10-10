@@ -1,0 +1,83 @@
+.pro-sale {
+    background-color: #82afe9;
+    margin: 20px;
+    /* border-radius: 20px; */
+    overflow: hidden;
+    position: relative;
+    padding: 10px;
+    margin-top: 50px;
+}
+
+.pro-sale-item {
+    display: flex;
+    transition: transform 0.5s ease;
+    padding-left: 50px;
+    padding-right: 20px;
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+
+.pro-flash-sale {
+    display: flex;
+    align-items: center;
+}
+
+.pro-flash-sale h5 {
+    margin-bottom: 5px;
+    margin-right: 15px;
+}
+
+.pro-flash-sale span:nth-child(2), .pro-flash-sale span:nth-child(6), .pro-flash-sale span:nth-child(4) {
+    padding: 5px;
+    background-color: #fff;
+    color: #34465d;
+    margin-right: 10px;
+    font-weight: 500;
+    border-radius: 10px;
+}
+
+.pro-flash-sale span:nth-child(3), .pro-flash-sale span:nth-child(5) {
+    margin-right: 10px;
+    color: #fff;
+}
+
+.pro-container {
+    box-sizing: border-box;
+    /* Đảm bảo padding và border không làm ảnh hưởng đến kích thước tổng cộng */
+    /* Điều chỉnh kích thước của từng sản phẩm */
+    min-width: calc(100% / 5);
+    /* Đảm bảo mỗi sản phẩm chiếm 1/4 của slide */
+    margin-right: 20px;
+    /* Khoảng cách giữa các sản phẩm */
+}
+
+
+.arrows {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+    left: 0px;
+}
+
+.arrows button {
+    background-color: #eee5;
+    border: none;
+    font-family: monospace;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    font-size: x-large;
+    color: #eee;
+    transition: .5s;
+    background-color: #000;
+}
+
+.arrows button:hover {
+    background-color: #eee;
+    color: black;
+}

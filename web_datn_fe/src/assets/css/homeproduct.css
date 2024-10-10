@@ -1,0 +1,114 @@
+/* CSS cho ProductHome Component */
+
+.home-title {
+    text-align: center;
+    margin-top: 50px;
+    color: #fff;
+    padding: 20px;
+    /* border-radius: 20px 20px 0 0; */
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    background-color: #005b7748;
+    display: flex;
+}
+
+.home-title h2 {
+    position: absolute;
+    color: #fff;
+    font-size: 5em;
+    top: 10%;
+    left: 30%;
+    height: auto;
+}
+
+.home-title h2:nth-child(1) {
+    color: transparent;
+    -webkit-text-stroke: 2px #34465d;
+}
+
+.home-title h2:nth-child(2) {
+    animation: animate 2s ease-in-out infinite;
+    color: #34465d;
+}
+
+@keyframes animate {
+    0%, 100% {
+        clip-path: polygon(0% 45%, 15% 44%, 32% 50%, 54% 60%, 70% 61%, 84% 59%, 100% 52%, 100% 100%, 0% 100%);
+    }
+
+    50% {
+        clip-path: polygon(0% 60%, 16% 65%, 34% 66%, 51% 62%, 67% 50%, 84% 45%, 100% 46%, 100% 100%, 0% 100%);
+    }
+}
+
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(5, .8fr);
+    background-color: #005b7748;
+    /* Màu nền */
+    /* border-radius: 0 0 20px 20px; */
+}
+
+.product-card {
+    margin-right: 0px;
+    width: 160px;
+    height: auto;
+}
+
+.product-card .pro {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.see-more-button {
+    display: block;
+    margin: 20px auto 0;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    border-radius: 50%;
+    text-decoration: none;
+    grid-column: span 5;
+    /* Nút sẽ chiếm toàn bộ chiều rộng của lưới */
+    justify-self: center;
+    /* Căn giữa nút trong lưới */
+    align-self: center;
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+.see-more-button i {
+    font-size: 1rem;
+    transition: transform 0.1s ease;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.see-more-button i:hover {
+    animation: rotate 0.1s linear infinite;
+    /* Áp dụng animation khi hover */
+}
+
+.see-more-button:hover {
+    animation: rotate 0.1s linear infinite;
+    /* Áp dụng animation khi hover */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+        /* Bắt đầu từ góc 0 độ */
+    }
+
+    to {
+        transform: rotate(360deg);
+        /* Kết thúc ở góc 360 độ */
+    }
+}

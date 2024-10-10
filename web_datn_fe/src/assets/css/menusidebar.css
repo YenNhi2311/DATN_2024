@@ -1,0 +1,124 @@
+.sidebar-left {
+    background-color: #fff;
+    color: #000;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    z-index: 10;
+    transition: width 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    width: 60px;
+    /* Độ rộng nhỏ của sidebar khi chưa mở */
+}
+
+.sidebar-left.open {
+    width: 200px;
+    /* Độ rộng khi mở */
+}
+
+.sidebar-left .sidebar-icon-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.sidebar-left .icon-item {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border-radius: 50%;
+    background-color: #333;
+    color: #fff;
+    z-index: 1;
+}
+
+.sidebar-left .icon-item:hover {
+    background-color: #555;
+}
+
+.sidebar-left .icon-item:hover .icon-text {
+    opacity: 1;
+    visibility: visible;
+    z-index: 10;
+}
+
+.icon-text {
+    position: absolute;
+    left: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-left.open .icon-text {
+    opacity: 1;
+    visibility: visible;
+    left: 50px;
+    /* Khi mở sidebar, icon-text sẽ nằm gần hơn */
+    position: static;
+    /* Không cần tuyệt đối khi sidebar mở */
+    transform: none;
+}
+
+.menu-button {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+/* Điều chỉnh khi màn hình dưới 992px */
+@media (max-width: 992px) {
+    .sidebar-left {
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-left.open {
+        transform: translateX(0);
+        /* Hiện sidebar khi mở */
+    }
+
+    .menu-button {
+        display: block;
+        /* Hiển thị nút menu */
+    }
+}
+
+/* Điều chỉnh khi màn hình trên 992px */
+@media (min-width: 992px) {
+    .sidebar-left {
+        transform: none;
+        /* Luôn hiện sidebar */
+        transition: none;
+        /* Không cần transition khi màn hình lớn */
+    }
+
+    .menu-button {
+        display: none;
+        /* Ẩn nút menu khi màn hình lớn */
+    }
+}

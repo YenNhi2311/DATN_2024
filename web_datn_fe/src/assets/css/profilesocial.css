@@ -1,0 +1,239 @@
+/* src/assets/css/leftColumn.css */
+.left-column {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: auto;
+    /* Điều chỉnh chiều cao để phù hợp với nội dung */
+    min-height: 150px;
+    /* Đảm bảo chiều cao tối thiểu */
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.left-column h2 {
+    font-size: 15px;
+    margin-bottom: 10px;
+    border-left: 5px solid #34465d;
+    padding-left: 10px;
+    margin-left: -20px;
+}
+
+.left-column hr {
+    margin: 10px -20px;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-info h6 {
+    margin-top: 10px;
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.profile-info p {
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.profile-info p i {
+    color: grey;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    border: 1px solid grey;
+}
+
+.profile-details {
+    font-size: 16px;
+}
+
+.icon-buttons {
+    display: flex;
+    justify-content: space-between;
+    /* Cách đều các icon theo chiều ngang */
+    flex-wrap: wrap;
+}
+
+.icon-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    /* Thêm hiệu ứng chuyển đổi cho màu nền và chuyển động */
+    padding: 10px;
+    border-radius: 8px;
+    color: #34465d;
+    font-size: 12px;
+    width: 65px;
+}
+
+.icon-button:hover {
+    background-color: #34465d;
+    color: #fff;
+    transform: translateY(-5px);
+    /* Đẩy icon lên trên khi hover */
+}
+
+.icon-button i {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.icon-button span {
+    font-size: 12px;
+}
+
+.stats-box {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+    height: 150px;
+
+}
+
+/* Hộp thông tin tổng quan */
+.stats-box h6 {
+    font-size: 16px;
+    color: #34465d;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.stats-box p {
+    font-size: 16px;
+    color: #2a2a2a;
+    margin: 0;
+    margin-bottom: 5px;
+    font-weight: 300;
+}
+
+/* Hiệu ứng hover */
+.stats-box:hover {
+    background-color: #e9ecef;
+    transform: translateY(-5px);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Các icon like bay lên */
+.icon-like {
+    position: absolute;
+    font-size: 24px;
+    color: #ff5722;
+    animation: flyUp 4s ease-in-out infinite;
+    opacity: 0;
+    /* Ẩn icon để chỉ xuất hiện khi hover */
+}
+
+/* Tạo hiệu ứng bay lên */
+@keyframes flyUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    25% {
+        transform: translateY(-30px);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translateY(-60px);
+        opacity: 0.6;
+    }
+
+    75% {
+        transform: translateY(-90px);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(-120px);
+        opacity: 0;
+    }
+}
+
+/* Để căn chỉnh nhiều icon */
+.icon-like:nth-child(1) {
+    top: 10px;
+    left: 10px;
+    animation-delay: 0s;
+}
+
+.icon-like:nth-child(2) {
+    top: 20px;
+    left: 40px;
+    animation-delay: 0.5s;
+}
+
+.icon-like:nth-child(3) {
+    top: 30px;
+    left: 70px;
+    animation-delay: 1s;
+}
+
+.icon-like:nth-child(4) {
+    top: 60px;
+    left: 30px;
+    animation-delay: 1.5s;
+}
+
+.icon-like:nth-child(5) {
+    top: 80px;
+    left: 50px;
+    animation-delay: 2s;
+}
+
+.icon-like:nth-child(6) {
+    top: 50px;
+    left: 80px;
+    animation-delay: 2.5s;
+}
+
+.icon-like:nth-child(7) {
+    top: 70px;
+    left: 120px;
+    animation-delay: 3s;
+}
+
+.icon-like:nth-child(8) {
+    top: 90px;
+    left: 60px;
+    animation-delay: 3.5s;
+}
+
+.icon-like:nth-child(9) {
+    top: 40px;
+    left: 110px;
+    animation-delay: 4s;
+}
+
+.icon-like:nth-child(10) {
+    top: 20px;
+    left: 140px;
+    animation-delay: 4.5s;
+}
+
+@media (max-width:768px) {
+    .left-column {
+        display: none;
+    }
+
+    .social-left-container {
+        width: 10%;
+    }
+}

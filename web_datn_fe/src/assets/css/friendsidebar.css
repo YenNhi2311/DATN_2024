@@ -1,0 +1,134 @@
+/* friendsidebar.css */
+/* friendsidebar.css */
+
+/* Định dạng chung cho sidebar */
+.friend-sidebar {
+    width: 80px;
+    /* Kích thước khi mở rộng */
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    /* Viền bên trái */
+    padding: 15px;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Căn giữa nội dung theo chiều ngang */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* Hiệu ứng đổ bóng */
+    transition: width 0.3s ease, opacity 0.3s ease;
+    /* Hiệu ứng thu gọn mở rộng */
+}
+
+/* Khi sidebar bị thu gọn */
+.friend-sidebar.collapsed {
+    width: 60px;
+    /* Kích thước khi thu gọn */
+}
+
+/* Để ẩn nội dung không cần thiết khi thu gọn */
+.friend-sidebar.collapsed .friend-list,
+.friend-sidebar.collapsed h3 {
+    display: none;
+    /* Ẩn danh sách bạn bè và tiêu đề khi thu gọn */
+}
+
+/* Nút để thu gọn hoặc mở rộng sidebar */
+.toggle-sidebar-btn {
+    position: absolute;
+    top: 10px;
+    left: -40px;
+    /* Nút nằm bên ngoài sidebar khi mở rộng */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    /* Bo góc cho nút */
+    transition: left 0.3s ease;
+    /* Hiệu ứng khi thu gọn hoặc mở rộng */
+    z-index: 1000;
+    /* Đảm bảo nút nằm trên tất cả các phần tử khác */
+}
+
+.friend-sidebar.collapsed .toggle-sidebar-btn {
+    left: 10px;
+    /* Đặt nút bên trong sidebar khi thu gọn */
+}
+
+
+.friend-sidebar h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: center;
+    /* Căn giữa tiêu đề */
+}
+
+/* Danh sách bạn bè */
+.friend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Căn giữa các mục trong danh sách */
+}
+
+/* Mục bạn bè */
+.friend-item {
+    display: flex;
+    flex-direction: column;
+    /* Hiển thị hình và tên theo cột */
+    align-items: center;
+    /* Căn giữa hình và tên */
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    /* Hiệu ứng khi hover */
+}
+
+/* Hiệu ứng khi hover lên mục bạn bè */
+.friend-item:hover {
+    background: #ddd;
+}
+
+/* Hình đại diện bạn bè */
+.friend-avatar {
+    width: 40px;
+    /* Chiều rộng cố định */
+    height: 40px;
+    /* Chiều cao cố định */
+    border-radius: 50%;
+    /* Hình tròn */
+    object-fit: cover;
+    /* Cắt cúp hình ảnh để phù hợp với khung hình */
+    margin-bottom: 5px;
+    /* Khoảng cách giữa hình và tên */
+    position: relative;
+    /* Để có thể đặt trạng thái trực tiếp lên hình */
+}
+
+/* Trạng thái online/offline của bạn bè */
+.status {
+    position: absolute;
+    /* Vị trí tuyệt đối trong khung chứa của avatar */
+    top: 0;
+    right: 0;
+    /* Di chuyển vào góc trên bên phải */
+    width: 10px;
+    height: 10px;
+    background-color: green;
+    /* Màu trạng thái online */
+    border-radius: 50%;
+    border: 2px solid white;
+    transform: translate(50%, -50%);
+    /* Đặt trạng thái vào góc trên bên phải */
+}

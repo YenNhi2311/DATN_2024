@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
+
+html,
+body,
+#root,
+.app,
+.content {
+    height: 100%;
+    width: 100%;
+    font-family: "Source Sans Pro", sans-serif;
+    background-color: transparent;
+}
+
+/* 
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 10px;
+    }
+} */
+
+/* Admin.css */
+.admin-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    /* Ẩn thanh cuộn tổng thể */
+}
+
+.sidebar {
+    width: 250px;
+    position: fixed;
+    /* Cố định vị trí sidebar */
+    height: 100vh;
+    /* Chiều cao đầy đủ màn hình */
+    overflow-y: auto;
+    /* Cho phép trượt nội dung trong sidebar */
+    -ms-overflow-style: none;
+    /* Ẩn thanh cuộn cho IE và Edge */
+    scrollbar-width: none;
+    /* Ẩn thanh cuộn cho Firefox */
+}
+
+.pro-sidebar-layout::-webkit-scrollbar {
+    display: none;
+    /* Ẩn thanh cuộn cho Chrome, Safari và Opera */
+}
+
+.admin-content {
+    flex-grow: 1;
+    /* Đẩy nội dung sang phải để nhường chỗ cho sidebar */
+    overflow-y: auto;
+    /* Cho phép cuộn nội dung khi quá dài */
+    padding: 20px;
+    height: 100vh;
+}

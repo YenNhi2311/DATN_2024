@@ -1,0 +1,28 @@
+.related-products-container {
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+.related-products-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.related-products-scroll::-webkit-scrollbar {
+    display: none;
+    /* Ẩn thanh cuộn mặc định của trình duyệt */
+}
+
+.pro-container {
+    flex: 0 0 auto;
+    /* Đảm bảo rằng mỗi sản phẩm là một mục trong hàng ngang */
+    width: 200px;
+    /* Tùy chỉnh độ rộng của mỗi sản phẩm */
+    margin-right: 10px;
+    /* Khoảng cách giữa các sản phẩm */
+    scroll-snap-align: start;
+    /* Đảm bảo cuộn dừng tại mỗi sản phẩm */
+}

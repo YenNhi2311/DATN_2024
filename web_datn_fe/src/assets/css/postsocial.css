@@ -1,0 +1,100 @@
+/* src/assets/css/postsocial.css */
+.post-social {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.post-header {
+    display: flex;
+    align-items: flex-start;
+}
+
+.post-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.post-input {
+    flex: 1;
+}
+
+.post-input h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.post-input textarea {
+    resize: none;
+}
+
+.post-icons {
+    margin: 10px 0;
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.post-icons i {
+    font-size: 18px;
+    color: #34465d;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.post-icons i:hover {
+    color: #007bff;
+}
+
+/* src/assets/css/postsocial.css */
+.post-submit {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    background-color: #007bff;
+    /* Màu nền mặc định */
+    color: #fff;
+}
+
+.post-submit::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.post-submit:hover {
+    background-color: #0056b3;
+    /* Màu nền khi hover */
+    transform: scale(1.05);
+    /* Tăng kích thước nút khi hover */
+}
+
+.post-submit:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.post-submit span {
+    position: relative;
+    z-index: 1;
+    /* Đảm bảo chữ nằm trên cùng */
+}

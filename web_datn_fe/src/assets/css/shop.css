@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.filter-sidebar {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-sidebar h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.apply-filter-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.apply-filter-btn:hover {
+    background-color: #0056b3;
+}
+
+.filter-category,
+.filter-brand,
+.filter-price {
+    margin-bottom: 20px;
+}
+
+.filter-category h3,
+.filter-brand h3,
+.filter-price h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.filter-category label,
+.filter-brand button {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.filter-category input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.brand-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-btn {
+    padding: 10px;
+    background-color: #e9ecef;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.brand-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.price-slider input[type="range"] {
+    width: 100%;
+}
+
+.price-slider div {
+    margin-top: 10px;
+}

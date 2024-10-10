@@ -1,0 +1,17 @@
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.photo-grid-item img {
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    max-height: 150px;
+    object-fit: cover;
+}
+
+.photo-grid-item img:hover {
+    opacity: 0.8;
+}

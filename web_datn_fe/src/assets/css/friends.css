@@ -1,0 +1,189 @@
+.friends-followers-container {
+    padding: 20px;
+    background-color: #f5f6fa;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    font-size: 24px;
+    color: #34465d;
+}
+
+.badge {
+    background-color: #6c63ff;
+    color: white;
+    border-radius: 20%;
+    padding: 5px 10px;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    width: 200px;
+}
+
+.sort-select {
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+}
+
+.friends-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.friend-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.friend-background {
+    position: relative;
+    height: 140px;
+    overflow: visible;
+}
+
+.friend-background-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.friend-avatar-container {
+    position: absolute;
+    bottom: -35px;
+    /* Di chuyển ảnh đại diện lên trên một chút */
+    left: 20px;
+    border-radius: 50%;
+    border: 3px solid white;
+    /* Đảm bảo ảnh đại diện luôn nằm trên phần nền */
+    background-color: white;
+    /* Thêm nền trắng phía sau ảnh đại diện để làm nổi bật */
+}
+
+.friend-avatar-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.friend-followers {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.friend-info {
+    padding: 40px 20px 20px;
+    text-align: left;
+}
+
+.friend-info h3 {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.friend-info p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.friend-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-top: 1px solid #eee;
+}
+
+.more-options {
+    cursor: pointer;
+}
+
+.more-options i {
+    color: #555;
+}
+
+.message-btn {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: width 0.3s ease, padding 0.3s ease;
+    /* Thêm transition cho width và padding */
+    width: 35px;
+    /* Chiều rộng ban đầu */
+    overflow: hidden;
+    white-space: nowrap;
+    /* Đảm bảo văn bản không xuống dòng */
+}
+
+.message-btn:hover {
+    width: 150px;
+    /* Chiều rộng khi hover */
+    padding: 5px 25px;
+    /* Thay đổi padding khi hover */
+}
+
+.message-btn::before {
+    content: '\f1d8';
+    /* Thêm icon gửi từ FontAwesome */
+    font-family: "FontAwesome";
+    margin-right: 8px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-link {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.page-link:hover {
+    background-color: #f1f1f1;
+}
+
+.page-link.active {
+    background-color: #6c63ff;
+    color: white;
+    border-color: #6c63ff;
+}

@@ -1,0 +1,257 @@
+/* Đặt các thuộc tính CSS vào tệp styles.css của bạn */
+
+.pro {
+    width: 100%;
+    padding: 8px 10px;
+    cursor: pointer;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s ease, opacity 0.3s ease;
+    position: relative;
+    height: 450px;
+    background-color: #fff;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.pro img {
+    width: 100%;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+    z-index: 1;
+    position: relative;
+    height: 300px;
+    padding: 5px;
+    object-fit: cover;
+}
+
+.pro:hover {
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.06);
+    opacity: 0.8;
+}
+
+.pro:hover img {
+    transform: scale(1.05);
+}
+
+.icon-container {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.pro:hover .icon-container {
+    opacity: 0.8;
+    pointer-events: all;
+}
+
+.icon-container a {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 3;
+    pointer-events: all;
+    text-decoration: none;
+    opacity: 1;
+    filter: brightness(1.5);
+}
+
+.icon-container a:hover {
+    background-color: #1877f3;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+
+/* .des {
+    margin-top: 20px;
+} */
+
+.des span {
+    color: #606060;
+    font-size: 15px;
+    margin: 0px;
+    display: flex;
+}
+
+.des h6 {
+    color: #1a1a1a;
+    font-size: 15px;
+    margin-top: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.des i {
+    color: rgb(243, 181, 25);
+    font-size: 12px;
+}
+
+.des .price {
+    display: inline;
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+.des .price h4 {
+    margin: 0;
+    font-size: 14px;
+    text-align: left;
+}
+
+.des .price h6,
+.des .price span {
+    text-align: left;
+}
+
+.des .star {
+    padding-top: 30px;
+    position: absolute;
+    bottom: 20px;
+}
+
+.des .price h4.sale-price {
+    color: #ff6600;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.sale {
+    position: absolute;
+    left: -5px;
+    top: 30px;
+    z-index: 2;
+    padding: 5px 30px;
+    background-color: rgb(255, 25, 0);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+
+/* Product page */
+
+.filter-sidebar {
+    width: 20%;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.sort-options button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.sort-options button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.topbar .pagination {
+    display: flex;
+    align-items: center;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination select {
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.flying-img {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    z-index: 1000;
+    transition: transform 1s ease-in-out;
+    animation: fly-to-cart 1s ease-in-out forwards;
+}
+
+@keyframes fly-to-cart {
+    to {
+        transform: translate(var(--left), var(--top)) scale(0.2);
+        opacity: 0;
+    }
+}
+
+@media screen and (max-width: 340px) {
+    .pro-container {
+        width: 50%;
+    }
+    .pro {
+        padding: 0px;
+    }
+    .des .price {
+        display: inline;
+        padding: 5px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+}
+.pro-container {
+     /* Set a maximum width if needed */
+    border-radius: 15px; /* Rounds the entire container */
+    overflow: hidden; /* Ensures child elements don't exceed the rounded corners */
+    border: 1px solid #ddd; /* Optional: adds a light border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: adds subtle shadow */
+}
+
+/* For medium devices */
+
+@media screen and (min-width: 768px) {
+    .pro-container {
+        width: 100%;
+        
+    }
+    .des .price {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 10px;
+        align-items: center;
+    }
+}

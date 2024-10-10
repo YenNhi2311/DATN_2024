@@ -1,0 +1,309 @@
+/*=============== CARD ===============*/
+.cate-container {
+    background-color: #174dff2a;
+    margin: 20px;
+    /* border-radius: 20px; */
+    height: auto;
+    align-items: center;
+    
+}
+
+
+.cate-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Hai cột có chiều rộng bằng nhau */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    width: 100%;
+    background-color: #fff;
+    /* border-radius: 20px 20px 0 0; */
+}
+
+.cate-container .cate-title {
+    padding: 20px;
+    justify-self: start;
+    border-radius: 15px 0 0 0;
+}
+
+.cate-container a.cate-all {
+    margin-right: 20px;
+    justify-self: end;
+    text-decoration: none;
+    color: #fff;
+    padding: 9px;
+    background-color: #34465d;
+    border-radius: 15px;
+}
+
+.card__container {
+    display: flex;
+    padding: 40px;
+}
+
+.card__article {
+    position: relative;
+    flex: 1;
+    /* This allows the cards to be evenly distributed */
+    text-align: center;
+    /* Center the content inside the card */
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.card__img {
+    width: 100%;
+    border-radius: 1.5rem;
+    height: 260px;
+    object-fit: cover;
+}
+
+.card__data {
+    width: auto;
+    background-color: #fff;
+    padding: 1.5rem 10px;
+    box-shadow: 0 8px 24px hsla(0, 0%, 0%, .15);
+    border-radius: 20px;
+    position: absolute;
+    bottom: -9rem;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    opacity: 0;
+    transition: opacity 1s 1s;
+    margin: 10px 30px;
+}
+
+.card__title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: hsl(0, 0%, 15%);
+    margin-bottom: 1.5rem;
+}
+
+.card__button {
+    text-decoration: none;
+    font-size: .813rem;
+    font-weight: 500;
+    padding: 8px;
+    background-color: #34465d;
+    border-radius: 15px;
+    color: #fff;
+}
+
+.card__button:hover {
+    text-decoration: underline;
+    filter: brightness(.9);
+}
+
+/* Naming animations in hover */
+.card__article:hover .card__data {
+    animation: show-data 1s forwards;
+    opacity: 1;
+    transition: opacity .3s;
+    filter: brightness(.8);
+}
+
+.card__article:hover {
+    animation: remove-overflow 2s forwards;
+
+}
+
+.card__article:not(:hover) {
+    animation: show-overflow 2s forwards;
+}
+
+.card__article:not(:hover) .card__data {
+    animation: remove-data 1s forwards;
+    filter: brightness(1.1);
+}
+
+/* Card animation */
+@keyframes show-data {
+    50% {
+        transform: translateY(-10rem);
+    }
+
+    100% {
+        transform: translateY(-7rem);
+    }
+}
+
+@keyframes remove-overflow {
+    to {
+        overflow: initial;
+    }
+}
+
+@keyframes remove-data {
+    0% {
+        transform: translateY(-7rem);
+    }
+
+    50% {
+        transform: translateY(-10rem);
+    }
+
+    100% {
+        transform: translateY(.5rem);
+    }
+}
+
+@keyframes show-overflow {
+    0% {
+        overflow: initial;
+        pointer-events: none;
+    }
+
+    50% {
+        overflow: hidden;
+    }
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For small devices */
+@media screen and (max-width: 340px) {
+    /* .container {
+        margin-inline: 1rem;
+    } */
+
+    .card__data {
+        width: 100%;
+        padding: 1rem;
+    }
+}
+
+/* For medium devices */
+@media screen and (min-width: 768px) {}
+
+/* For large devices */
+@media screen and (min-width: 1120px) {
+    /* .container {
+        height: 100vh;
+    } */
+
+    .card__container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card__img {
+        width: 100%;
+        height: 260px;
+    }
+
+    .card__data {
+        width: auto;
+        padding-inline: 1rem;
+    }
+}
+.category-item {
+    text-align: center;
+    padding: 10px;
+    background: #fff; /* Nền trắng cho mỗi mục */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Thêm bóng */
+    border-radius: 12px; /* Bo tròn góc */
+    transition: transform .3s; /* Hiệu ứng chuyển đổi */
+ 
+   
+  }
+  
+  .category-item:hover {
+    transform: translateY(-5px); /* Di chuyển lên khi hover */
+  }
+  
+  .category-item img {
+    width: 100%; /* Chiều rộng tối đa của hình ảnh */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px; /* Bo tròn góc trên của hình ảnh */
+  }
+  
+  .category-item p {
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 10px; /* Khoảng cách dưới cùng */
+  }
+  .custom-prev, .custom-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 1;
+    cursor: pointer;
+    font-size: 20px;
+    transition: opacity 0.3s ease;
+    opacity: 0; /* Ẩn các nút này khi không hover */
+}
+
+.custom-prev {
+    left: -10px; /* Điều chỉnh khoảng cách từ nút prev đến bên trái */
+}
+
+.custom-next {
+    right: -10px; /* Điều chỉnh khoảng cách từ nút next đến bên phải */
+}
+
+/* Hiển thị nút prev và next khi hover slider */
+.slick-slider:hover .custom-prev,
+.slick-slider:hover .custom-next {
+    opacity: 1;
+}
+
+/* Hiển thị nút prev và next trên màn hình nhỏ (mobile) */
+@media (max-width: 768px) {
+    .custom-prev, .custom-next {
+        display: flex;
+        opacity: 0.8; /* Cho phép hiển thị nút trên mobile */
+    }
+}
+
+/* Đảm bảo responsive cho các item */
+
+
+
+.category-item img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.category-item p {
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+    margin-top: 5px;
+}
+.countdown-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem; /* Adjust size as needed */
+    margin-top: 10px;
+  }
+  
+  .time {
+    background-color: #000000; /* Flash sale color */
+    color: white;
+    padding: 2px 5px; /* Padding for the time blocks */
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+  }
+  
+  .separator {
+    margin: 0 5px; /* Spacing around the separator */
+    color: white; /* Color for the separator */
+    font-weight: bold;
+  }
+  
+

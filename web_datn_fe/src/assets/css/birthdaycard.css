@@ -1,0 +1,67 @@
+.birthday-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 300px;
+    text-align: center;
+    font-family: "Arial, sans-serif";
+    margin-top: 20px;
+}
+
+.birthday-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #6c63ff;
+    color: white;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+}
+
+.birthday-avatar {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+    border: 2px solid white;
+    object-fit: cover;
+}
+
+.birthday-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.birthday-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.birthday-date {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.birthday-content {
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 0 0 8px 8px;
+}
+
+.birthday-cake {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.birthday-message {
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+}
+
+@media (max-width:992px) {
+    .birthday-card {
+        display: none;
+    }
+}

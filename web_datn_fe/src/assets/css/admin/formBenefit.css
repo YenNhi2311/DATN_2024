@@ -1,0 +1,50 @@
+.row label {
+    font-size: 1em;
+    font-weight: bold;
+}
+.mb-4{
+    font-size: 1.2em;
+}
+.custom-button {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 10px 5px; /* Bo góc button */
+    text-decoration: none; /* Bỏ gạch chân */
+    color: white; /* Màu chữ */
+    position: relative; /* Đặt vị trí tương đối */
+    overflow: hidden; /* Ẩn phần thừa */
+    background-color: #1976d2; /* Màu nền mặc định */
+    border: none; /* Bỏ viền */
+    transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu */
+    cursor: pointer; /* Đổi con trỏ thành bàn tay */
+    float:right
+}
+
+/* Hiệu ứng thanh màu chạy */
+.custom-button::before {
+    content: ""; /* Thêm nội dung cho pseudo-element */
+    position: absolute; /* Vị trí tuyệt đối */
+    top: 0;
+    left: -100%; /* Bắt đầu từ bên trái */
+    width: 100%; /* Chiều rộng bằng với button */
+    height: 100%; /* Chiều cao bằng với button */
+    background-color: rgba(255, 255, 255, 0.223); /* Màu thanh trắng xám khi hover */
+    transition: left 0.4s ease; /* Thời gian di chuyển */
+    z-index: 0; /* Đặt xuống dưới cùng */
+   
+}
+
+.custom-button:hover::before {
+    left: 0; /* Di chuyển thanh chạy vào khi hover */
+}
+
+/* Đổi màu nền khi hover */
+.custom-button:hover {
+    color:white;
+    background-color: #1565c0; /* Tối màu nền khi hover */
+}
+
+.custom-dialog {
+    max-width: 550px; /* Hoặc kích thước mà bạn muốn */
+    width: 100%; /* Để sử dụng hết không gian có sẵn */
+}

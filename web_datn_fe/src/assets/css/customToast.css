@@ -1,0 +1,53 @@
+
+
+
+/* Thông báo mặc định */
+.custom-toast {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* Màu nền trắng */
+  color: #333; /* Màu chữ thông báo để có độ tương phản tốt với nền trắng */
+  font-weight: bolder; /* Đậm chữ */
+  font-size: 25px; /* Kích thước chữ thông báo */
+  /* font-family: 'Arial', sans-serif; Phông chữ giống như trong React Toastify */
+}
+
+/* Căn chỉnh phần tin nhắn */
+.custom-toast-message {
+  flex: 2; /* Chiếm không gian còn lại */
+}
+
+/* Căn chỉnh nút đóng */
+.custom-toast-close {
+  margin-left: 20px;
+}
+
+/* Nút đóng mặc định của react-toastify */
+.Toastify__close-button {
+  display: none; /* Ẩn nút đóng mặc định */
+}
+
+/* Thông báo thành công */
+.Toastify__toast--success {
+  background-color: #e6ffe6; /* Màu nền xanh lá cây nhạt cho thông báo thành công */
+  color: #28a745; /* Màu chữ xanh lá cây cho thông báo thành công */
+}
+
+/* Thông báo lỗi */
+.Toastify__toast--error {
+  background-color: #ffe6e6; /* Màu nền đỏ nhạt cho thông báo lỗi */
+  color: #dc3545; /* Màu chữ đỏ cho thông báo lỗi */
+}
+
+/* Thông báo thông tin */
+.Toastify__toast--info {
+  background-color: #e6f7ff; /* Màu nền xanh dương nhạt cho thông báo thông tin */
+  color: #17a2b8; /* Màu chữ xanh dương cho thông báo thông tin */
+}
+
+/* Thông báo cảnh báo */
+.Toastify__toast--warning {
+  background-color: #fff3e6; /* Màu nền vàng nhạt cho thông báo cảnh báo */
+  color: #ffc107; /* Màu chữ vàng cho thông báo cảnh báo */
+}

@@ -1,0 +1,63 @@
+.slider {
+    width: 100%;
+    max-width: 1200px;
+    overflow: hidden;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.slider-track {
+    display: flex;
+    animation: scroll 12s linear infinite;
+}
+
+.slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-width: 20%;
+    /* Điều chỉnh độ rộng theo phần trăm */
+}
+
+.slide img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.brand-name {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Responsive cho thiết bị di động */
+@media (max-width: 768px) {
+    .slide {
+        min-width: 40%;
+        /* Điều chỉnh độ rộng khi trên màn hình nhỏ */
+    }
+}
+
+@media (max-width: 480px) {
+    .slide {
+        min-width: 80%;
+        /* Chiều rộng của mỗi slide trên màn hình điện thoại */
+    }
+}
+
+/* Animation để cuộn vô tận */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-20% * 5));
+        /* Tính toán để cuộn đủ số lượng ảnh */
+    }
+}

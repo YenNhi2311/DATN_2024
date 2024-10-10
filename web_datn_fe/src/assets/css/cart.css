@@ -1,0 +1,138 @@
+.cart-container {
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.cart-items-container {
+    display: flex;
+    gap: 50px;
+}
+
+.cart-items {
+    width: 70%;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    display: flex;
+    flex-direction: row;
+    width: 400px;
+}
+
+.cart-item-details {
+    margin-left: 15px;
+}
+
+.cart-item-details h4 {
+    margin-bottom: 10px;
+}
+
+.cart-item-details p {
+    margin: 5px 0;
+}
+
+.cart-item-price {
+    margin-top: 40px;
+    width: 150px;
+}
+
+.cart-item-quantity {
+    width: 120px;
+}
+
+.cart-item-quantity input {
+    width: 120px;
+    text-align: center;
+}
+
+.cart-item-quantity .quantity-controls {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-quantity .quantity-controls button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.cart-item-quantity .quantity-controls input {
+    width: 50px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.cart-item-quantity .quantity-controls button:hover {
+    background-color: #ddd;
+}
+
+.cart-item-total {
+    width: 150px;
+    align-items: center;
+    margin-bottom: 0px;
+    margin-top: 20px;
+}
+
+.cart-item-price,
+.cart-item-quantity,
+.cart-item-total {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+.cart-summary {
+    width: 25%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.cart-summary h3,
+.cart-summary h4 {
+    margin-bottom: 20px;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: orange;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.old-price {
+    font-size: 15px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.new-price {
+    font-size: 18px;
+    padding: 5px 10px;
+    color: #fff;
+    background-color: orange;
+    border-radius: 20px;
+    margin-bottom: 0px;
+}

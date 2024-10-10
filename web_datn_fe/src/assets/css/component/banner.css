@@ -1,0 +1,49 @@
+.banner-container {
+    display: flex;
+    justify-content: space-between;
+    /* Căn giữa các banner */
+    gap: 20px;
+    /* Khoảng cách giữa các banner */
+    padding: 20px 0;
+}
+
+.banner-item {
+    position: relative;
+    width: 30%;
+    /* Mỗi banner chiếm khoảng 30% chiều rộng */
+    /* border-radius: 10px; */
+    /* Bo góc banner */
+    overflow: hidden;
+    /* Ẩn các phần bị tràn */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.226);
+    /* Đổ bóng nhẹ */
+}
+
+.banner-item:hover .banner-btn {
+    filter: brightness(.8);
+    display: flex;
+}
+
+.banner-item img {
+    width: 100%;
+    /* Hình ảnh bao phủ toàn bộ banner */
+    height: auto;
+}
+
+.banner-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    display: none;
+}
+
+.banner-btn:hover {
+    background-color: #0056b3;
+}

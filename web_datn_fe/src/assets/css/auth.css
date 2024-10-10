@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    font-family: "Poppins", system-ui;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+}
+
+.auth-box {
+    display: flex;
+    width: 750px;
+    height: 500px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.left-box, .right-box {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+}
+
+.left-box {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.left-box p {
+    color: #000 !important;
+    padding-top: 10px;
+}
+
+.left-box a {
+    position: absolute;
+    color: #000 !important;
+    text-decoration: none;
+    border: none;
+    top: 90%;
+    right: 50%;
+}
+
+.right-box {
+    flex: 1;
+    background-color: #512da8;
+    background: linear-gradient(to right, #5c6bc0, #34465d);
+    color: white;
+    text-align: center;
+    border-radius: 150px 0 0 100px;
+
+
+}
+
+.auth-box h2 {
+    font-size: 38px;
+}
+
+.auth-box p {
+    font-size: 15px;
+    margin-bottom: 30px;
+    color: #fff;
+
+}
+
+.auth-box input {
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.auth-box button {
+    background-color: #34465d;
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+
+}
+
+.auth-box button[type="submit"] {
+    background-color: #34465d;
+    color: white;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+
+.auth-box a {
+    background-color: transparent;
+    color: white;
+    transition: background-color 0.3s ease;
+    padding: 10px 30px;
+    text-decoration: none;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: small;
+}
+
+.auth-box button[type="submit"]:hover {
+    background-color: #2575fc;
+}
+
+.right-box button {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.right-box button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}

@@ -1,0 +1,204 @@
+/*=============== CARD ===============*/
+.cate-container {
+    background-color: #174dff2a;
+    margin: 20px;
+    /* border-radius: 20px; */
+    height: auto;
+    align-items: center;
+}
+
+
+.cate-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Hai cột có chiều rộng bằng nhau */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    width: 100%;
+    background-color: #fff;
+    /* border-radius: 20px 20px 0 0; */
+}
+
+.cate-container .cate-title {
+    padding: 20px;
+    justify-self: start;
+    border-radius: 15px 0 0 0;
+}
+
+.cate-container a.cate-all {
+    margin-right: 20px;
+    justify-self: end;
+    text-decoration: none;
+    color: #fff;
+    padding: 9px;
+    background-color: #34465d;
+    border-radius: 15px;
+}
+
+.card__container {
+    display: flex;
+    padding: 40px;
+}
+
+.card__article {
+    position: relative;
+    flex: 1;
+    /* This allows the cards to be evenly distributed */
+    text-align: center;
+    /* Center the content inside the card */
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.card__img {
+    width: 215px;
+    border-radius: 1.5rem;
+    height: 260px;
+    object-fit: cover;
+}
+
+.card__data {
+    width: auto;
+    background-color: #fff;
+    padding: 1.5rem 10px;
+    box-shadow: 0 8px 24px hsla(0, 0%, 0%, .15);
+    border-radius: 20px;
+    position: absolute;
+    bottom: -9rem;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    opacity: 0;
+    transition: opacity 1s 1s;
+    margin: 10px 30px;
+}
+
+.card__title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: hsl(0, 0%, 15%);
+    margin-bottom: 1.5rem;
+}
+
+.card__button {
+    text-decoration: none;
+    font-size: .813rem;
+    font-weight: 500;
+    padding: 8px;
+    background-color: #34465d;
+    border-radius: 15px;
+    color: #fff;
+}
+
+.card__button:hover {
+    text-decoration: underline;
+    filter: brightness(.9);
+}
+
+/* Naming animations in hover */
+.card__article:hover .card__data {
+    animation: show-data 1s forwards;
+    opacity: 1;
+    transition: opacity .3s;
+    filter: brightness(.8);
+}
+
+.card__article:hover {
+    animation: remove-overflow 2s forwards;
+
+}
+
+.card__article:not(:hover) {
+    animation: show-overflow 2s forwards;
+}
+
+.card__article:not(:hover) .card__data {
+    animation: remove-data 1s forwards;
+    filter: brightness(1.1);
+}
+
+/* Card animation */
+@keyframes show-data {
+    50% {
+        transform: translateY(-10rem);
+    }
+
+    100% {
+        transform: translateY(-7rem);
+    }
+}
+
+@keyframes remove-overflow {
+    to {
+        overflow: initial;
+    }
+}
+
+@keyframes remove-data {
+    0% {
+        transform: translateY(-7rem);
+    }
+
+    50% {
+        transform: translateY(-10rem);
+    }
+
+    100% {
+        transform: translateY(.5rem);
+    }
+}
+
+@keyframes show-overflow {
+    0% {
+        overflow: initial;
+        pointer-events: none;
+    }
+
+    50% {
+        overflow: hidden;
+    }
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For small devices */
+@media screen and (max-width: 340px) {
+    .container {
+        margin-inline: 1rem;
+    }
+
+    .card__data {
+        width: 250px;
+        padding: 1rem;
+    }
+}
+
+/* For medium devices */
+@media screen and (min-width: 768px) {
+    .card__container {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 1.5rem;
+    }
+}
+
+/* For large devices */
+@media screen and (min-width: 1120px) {
+    .container {
+        height: 100vh;
+    }
+
+    .card__container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card__img {
+        width: 215px;
+        height: 260px;
+    }
+
+    .card__data {
+        width: auto;
+        padding-inline: 1rem;
+    }
+}
