@@ -1,26 +1,32 @@
-// package com.edu.datn.controller;
+package com.edu.datn.controller;
 
-// import javax.management.Notification;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.messaging.handler.annotation.MessageMapping;
-// import org.springframework.messaging.handler.annotation.SendTo;
-// import org.springframework.messaging.simp.SimpMessagingTemplate;
-// import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
-// @RestController
-// public class NotificationController {
-//   @Autowired
-//   private SimpMessagingTemplate messagingTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-//   // Method để gửi thông báo khi like hoặc comment
-//   @MessageMapping("/notify")
-//   @SendTo("/topic/notifications")
-//   public Notification sendNotification(Notification notification) {
-//     return notification;
-//   }
+import com.edu.datn.model.Notification;
+import com.edu.datn.service.NotificationService;
 
-//   // Gửi thông báo từ API HTTP
-//   public void sendNotificationToClients(String message) {
-//     messagingTemplate.convertAndSend("/topic/notifications", message);
-//   }
-// }
+@RestController
+@RequestMapping("/api/notifications")
+public class NotificationController {
+    @Autowired
+    private NotificationService notificationService;
+
+    // Endpoint lấy tất cả thông báo
+    @GetMapping
+    public List<Notification> getNotifications() {
+        return notificationService.getAllNotifications();
+    }
+
+    // Endpoint lấy thông báo theo ID người nhận
+    @GetMapping("/receiver/{id}")
+    public List<Notification> getNotificationsByReceiverId(
+            @PathVariable("id") Integer receiverId) {
+        return notificationService.getNotificationsByReceiverId(receiverId);
+    }
+}

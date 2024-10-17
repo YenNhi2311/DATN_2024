@@ -1,121 +1,256 @@
-import React, { Component } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/brand.css";
-import "../assets/css/card.css";
 import "../assets/css/category.css";
 import "../assets/css/shop.css";
 import "../assets/css/style.css";
 
-export default class GioHang extends Component {
-  render() {
-    return (
-      <div>
-        {/* Single Page Header Start */}
-        <div className="container-fluid page-header py-5">
-          <h1 className="text-center text-white display-6">Cart</h1>
-          <ol className="breadcrumb justify-content-center mb-0">
-            <li className="breadcrumb-item">
-              <a href="#">Home</a>
-            </li>
-            <li className="breadcrumb-item">
-              <a href="#">Pages</a>
-            </li>
-            <li className="breadcrumb-item active text-white">Cart</li>
-          </ol>
-        </div>
-        {/* Single Page Header End */}
+const GioHang = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const { userId } = useParams();
+  const [productPromotionId, setProductPromotionId] = useState(0);
+  // Chỉ định một giá trị productPromotionId cho khuyến mãi nếu có, giả sử bạn có giá trị này từ đâu đó (ví dụ như trong URL hoặc redux store)
 
-        {/* Cart Start */}
-        <div className="container-fluid py-5">
-          <div className="container py-5">
-            <form action="#">
-              <div className="row g-5">
-                <div className="col-md-12 col-lg-6 col-xl-8">
-                  <div className="table-responsive">
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th scope="col">Sản phẩm</th>
-                          <th scope="col">Tên sản phẩm</th>
-                          <th scope="col">Giá</th>
-                          <th scope="col">Số lượng</th>
-                          <th scope="col">Thành tiền</th>
-                          <th scope="col"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">
-                            <div className="d-flex align-items-center">
-                              <img
-                                src={require("../assets/img/hasaki.png")}
-                                className="img-fluid me-3 "
-                                style={{ width: "80px", height: "80px" }}
-                                alt="Sản phẩm 1"
-                              />
-                            </div>
-                          </th>
-                          <td>
-                            <p className="mb-0 mt-4">Big Banana</p>
-                          </td>
-                          <td>
-                            <p className="mb-0 mt-4">2.99 $</p>
-                          </td>
-                          <td>
-                            <div
-                              className="input-group quantity mt-4"
-                              style={{ width: "100px" }}
-                            >
-                              <button className="btn btn-sm btn-minus rounded-circle bg-light border">
-                                <i className="fa fa-minus"></i>
-                              </button>
-                              <input
-                                type="text"
-                                className="form-control form-control-sm text-center border-0"
-                                value="1"
-                              />
-                              <button className="btn btn-sm btn-plus rounded-circle bg-light border">
-                                <i className="fa fa-plus"></i>
-                              </button>
-                            </div>
-                          </td>
-                          <td>
-                            <p className="mb-0 mt-4">2.99 $</p>
-                          </td>
-                          <td>
-                            <button className="btn btn-md rounded-circle bg-light border mt-4">
-                              <i className="fa fa-times text-danger"></i>
-                            </button>
-                          </td>
-                        </tr>
-                        {/* Add more rows as needed */}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="col-md-12 col-lg-6 col-xl-4 mt-5">
-                  <div className="bg-light rounded">
-                    <div className="p-4">
-                      <h1 className="display-6 mb-4">Tổng hóa đơn</h1>
-                      <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
-                        <h5 className="mb-0 ps-4">Tổng tiền</h5>
-                        <p className="mb-0 pe-4">$99.00</p>
-                      </div>
-                      <a
-                        href="/ThanhToan"
-                        className="btn border-secondary rounded-pill px-4 py-3 text-dark text-uppercase"
+  // Function to fetch cart items for the given userId
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/cart/items/${userId}`
+      );
+      console.log("Fetched cart items:", response.data);
+      setCartItems(response.data);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+      setCartItems([]); // Clear cart items on error
+    }
+  };
+
+  // Fetch cart items when component mounts or userId changes
+  useEffect(() => {
+    console.log(`Fetching cart items for user ID: ${userId}`);
+    fetchCartItems();
+  }, [userId]);
+
+  // Function to update the cart (add or update item quantity)
+  const updateCart = async (cartItemId, productDetailId, newQuantity) => {
+    if (newQuantity <= 0) return;
+
+    const updatedItems = cartItems.map((item) =>
+      item.cartItemId === cartItemId ? { ...item, quantity: newQuantity } : item
+    );
+    setCartItems(updatedItems);
+
+    console.log(
+      `Updating cart: cartItemId=${cartItemId}, productDetailId=${productDetailId}, newQuantity=${newQuantity}`
+    );
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/cart/cartItem/update/${cartItemId}/${productDetailId}/${productPromotionId}/${newQuantity}`
+      );
+      console.log("Cart updated", response.data);
+      fetchCartItems(); // Refresh cart items after update
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      fetchCartItems(); // Re-fetch items to ensure data consistency
+    }
+  };
+
+  // Increment quantity
+  const handleIncrement = (item) => {
+    const newQuantity = item.quantity + 1; // Increase quantity by 1
+    console.log(
+      `Incrementing quantity for item: ${item.productDetail.productDetailId}, new quantity: ${newQuantity}`
+    );
+    updateCart(
+      item.cartItemId,
+      item.productDetail.productDetailId,
+      newQuantity
+    ); // Pass both cartItemId and productDetailId
+  };
+
+  // Decrement quantity
+  const handleDecrement = (item) => {
+    if (item.quantity > 1) {
+      const newQuantity = item.quantity - 1; // Decrease quantity by 1
+      console.log(
+        `Decrementing quantity for item: ${item.productDetail.productDetailId}, new quantity: ${newQuantity}`
+      );
+      updateCart(
+        item.cartItemId,
+        item.productDetail.productDetailId,
+        newQuantity
+      ); // Pass both cartItemId and productDetailId
+    } else {
+      console.log(
+        `Cannot decrement quantity for item: ${item.productDetail.productDetailId}, current quantity is ${item.quantity}`
+      );
+    }
+  };
+
+  // Remove item from the cart
+  const handleRemove = async (cartItemId) => {
+    console.log(`Removing item from cart with ID: ${cartItemId}`);
+    try {
+      await axios.delete(
+        `http://localhost:8080/api/cart/cartItem/${cartItemId}`
+      );
+      console.log("Item removed from cart");
+      fetchCartItems(); // Refresh cart items after removing
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+    }
+  };
+
+  // Calculate total price of items in the cart
+  const totalPrice = cartItems.reduce(
+    (total, item) =>
+      total +
+      (item?.discountedPrice || item?.productDetail?.price || 0) *
+        item.quantity,
+    0
+  );
+
+  return (
+    <div className="container">
+      {/* Page Header */}
+      <div className="container-fluid page-header py-5">
+       
+      </div>
+
+      {/* Cart Content */}
+      <div className="col-lg-12">
+        <div className="row">
+          {/* Left side: Cart items */}
+          <div className="col-lg-9">
+            <h4>Giỏ hàng ({cartItems.length} sản phẩm)</h4>
+            <table className="table align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Sản phẩm</th>
+                  <th scope="col"></th>
+                  <th scope="col">Giá tiền</th>
+                  <th scope="col">Số lượng</th>
+                  <th scope="col">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cartItems.map((item) => (
+                  <tr key={item.cartItemId} className="cart-item-row">
+                    <td>
+                      <img
+                        src={require(`../assets/img/${item.productDetail?.img}`)}
+                        className="img-fluid"
+                        alt={item.productDetail?.name || "Product Image"}
+                        style={{ width: "80px", height: "80px" }}
+                      />
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
                       >
-                        Thanh Toán
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                      <p className="font-weight-bold">
+  {item.productDetail?.product?.name || "N/A"}
+  <span className="text-danger" style={{ fontWeight: 'bold', marginLeft: '5px' }}>
+    {item.productPromotion?.promotion?.percent
+      ? `(${item.productPromotion.promotion.percent.toFixed(0)}%)`
+      : ""}
+  </span>
+</p>
+
+                      </div>
+
+                      <div className="d-flex justify-content-start">
+                        <button
+                          className="btn btn-link text-danger"
+                          onClick={() => handleRemove(item.cartItemId)}
+                        >
+                          ✖ Xóa
+                        </button>
+                      </div>
+                    </td>
+
+                    <td className="d-none d-lg-table-cell">
+                      <p>
+                        {item.discountedPrice?.toLocaleString() ||
+                          item.productDetail?.price?.toLocaleString() ||
+                          "0"}
+                        ₫
+                      </p>
+                    </td>
+                    <td className="d-none d-lg-table-cell">
+                      <div className="d-flex align-items-center">
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={() => handleDecrement(item)}
+                          disabled={item.quantity <= 1}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="text"
+                          value={item.quantity}
+                          className="form-control text-center mx-2"
+                          style={{ width: "60px" }}
+                          
+                        />
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={() => handleIncrement(item)}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td className="d-none d-lg-table-cell">
+                      <p>
+                        {(
+                          (item.discountedPrice || item.productDetail?.price) *
+                          item.quantity
+                        ).toLocaleString()}
+                        ₫
+                      </p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="d-flex justify-content-left">
+              <a href="/shop" className="btn btn-link">
+                ⬅ Tiếp tục mua hàng
+              </a>
+            </div>
+          </div>
+
+          {/* Right side: Order summary */}
+          <div className="col-lg-3">
+            <div className="border p-4 rounded">
+              <h5>Hóa đơn của bạn</h5>
+              <div className="d-flex justify-content-between mb-2">
+                <span>Tạm tính:</span>
+                <span>{totalPrice.toLocaleString()}₫</span>
               </div>
-            </form>
+              <hr />
+              <div className="d-flex justify-content-between mb-4">
+                <h6>Tổng cộng:</h6>
+                <h6>{totalPrice.toLocaleString()}₫</h6>
+              </div>
+              <a href={`/ThanhToan/${userId}`} className="btn btn-outline-primary w-100">
+  Tiến hành đặt hàng
+</a>
+
+            </div>
           </div>
         </div>
-        {/* Cart End */}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+export default GioHang;

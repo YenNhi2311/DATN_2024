@@ -1,8 +1,16 @@
 package com.edu.datn.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,17 +21,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "users")
@@ -98,9 +99,9 @@ public class UserEntity implements UserDetails { // Implement UserDetails
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return userRoles
-      .stream()
-      .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getName()))
-      .collect(Collectors.toList());
+        .stream()
+        .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getName()))
+        .collect(Collectors.toList());
   }
 
   @Override

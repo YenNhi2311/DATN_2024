@@ -3,6 +3,7 @@ import KhuyenMai from "../component/page/KhuyenMai";
 import LoaiSP from "../component/page/LoaiSP";
 import LoaiSPBanChay from "../component/page/LoaiSPBanChay";
 import ThuongHieu from "../component/page/ThuongHieu";
+import TimKiem from "../component/page/timkiem";
 const TrangChu = () => {
   return (
     <div>
@@ -18,20 +19,9 @@ const TrangChu = () => {
               <h1 className="mb-5 display-3 text-blue">
                 Làn da đẹp, cuộc sống đẹp
               </h1>
-              <div className="position-relative mx-auto">
-                <input
-                  className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill"
-                  type="number"
-                  placeholder="Search"
-                />
-                <button
-                  type="submit"
-                  className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"
-                  style={{ top: "0", right: "25%" }}
-                >
-                  Tìm kiếm
-                </button>
-              </div>
+              <section className="container-fluid service py-0">
+        <TimKiem />
+      </section>
             </div>
             <div className="col-md-12 col-lg-6">
               <div
@@ -53,7 +43,7 @@ const TrangChu = () => {
                   </div>
                   <div className="carousel-item rounded">
                     <img
-                      src={require("../assets/img/hero-img-2.jpg")}
+                      src={require("../assets/img/banerhasaki.jpg")}
                       className="img-fluid w-100 h-100 rounded"
                       alt="Second slide"
                     />

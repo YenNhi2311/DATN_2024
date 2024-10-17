@@ -365,7 +365,7 @@
   }
   
   .logo img {
-    max-height: 134px;
+    max-height: 26px;
     margin-right: 6px;
   }
   
@@ -682,7 +682,7 @@
   .sidebar-nav .nav-link {
     display: flex;
     align-items: center;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     color: #4154f1;
     transition: 0.3;

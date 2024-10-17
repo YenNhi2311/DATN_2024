@@ -1,29 +1,28 @@
-import React, { useState, useEffect } from "react";
 import {
-  Navbar,
-  Nav,
-  Image,
-  Dropdown,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import "../../assets/css/header.css";
-import { FaBars, FaBell, FaUserAlt, FaUserPlus } from "react-icons/fa"; // Import FaBars
-import {
-  Login as LoginIcon,
+  AccountCircle as AccountCircleIcon,
+  History as HistoryIcon,
+  Home as HomeIcon,
   HowToReg as HowToRegIcon,
   Lock as LockIcon,
-  History as HistoryIcon,
-  AccountCircle as AccountCircleIcon,
-  Home as HomeIcon,
+  Login as LoginIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { getUserData } from "../../services/authService";
 import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
-import Logo from "../../assets/img/logoYNB.webp";
+import React, { useEffect, useState } from "react";
+import {
+  Dropdown,
+  FormControl,
+  Image,
+  InputGroup,
+  Nav,
+  Navbar,
+} from "react-bootstrap";
+import { FaBars, FaBell, FaUserAlt, FaUserPlus } from "react-icons/fa"; // Import FaBars
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "../../assets/css/header.css";
 import SidebarLeft from "../../component/user/MenuSidebar"; // Import sidebar component
+import { getUserData } from "../../services/authService";
 
 const Header = () => {
   const [activeNav, setActiveNav] = useState("");
@@ -40,7 +39,7 @@ const Header = () => {
     const checkLoginStatus = () => {
       const token = Cookies.get("access_token");
       const encryptedUserData = localStorage.getItem("userData");
-
+      console.log(encryptedUserData);
       if (!token) {
         setIsLoggedIn(false);
         setUserData(null);

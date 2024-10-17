@@ -1,67 +1,94 @@
+import { Comment, NotificationsActive, ThumbUp } from "@mui/icons-material"; // Import biểu tượng MUI
+import CryptoJS from "crypto-js";
 import React, { useEffect, useState } from "react";
-import { FaBell, FaCommentDots, FaUserPlus } from "react-icons/fa";
-import "../../assets/css/notification.css"; // Import file CSS
 import { Link } from "react-router-dom";
-
-// Danh sách thông báo mặc định
-const initialNotifications = [
-  {
-    id: 1,
-    user: "Người Dùng 1",
-    message: "Có một thông báo mới từ nhóm.",
-    time: "10:00 AM",
-    icon: <FaBell color="#ff5722" />,
-  },
-  {
-    id: 2,
-    user: "Người Dùng 2",
-    message: "Bạn đã nhận được một tin nhắn.",
-    time: "11:30 AM",
-    icon: <FaCommentDots color="#4caf50" />,
-  },
-  {
-    id: 3,
-    user: "Người Dùng 3",
-    message: "Yêu cầu kết bạn từ Alice.",
-    time: "01:45 PM",
-    icon: <FaUserPlus color="#2196f3" />,
-  },
-];
+import "../../assets/css/notification.css"; // Import file CSS
+import { formatNotificationTime } from "../../config/formatPostTime";
+import { apiClient } from "../../services/authService";
 
 const NotificationFullPage = () => {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const encryptedUserData = localStorage.getItem("userData");
 
   useEffect(() => {
-    // Kết nối WebSocket đến server
-    const socket = new WebSocket("ws://localhost:8080/notifications");
+    // Lấy userId từ localStorage
+    const decryptedUserId = CryptoJS.AES.decrypt(
+      encryptedUserData,
+      "secret-key"
+    ).toString(CryptoJS.enc.Utf8);
+    const userId = JSON.parse(decryptedUserId).user_id;
 
-    // Khi nhận được thông báo mới từ WebSocket
+    const fetchNotifications = async () => {
+      try {
+        if (userId) {
+          const response = await apiClient.get(
+            `/api/notifications/receiver/${userId}`
+          );
+          // Sắp xếp thông báo theo thời gian giảm dần
+          const sortedNotifications = response.data.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          setNotifications(sortedNotifications);
+        } else {
+          console.error("User ID not found in local storage.");
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    fetchNotifications();
+
+    // Kết nối WebSocket
+    const socket = new WebSocket("ws://localhost:8080/ws");
+
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+      setIsConnected(true);
+    };
+
     socket.onmessage = (event) => {
+      const newNotificationData = JSON.parse(event.data);
       const newNotification = {
-        id: notifications.length + 1, // Tăng id cho mỗi thông báo mới
-        user: "Người Dùng Mới", // Tạm thời gán tên người dùng
-        message: event.data, // Dữ liệu thông báo từ server
-        time: new Date().toLocaleTimeString(), // Thời gian hiện tại
-        icon: <FaBell color="#ff5722" />, // Bạn có thể tùy chỉnh icon
+        id: notifications.length + 1,
+        user: newNotificationData.user,
+        message: newNotificationData.message,
+        type: newNotificationData.type, // Thêm thuộc tính type để xác định loại thông báo
+        postId: newNotificationData.postId, // Thêm postId để điều hướng
+        createdAt: new Date(), // Sử dụng thời gian hiện tại
       };
 
-      // Cập nhật danh sách thông báo với thông báo mới
       setNotifications((prevNotifications) => [
-        ...prevNotifications,
         newNotification,
+        ...prevNotifications,
       ]);
-
-      console.log("New notification received:", event.data);
     };
 
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);
     };
 
-    // return () => {
-    //   socket.close(); // Đóng kết nối khi component unmount
-    // };
-  }, []); // Chỉ chạy một lần khi component mount
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+      setIsConnected(false);
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "like":
+        return <ThumbUp style={{ color: "#ff5722" }} />;
+      case "comment":
+        return <Comment style={{ color: "#00bcd4" }} />;
+      default:
+        return <NotificationsActive style={{ color: "#ff5722" }} />;
+    }
+  };
 
   return (
     <div className="notification-fullpage-container">
@@ -71,18 +98,31 @@ const NotificationFullPage = () => {
           Cài đặt Thông Báo
         </Link>
       </div>
-      <div className="banner-notification">
-        {notifications.map((notif) => (
-          <div key={notif.id} className="notification-item">
-            <div className="notification-icon">{notif.icon}</div>
-            <div className="notif-details">
-              <h6>{notif.user}</h6>
-              <p>{notif.message}</p>
-              <span className="notif-time">{notif.time}</span>
+
+      {/* <div className="connection-status">
+        {isConnected ? (
+          <p className="connected">WebSocket đã kết nối</p>
+        ) : (
+          <p className="disconnected">WebSocket chưa kết nối</p>
+        )}
+      </div> */}
+
+      {notifications.map((notif) => (
+        <div className="banner-notification" key={notif.id}>
+          <Link to={`/posts/${notif.postId}`} className="notification-item">
+            {/* Link đến bài viết */}
+            <div className="notification-icon">
+              {getNotificationIcon(notif.type)}
             </div>
-          </div>
-        ))}
-      </div>
+            <div className="notif-details">
+              <p>{notif.message}</p>
+              <span className="notif-time">
+                {formatNotificationTime(notif.createdAt)}
+              </span>
+            </div>
+          </Link>
+        </div>
+      ))}
     </div>
   );
 };

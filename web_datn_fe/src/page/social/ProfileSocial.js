@@ -1,17 +1,16 @@
 // src/components/LeftColumn.js
-import React, { useState, useEffect } from "react";
+import CryptoJS from "crypto-js";
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
-import "../../assets/css/profilesocial.css"; // Import CSS
 import {
   FaHeart,
   FaMailBulk,
-  FaMapMarkedAlt,
-  FaVoicemail,
+  FaMapMarkedAlt
 } from "react-icons/fa";
-import CryptoJS from "crypto-js";
-import Cookies from "js-cookie";
-import { getUserData } from "../../services/authService";
+import "../../assets/css/profilesocial.css"; // Import CSS
 import { apiClient } from "../../config/apiClient";
+import { getUserData } from "../../services/authService";
 
 const ProfileSocial = () => {
   const [profileData, setProfileData] = useState(null);
@@ -85,8 +84,7 @@ const ProfileSocial = () => {
                       (address) => address.status === true
                     )?.district || "Chưa có địa chỉ"}
                     ,{" "}
-                    {profileData.addresses.find(
-                      (address) => address.status === true
+                    {profileData.addresses.find((address) => address.status === true
                     )?.province || "Chưa có địa chỉ"}
                   </p>
                 </>

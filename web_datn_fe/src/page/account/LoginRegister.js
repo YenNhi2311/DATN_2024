@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import { registerUser, loginUser } from "../../services/authService";
-import "../../assets/css/login.css";
-import "../../assets/css/customToast.css";
-import { notify, ToastContainer } from "../../component/web/CustomToast";
-import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
-import { Link, useNavigate } from "react-router-dom";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
+import CryptoJS from "crypto-js";
+import Cookies from "js-cookie";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'; // Import SweetAlert2
+import "../../assets/css/customToast.css";
+import "../../assets/css/login.css";
+import { loginUser, registerUser } from "../../services/authService";
 
 const LoginRegister = () => {
   const [isActive, setIsActive] = useState(false);
@@ -29,12 +28,18 @@ const LoginRegister = () => {
     const { username, password, email, fullname, phone } = formData;
 
     if (!username || !password || !email || !fullname || !phone) {
-      notify("Vui lòng điền đầy đủ tất cả các trường.", "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Vui lòng điền đầy đủ tất cả các trường.',
+      });
       return false;
     }
 
     if (phone.length !== 10) {
-      notify("Số điện thoại phải có 10 số.", "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Số điện thoại phải có 10 số.',
+      });
       return false;
     }
 
@@ -51,21 +56,28 @@ const LoginRegister = () => {
 
     try {
       await registerUser(formData);
-      notify("Đăng ký thành công", "success");
+      Swal.fire({
+        icon: 'success',
+        title: 'Đăng ký thành công',
+      });
       setIsActive(false);
     } catch (err) {
-      notify(
-        "Đăng ký không thành công: " +
-          (err.response?.data?.message || "Lỗi không xác định"),
-        "error"
-      );
+      Swal.fire({
+        icon: 'error',
+        title: 'Đăng ký không thành công',
+        text: err.response?.data?.message || 'Lỗi không xác định',
+      });
     }
   };
+
   const handleLoginClick = async (event) => {
     event.preventDefault();
 
     if (!formData.username || !formData.password) {
-      notify("Vui lòng điền đầy đủ tên đăng nhập và mật khẩu.", "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Vui lòng điền đầy đủ tên đăng nhập và mật khẩu.',
+      });
       return;
     }
 
@@ -86,27 +98,34 @@ const LoginRegister = () => {
         // Lưu vào localStorage
         localStorage.setItem("userData", encryptedUserData);
         Cookies.set("access_token", access_token, { expires: 7 });
-        notify("Đăng nhập thành công", "success"); // Thông báo thành công
+        Swal.fire({
+          icon: 'success',
+          title: 'Đăng nhập thành công',
+        }); // Thông báo thành công
         navigate(role === "admin" ? "/admin" : "/");
       } else {
-        notify("Lỗi: Dữ liệu không đầy đủ từ server.", "error");
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: 'Dữ liệu không đầy đủ từ server.',
+        });
       }
     } catch (err) {
       const errorMessage =
         err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng";
-      notify(errorMessage, "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: errorMessage,
+      });
     }
   };
 
   return (
-    <div
-      className={`login-container ${isActive ? "active" : ""}`}
-      id="container"
-    >
+    <div className={`login-container ${isActive ? "active" : ""}`} id="container">
       <div className="form-container sign-up">
         <form>
           <h1>Tạo Tài Khoản</h1>
-
           <input
             type="text"
             name="username"
@@ -167,17 +186,14 @@ const LoginRegister = () => {
           />
           <div className="password-container">
             <input
-              type={showPassword ? "text" : "password"} // Thay đổi kiểu input
+              type={showPassword ? "text" : "password"}
               name="password"
               style={{ width: "305px" }}
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Mật khẩu"
             />
-            <span
-              className="password-toggle"
-              onClick={togglePasswordVisibility}
-            >
+            <span className="password-toggle" onClick={togglePasswordVisibility}>
               {showPassword ? (
                 <i className="fa fa-eye"></i>
               ) : (
@@ -185,14 +201,7 @@ const LoginRegister = () => {
               )}
             </span>
           </div>
-          <Link
-            href="#"
-            style={{
-              marginRight: "200px",
-              marginBottom: "10px",
-              marginTop: "6px",
-            }}
-          >
+          <Link to="/forgot-password" style={{ marginRight: "200px", marginBottom: "10px", marginTop: "6px" }}>
             Quên mật khẩu?
           </Link>
           <div className="social-icons">
@@ -213,29 +222,18 @@ const LoginRegister = () => {
         <div className="toggle">
           <div className="toggle-panel toggle-left">
             <h1 style={{ marginRight: "70px" }}>Welcome Back!</h1>
-            <button
-              className="hidden"
-              id="login"
-              onClick={() => setIsActive(false)}
-              style={{ marginRight: "70px" }}
-            >
+            <button className="hidden" id="login" onClick={() => setIsActive(false)} style={{ marginRight: "70px" }}>
               Đăng Nhập
             </button>
           </div>
           <div className="toggle-panel toggle-right">
             <h1 style={{ marginLeft: "70px" }}>Hello, Friend!</h1>
-            <button
-              className="hidden"
-              id="register"
-              onClick={() => setIsActive(true)}
-              style={{ marginLeft: "70px" }}
-            >
+            <button className="hidden" id="register" onClick={() => setIsActive(true)} style={{ marginLeft: "70px" }}>
               Đăng Ký
             </button>
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

@@ -32,4 +32,5 @@ public class ProductPromotionEntity {
     @ManyToOne
     @JoinColumn(name = "promotion_id", nullable = false)
     private PromotionEntity promotion;
+
 }

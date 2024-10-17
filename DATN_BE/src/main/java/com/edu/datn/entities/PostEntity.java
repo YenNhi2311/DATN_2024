@@ -1,7 +1,13 @@
 package com.edu.datn.entities;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,8 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,8 +53,8 @@ public class PostEntity {
   @JsonIgnore
   private Set<CommentEntity> comments;
 
-  @OneToMany(mappedBy = "post")
-  @JsonIgnore
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  @JsonManagedReference
   private Set<ImgpostEntity> imgposts;
 
   @OneToMany(mappedBy = "post")

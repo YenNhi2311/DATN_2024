@@ -1,22 +1,23 @@
 package com.edu.datn.service;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.edu.datn.dto.PostStatsDTO;
-import com.edu.datn.entities.LikeEntity;
+import com.edu.datn.entities.ImgpostEntity;
 import com.edu.datn.entities.PostEntity;
 import com.edu.datn.entities.UserEntity;
 import com.edu.datn.jpa.ImgPostJPA;
 import com.edu.datn.jpa.LikeJPA;
 import com.edu.datn.jpa.PostJPA;
-import com.edu.datn.jpa.UserJPA;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.edu.datn.utils.ImageUtils;
 
 @Service
 @Transactional
@@ -34,13 +35,19 @@ public class PostService {
   private LikeJPA likeJPA;
 
   @Autowired
-  private UserJPA userJPA;
+  private ImgPostJPA imgPostJPA;
+
+  @Autowired
+  private ImageUtils imageUtils;
 
   public List<PostEntity> getAllPosts() {
     return postJPA.findAll();
   }
 
-  public PostEntity createPost(PostEntity post, String token) {
+  public PostEntity createPost(
+      PostEntity post,
+      List<MultipartFile> images,
+      String token) {
     // Kiểm tra dữ liệu đầu vào (ví dụ: nội dung bài viết không được rỗng)
     if (post.getContent() == null || post.getContent().trim().isEmpty()) {
       throw new IllegalArgumentException("Nội dung bài viết không được rỗng");
@@ -62,33 +69,35 @@ public class PostService {
       // Gán user vào post
       post.setUser(user);
 
-      // Kiểm tra dữ liệu đầu vào (ví dụ: nội dung bài viết không được rỗng)
-      if (post.getContent() == null || post.getContent().trim().isEmpty()) {
-        throw new IllegalArgumentException("Nội dung bài viết không được rỗng");
-      }
-
       // Thiết lập thời gian tạo và cập nhật cho bài viết
       post.setCreateAt(LocalDateTime.now());
       post.setUpdateAt(LocalDateTime.now());
       post.setLikes(new HashSet<>()); // Likes rỗng
       post.setComments(new HashSet<>()); // Comments rỗng
-      post.setImgposts(new HashSet<>()); // Các ảnh rỗng
 
-      // Lưu bài viết vào cơ sở dữ liệu
-      return postJPA.save(post);
+      // Lưu bài viết vào cơ sở dữ liệu trước
+      PostEntity savedPost = postJPA.save(post);
+
+      // Lưu hình ảnh nếu có
+      if (images != null && !images.isEmpty()) {
+        for (MultipartFile image : images) {
+          String fileName = ImageUtils.saveImage(image); // Hàm saveImage sẽ lưu file và trả về tên file
+
+          ImgpostEntity imgPost = new ImgpostEntity();
+          imgPost.setImg(fileName); // Lưu đường dẫn/tên file của ảnh
+          imgPost.setPost(savedPost); // Gán bài viết đã lưu
+
+          // Lưu ảnh vào bảng imgposts
+          imgPostJPA.save(imgPost);
+        }
+      }
+
+      return savedPost;
     } catch (Exception e) {
       // Xử lý ngoại lệ khi lưu bài viết không thành công
       throw new RuntimeException("Lỗi khi lưu bài viết: " + e.getMessage(), e);
     }
   }
-
-  // public PostEntity updatePost(Integer postId, PostEntity postDetails) {
-  //   PostEntity post = postJPA.findById(postId).orElseThrow();
-
-  //   post.setContent(postDetails.getContent());
-  //   post.setUpdateAt(postDetails.getUpdateAt());
-  //   return postJPA.save(post);
-  // }
 
   public PostEntity updatePost(Integer postId, String content) {
     Optional<PostEntity> postOpt = postJPA.findById(postId);

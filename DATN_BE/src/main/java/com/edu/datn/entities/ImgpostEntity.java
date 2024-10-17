@@ -1,5 +1,7 @@
 package com.edu.datn.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +32,7 @@ public class ImgpostEntity {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonBackReference
     private PostEntity post;
 
     // Các trường khác

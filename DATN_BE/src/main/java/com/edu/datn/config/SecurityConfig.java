@@ -52,7 +52,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             req -> req
                 // Các endpoint không yêu cầu xác thực
-                .requestMatchers("/login/**", "/register/**", "/api/home/**", "/api/**")
+                .requestMatchers("/login/**", "/register/**", "/forgot-password/**", "/password-reset/**",
+                    "/api/home/**", "/api/**", "/assets/**", "/ws/**")
                 .permitAll()
                 // Các endpoint chỉ cho phép quyền ADMIN truy cập
                 .requestMatchers("/admin/**")

@@ -27,7 +27,7 @@ public class CartItemEntity {
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
-    
+
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private CartEntity cart;
@@ -36,5 +36,9 @@ public class CartItemEntity {
     @JoinColumn(name = "productDetail_id", nullable = false)
     private ProductDetailsEntity productDetail;
 
-    
+    // Thêm quan hệ với ProductPromotionEntity
+    @ManyToOne
+    @JoinColumn(name = "productPromotion_id")
+    private ProductPromotionEntity productPromotion;
+
 }
