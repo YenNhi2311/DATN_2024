@@ -2,12 +2,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #c9d6ff;
-    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    margin-top: 150px;
+    height: 80vh;
+    background-color: linear-gradient(to right, #e2e2e2, #c9d6ff);
     font-family: "Poppins", system-ui;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-    position: relative;
+    /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35); */
+    /* position: relative; */
 }
 
 .profile-form {
@@ -16,7 +16,7 @@
     border-radius: 10px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
     width: 700px;
-    height: 600px;
+    height: 500px;
 }
 
 .profile-form h2 {

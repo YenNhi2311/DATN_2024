@@ -127,7 +127,7 @@ public class PasswordResetController {
         try {
 
             user.setPassword(newPassword);
-            userService.updateUser(user);
+            userService.updateUserPass(user);
 
             // Xóa tất cả các token cũ của người dùng (nếu có)
             authenticationService.revokeAllTokenByUser(user);

@@ -1,14 +1,20 @@
 package com.edu.datn.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.edu.datn.dto.UserDTO;
 import com.edu.datn.entities.UserEntity;
 import com.edu.datn.jpa.UserJPA;
+import com.edu.datn.utils.ImageUtils;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -27,40 +33,51 @@ public class UserService {
   }
 
   public UserEntity findById(Integer id) {
-    return userJPA.findById(id).orElseThrow();
+    return userJPA.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
   }
 
-  public String getUsernameFromToken(String token) {
-    // Giả sử token bắt đầu bằng "Bearer ", cần cắt bỏ phần đó
-    if (token.startsWith("Bearer ")) {
-      token = token.substring(7);
+ public void updateUser(UserDTO userDTO, MultipartFile img) throws IOException {
+    Optional<UserEntity> existingUserOptional = userJPA.findById(userDTO.getUserId());
+    if (existingUserOptional.isPresent()) {
+        UserEntity existingUser = existingUserOptional.get();
+
+        if (userDTO.getEmail() != null) {
+            existingUser.setEmail(userDTO.getEmail());
+        }
+        if (userDTO.getFullname() != null) {
+            existingUser.setFullname(userDTO.getFullname());
+        }
+        if (userDTO.getPhone() != null) {
+            existingUser.setPhone(userDTO.getPhone());
+        }
+        if (userDTO.getUsername() != null) {
+            existingUser.setUsername(userDTO.getUsername());
+        }
+
+        // Cập nhật mật khẩu nếu có
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
+
+        // Cập nhật ảnh nếu có
+        if (img != null && !img.isEmpty()) {
+            String imagePath = ImageUtils.saveImage(img);
+            existingUser.setImg(imagePath);
+        }
+
+        userJPA.save(existingUser);
+    } else {
+        throw new RuntimeException("User does not exist");
     }
-    // Sử dụng JwtService để trích xuất username từ token
-    return jwtService.extractUsername(token);
-  }
+}
 
-  // Phương thức cập nhật thông tin người dùng
-  public void updateUser(UserEntity user) {
+
+  public void updateUserPass(UserEntity user) throws IOException {
     // Kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu không
     Optional<UserEntity> existingUserOptional = userJPA.findById(user.getUserId());
+
     if (existingUserOptional.isPresent()) {
       UserEntity existingUser = existingUserOptional.get();
-
-      // Cập nhật các thuộc tính khác của người dùng nếu chúng không null hoặc không
-      // rỗng
-      if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-        existingUser.setEmail(user.getEmail());
-      }
-      if (user.getFullname() != null && !user.getFullname().isEmpty()) {
-        existingUser.setFullname(user.getFullname());
-      }
-      if (user.getPhone() != null && !user.getPhone().isEmpty()) {
-        existingUser.setPhone(user.getPhone());
-      }
-      if (user.getUsername() != null && !user.getUsername().isEmpty()) {
-        existingUser.setUsername(user.getUsername());
-      }
-
       // Cập nhật mật khẩu nếu nó đã thay đổi
       if (user.getPassword() != null && !user.getPassword().isEmpty()) {
         existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -73,4 +90,11 @@ public class UserService {
     }
   }
 
+  // Phương thức lấy tên người dùng từ token
+  public String getUsernameFromToken(String token) {
+    if (token.startsWith("Bearer ")) {
+      token = token.substring(7);
+    }
+    return jwtService.extractUsername(token);
+  }
 }

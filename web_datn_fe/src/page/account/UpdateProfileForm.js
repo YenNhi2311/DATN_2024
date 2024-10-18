@@ -1,7 +1,6 @@
-import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../../assets/css/profile.css"; // Tệp CSS của bạn
+import { useState, useEffect } from "react";
+import { apiClient, getUserData } from "../../services/authService";
+import "../../assets/css/profile.css";
 
 const UpdateProfileForm = () => {
   const [formData, setFormData] = useState({
@@ -9,12 +8,45 @@ const UpdateProfileForm = () => {
     username: "",
     email: "",
     phone: "",
-    password: "",
-    confirmPassword: "",
-    gender: "",
   });
 
   const [profileImage, setProfileImage] = useState(null);
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // Lấy dữ liệu người dùng từ localStorage
+  const userData = getUserData();
+  const userId = userData ? userData.user_id : null; // Sử dụng đúng trường user_id
+
+  useEffect(() => {
+    fetchUserData(); // Gọi hàm này khi component được mount
+  }, [userId]);
+
+  const fetchUserData = async () => {
+    if (userId) {
+      try {
+        const response = await apiClient.get(`/api/user/profile`, {
+          headers: {
+            user_id: userId,
+          },
+        });
+        setFormData({
+          fullname: response.data.fullname,
+          username: response.data.username,
+          email: response.data.email,
+          phone: response.data.phone,
+        });
+        setProfileImage(response.data.img || "https://via.placeholder.com/150");
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu người dùng: ", error);
+        setError("Lỗi khi tải dữ liệu người dùng");
+      }
+    } else {
+      setError("Không tìm thấy thông tin người dùng");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,32 +58,56 @@ const UpdateProfileForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setProfileImage(URL.createObjectURL(file)); // Hiển thị hình ảnh
+    if (file && file.type.startsWith("image/")) {
+      setProfileImage(URL.createObjectURL(file));
+      setProfileImageFile(file);
+    } else {
+      setError("Vui lòng chọn file hình ảnh hợp lệ.");
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Mật khẩu xác nhận không khớp!");
-      return;
+    setError("");
+    setSuccess("");
+
+    try {
+        setLoading(true);
+        const formDataToSend = new FormData();
+        formDataToSend.append("user", new Blob([JSON.stringify(formData)], { type: "application/json" }));
+
+        if (profileImageFile) {
+            formDataToSend.append("img", profileImageFile);
+            console.log("Form Data: ", Array.from(formDataToSend.entries()));
+        }
+
+        console.log("User ID: ", userId); // Thêm dòng này để kiểm tra ID
+        const response = await apiClient.put(`/api/user/profile`, formDataToSend, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                user_id: userId,
+            },
+        });
+
+        setSuccess("Cập nhật thông tin thành công!");
+        fetchUserData(); // Gọi hàm này để làm mới dữ liệu người dùng
+    } catch (error) {
+        setError("Lỗi khi cập nhật thông tin: " + (error.response?.data?.message || error.message));
+    } finally {
+        setLoading(false);
     }
-    // Xử lý logic cập nhật dữ liệu người dùng tại đây
-    console.log("Dữ liệu đã được cập nhật: ", formData);
-  };
+};
+
 
   return (
     <div className="profile-container">
       <form className="profile-form" onSubmit={handleSubmit}>
         <h2>Cập nhật thông tin</h2>
-
-        {/* Ảnh đại diện */}
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
         <div className="profile-image-section">
           <label htmlFor="profileImage">
-            <img
-              src={profileImage || "https://via.placeholder.com/150"}
-              alt="Profile"
-              className="profile-image"
-            />
+            <img src={profileImage} alt="Profile" className="profile-image" />
           </label>
           <input
             type="file"
@@ -61,8 +117,6 @@ const UpdateProfileForm = () => {
             hidden
           />
         </div>
-
-        {/* Các trường thông tin */}
         <div className="form-group">
           <input
             type="text"
@@ -99,37 +153,10 @@ const UpdateProfileForm = () => {
             required
           />
         </div>
-
-        {/* Giới tính */}
-        <div className="gender-group">
-          <h5>Giới tính</h5>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="male"
-                onChange={handleChange}
-              />
-              Nam
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="female"
-                onChange={handleChange}
-              />
-              Nữ
-            </label>
-          </div>
-        </div>
-
-        <button type="submit">Cập nhật thông tin</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Đang cập nhật..." : "Cập nhật thông tin"}
+        </button>
       </form>
-      <Link to="/">
-        <ArrowBackIcon /> Về trang chủ
-      </Link>
     </div>
   );
 };

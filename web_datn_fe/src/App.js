@@ -11,10 +11,12 @@ import PhotosPage from "./component/user/PhotosPage";
 import Timeline from "./component/user/Timeline";
 import MainLayout from "./MainLayout";
 
-import ChangePassword from "./page/account/ChangePasswordPage.js";
+import ResetPassword from "./page/account/ChangePasswordPage.js";
 import ForgotPasswordPage from "./page/account/ForgotPasswordPage.js";
 import LoginRegister from "./page/account/LoginRegister";
 import OTPVerification from "./page/account/OTPVerification.js";
+import ProFile from "./page/account/UpdateProfileForm.js";
+import ChangePassword from "./page/account/UpdateProfileForm.js";
 
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";
@@ -76,7 +78,7 @@ const App = () => {
       <Route path="/login" element={<LoginRegister />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-otp" element={<OTPVerification />} />
-        <Route path="/reset-password" element={<ChangePassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/social/*" element={<Social />}>
           <Route path="" element={<HomeSocial />} />
@@ -101,12 +103,17 @@ const App = () => {
           <Route path="/thanhtoan/:userId" element={<ThanhToan />} />
           <Route path="/danhgia" element={<DanhGia />} />
           <Route path="/promotions" element={<KhuyenMaiList />} />
+          {/* Thông Tin Người dùng */}
+          <Route path="/profile" element={<ProFile/>} />
+          <Route path="/change-password" element={<ChangePassword/>} />
         </Route>
 
         <Route path="/admin/*" element={<Admin1Layout />}>
           <Route path="" element={<Dashboard2 />} />
-
-          <Route path="formproduct" element={<FormProduct />} />
+        </Route>
+        {/* Routes quản trị */}
+       {/* QL Sản phẩm */}
+       <Route path="formproduct" element={<FormProduct />} />
           <Route path="formproduct/:id" element={<FormProduct />} />
           <Route path="tableproduct" element={<TableProduct />} />
 
@@ -150,10 +157,6 @@ const App = () => {
           <Route path="formbenefit" element={<FormBenefit />} />
           <Route path="formbenefit/:id" element={<FormBenefit />} />
           <Route path="tablebenefit" element={<TableBenefit />} />
-        </Route>
-        {/* Routes quản trị */}
-       {/* QL Sản phẩm */}
-       
       </Routes>
     </Router>
   );

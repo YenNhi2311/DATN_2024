@@ -61,23 +61,6 @@ export const getUserData = () => {
   return null;
 };
 
-// // Thêm hàm lấy thông tin người dùng theo userId
-// export const getUserData = async (userId, token) => {
-//   try {
-//     const response = await apiClient.get(`/user/${userId}`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`, // Đính kèm token vào request
-//       },
-//     });
-
-//     return response.data; // Trả về dữ liệu người dùng
-//   } catch (error) {
-//     throw new Error(
-//       error.response?.data?.message ||
-//         "Đã xảy ra lỗi khi lấy thông tin người dùng"
-//     );
-//   }
-// };
 
 // Thêm hàm lấy giỏ hàng theo userId
 export const getCartByUserId = async (userId) => {

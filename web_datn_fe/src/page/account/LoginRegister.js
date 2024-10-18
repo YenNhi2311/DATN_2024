@@ -122,7 +122,7 @@ const LoginRegister = () => {
   };
 
   return (
-    <div className={`login-container ${isActive ? "active" : ""}`} id="container">
+    <div className={`login-container ${isActive ? "active" : ""}`} id="container " style={{ marginLeft: '400px', marginTop: '60px' }}>
       <div className="form-container sign-up">
         <form>
           <h1>Tạo Tài Khoản</h1>
@@ -163,10 +163,10 @@ const LoginRegister = () => {
           />
           <div className="social-icons">
             <a href="/auth/google" className="icon">
-              <i className="fa-brands fa-google"></i>
+              <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google Logo" width="30" />
             </a>
             <a href="/auth/facebook" className="icon">
-              <i className="fa-brands fa-facebook-f"></i>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook Logo" width="30" />
             </a>
           </div>
           <button type="button" onClick={handleRegisterClick}>
@@ -201,34 +201,37 @@ const LoginRegister = () => {
               )}
             </span>
           </div>
-          <Link to="/forgot-password" style={{ marginRight: "200px", marginBottom: "10px", marginTop: "6px" }}>
+          <Link to="/forgot-password" style={{ marginRight: "200px", marginBottom: "10px", marginTop: "6px", fontWeight: 'bold' }}>
             Quên mật khẩu?
           </Link>
           <div className="social-icons">
             <a href="/auth/google" className="icon">
-              <i className="fa-brands fa-google"></i>
+              <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google Logo" width="30" />
             </a>
             <a href="/auth/facebook" className="icon">
-              <i className="fa-brands fa-facebook-f"></i>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook Logo" width="30" />
             </a>
           </div>
           <button type="submit">Đăng Nhập</button>
         </form>
-        <Link to="/social" className="to-home">
+        <Link to="/" className="to-home">
           <ArrowBackIcon /> Về trang chủ
         </Link>
       </div>
       <div className="toggle-container">
         <div className="toggle">
           <div className="toggle-panel toggle-left">
-            <h1 style={{ marginRight: "70px" }}>Welcome Back!</h1>
-            <button className="hidden" id="login" onClick={() => setIsActive(false)} style={{ marginRight: "70px" }}>
+            <h4 style={{ color: 'white', marginBottom: '10px', textTransform: 'capitalize' }}>Chào mừng quay trở lại!</h4>
+            <span style={{ marginRight: "20px", color: 'white', marginBottom: '10px' }}>Đăng nhập vào tài khoản của bạn</span>
+            <button className="hidden" id="login" onClick={() => setIsActive(false)} style={{ marginRight: "20px" }}>
               Đăng Nhập
             </button>
           </div>
           <div className="toggle-panel toggle-right">
-            <h1 style={{ marginLeft: "70px" }}>Hello, Friend!</h1>
-            <button className="hidden" id="register" onClick={() => setIsActive(true)} style={{ marginLeft: "70px" }}>
+
+            <h3 style={{ marginLeft: "20px", color: 'white', marginBottom: '10px', textTransform: 'capitalize' }}>Tạo tài khoản mới</h3>
+            <span style={{ marginLeft: "20px", color: 'white', marginBottom: '10px' }}>Đăng ký để khám phá những tiện ích tuyệt vời</span>
+            <button className="hidden" id="register" onClick={() => setIsActive(true)} style={{ marginLeft: "20px" }}>
               Đăng Ký
             </button>
           </div>
