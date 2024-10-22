@@ -6,14 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class ImageUtils {
 
-    private static final String UPLOAD_DIR = "C:\\DATN_GIT\\DATN_2024-master\\DATN_2024\\web_datn_fe\\src\\assets\\img\\";
+    private static final String UPLOAD_DIR = "C:/Users/Asus/Documents/GitHub/DATN_2024/DATN_BE/src/main/resources/static/assets/img/";
 
     static {
         File uploadDir = new File(UPLOAD_DIR);

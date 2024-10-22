@@ -160,7 +160,7 @@ const FormCategory = ({ onClose, editData }) => {
             <div className="row mb-3">
                 <div className="col-sm-12">
                     <button type="submit" className="btn btn-primary custom-button">
-                        {isUpdating ? 'Cập nhật ' : 'Thêm '}
+                        {isUpdating ? 'Cập nhật ' : 'Thêm Mới'}
                     </button>
                 </div>
             </div>

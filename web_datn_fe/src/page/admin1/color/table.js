@@ -228,7 +228,7 @@ const TableColor = () => {
                     <TableRow>
                         <TableCell style={{ width: "100px" }}>ID</TableCell>
                         <TableCell style={{ width: "300px" }}>Tên màu </TableCell>
-                        <TableCell style={{ width: "150px" }}>Thao tác</TableCell>
+                        <TableCell style={{ width: "150px" }}>Hành Động</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -287,7 +287,7 @@ const TableColor = () => {
             fullWidth
         >
             <DialogTitle style={{ fontWeight: 'bolder', fontSize: '1.5em' }}>
-                {editData ? "Chỉnh sửa màu sản phẩm" : "Thêm mới màu sản phẩm"}
+                {editData ? "Cập Nhật" : "Thêm Mới"}
                 <IconButton
                     edge="end"
                     style={{ float: 'right', right: 2, color: 'red', fontWeight: 'bolder' }}
