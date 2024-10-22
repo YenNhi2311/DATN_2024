@@ -1,5 +1,7 @@
 package com.edu.datn.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,36 +81,41 @@ public class UserController {
         }
     }
 
-       // API để thay đổi mật khẩu người dùng
-       @PutMapping("/password")
-       public ResponseEntity<?> updatePassword(
-               @RequestHeader("user_id") Integer userId,
-               @RequestPart("user") String userJson) {
-       
-           if (userId == null) {
-               return ResponseEntity.badRequest().body("Người dùng không tìm thấy");
-           }
-       
-           try {
-               // Parse JSON string to UserDTO
-               ObjectMapper objectMapper = new ObjectMapper();
-               UserDTO userDTO = objectMapper.readValue(userJson, UserDTO.class);
-       
-               // Thiết lập userId vào userDTO để sử dụng trong service
-               userDTO.setUserId(userId);
-       
-               // Cập nhật mật khẩu
-               userService.updateUserPass(userDTO);
-       
-               return ResponseEntity.ok("Mật khẩu thay đổi thành công");
-           } catch (EntityNotFoundException e) {
-               return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại");
-           } catch (IllegalArgumentException e) {
-               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi: " + e.getMessage());
-           } catch (Exception e) {
-               return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra: " + e.getMessage());
-           }
-       }
-       
+    // API để thay đổi mật khẩu người dùng
+    @PutMapping("/password")
+    public ResponseEntity<?> updatePassword(
+            @RequestHeader("user_id") Integer userId,
+            @RequestPart("user") String userJson) {
+
+        if (userId == null) {
+            return ResponseEntity.badRequest().body("Người dùng không tìm thấy");
+        }
+
+        try {
+            // Parse JSON string to UserDTO
+            ObjectMapper objectMapper = new ObjectMapper();
+            UserDTO userDTO = objectMapper.readValue(userJson, UserDTO.class);
+
+            // Thiết lập userId vào userDTO để sử dụng trong service
+            userDTO.setUserId(userId);
+
+            // Cập nhật mật khẩu
+            userService.updateUserPass(userDTO);
+
+            return ResponseEntity.ok("Mật khẩu thay đổi thành công");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra: " + e.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        List<UserEntity> users = userService.getAllUsersExceptAdmin();
+        return ResponseEntity.ok(users);
+    }
 
 }

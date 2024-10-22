@@ -1,6 +1,7 @@
 package com.edu.datn.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +131,16 @@ public class UserService {
     }
   }
 
+
+  public List<UserEntity> getAllUsersExceptAdmin() {
+    return userJPA
+      .findAll()
+      .stream()
+      .filter(user -> !user.getUsername().equalsIgnoreCase("admin"))
+      .toList();
+  }
+
+  
   // Phương thức lấy tên người dùng từ token
   public String getUsernameFromToken(String token) {
     if (token.startsWith("Bearer ")) {

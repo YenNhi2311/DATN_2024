@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageUtils {
 
 
-    private static final String UPLOAD_DIR = "C:/Users/Asus/Documents/GitHub/DATN_2024/DATN_BE/src/main/resources/static/assets/img/";
+    private static final String UPLOAD_DIR = "C:/Users/ASUS/Downloads/DATN_2024-master/DATN_2024/DATN_BE/src/main/resources/static/assets/img/";
 
 
     static {
