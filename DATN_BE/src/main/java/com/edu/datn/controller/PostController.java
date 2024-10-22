@@ -1,5 +1,17 @@
 package com.edu.datn.controller;
 
+
+import com.edu.datn.dto.PostStatsDTO;
+import com.edu.datn.entities.LikeEntity;
+import com.edu.datn.entities.PostEntity;
+import com.edu.datn.entities.UserEntity;
+import com.edu.datn.model.Notification;
+import com.edu.datn.service.LikeService;
+import com.edu.datn.service.NotificationService;
+import com.edu.datn.service.PostService;
+import com.edu.datn.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,15 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.edu.datn.dto.PostStatsDTO;
-import com.edu.datn.entities.PostEntity;
-import com.edu.datn.entities.UserEntity;
-import com.edu.datn.service.LikeService;
-import com.edu.datn.service.NotificationService;
-import com.edu.datn.service.PostService;
-import com.edu.datn.service.UserService;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/post")
@@ -64,9 +67,15 @@ public class PostController {
 
   @PostMapping("/create")
   public ResponseEntity<?> createPost(
-      @RequestParam("content") String content, // Nội dung bài đăng
-      @RequestParam(value = "images", required = false) List<MultipartFile> images, // Các file ảnh (có thể null)
-      HttpServletRequest request) {
+
+    @RequestParam("content") String content, // Nội dung bài đăng
+    @RequestParam(
+      value = "images",
+      required = false
+    ) List<MultipartFile> images, // Các file ảnh (có thể null)
+    HttpServletRequest request
+  ) {
+
     try {
       // Lấy JWT token từ header Authorization
       String authHeader = request.getHeader("Authorization");
@@ -114,10 +123,32 @@ public class PostController {
     return ResponseEntity.ok().build();
   }
 
+  // @PostMapping("/like")
+  // public ResponseEntity<?> likePost(
+  //   @RequestParam Integer postId,
+  //   @RequestParam Integer userId
+  // ) {
+  //   // Gọi service để xử lý việc like bài viết
+  //   likeService.likePost(postId, userId);
+
+  //   // Lấy thông tin người dùng thực hiện hành động like
+  //   UserEntity user = userService.findById(userId);
+
+  //   // Lấy thông tin bài viết mà người dùng đã like
+  //   PostEntity post = postService
+  //     .getPostById(postId)
+  //     .orElseThrow(() -> new RuntimeException("Post not found"));
+
+  //   return ResponseEntity.ok("Liked and notification sent.");
+  // }
+
   @PostMapping("/like")
   public ResponseEntity<?> likePost(
-      @RequestParam Integer postId,
-      @RequestParam Integer userId) {
+
+    @RequestParam Integer postId,
+    @RequestParam Integer userId
+  ) {
+
     // Gọi service để xử lý việc like bài viết
     likeService.likePost(postId, userId);
 
@@ -126,45 +157,64 @@ public class PostController {
 
     // Lấy thông tin bài viết mà người dùng đã like
     PostEntity post = postService
-        .getPostById(postId)
-        .orElseThrow(() -> new RuntimeException("Post not found"));
 
-    // Kiểm tra xem người like có phải là chủ bài viết hay không
+      .getPostById(postId)
+      .orElseThrow(() -> new RuntimeException("Post not found"));
+
+    // Nếu người thực hiện like không phải là chủ bài viết
     if (!post.getUser().getUserId().equals(userId)) {
-      // Tạo thông báo cho chủ bài viết
-      String message = user.getFullname() + " đã like bài viết của bạn.";
+      Notification notification = new Notification();
+      notification.setPostId(postId);
+      notification.setReceiverId(post.getUser().getUserId()); // Gửi cho chủ bài viết
+      notification.setMessage(
+        "Người dùng " + user.getFullname() + " đã thích bài viết của bạn."
+      );
+      notification.setType("like"); // Loại thông báo là thích
+      notificationService.sendNotificationToUser(
+        post.getUser().getUserId(),
+        notification
+      );
 
-      // Gửi thông báo đến chủ bài viết (người nhận thông báo là chủ bài viết)
-      notificationService.createNotification(
-          post.getUser().getUserId(),
-          post.getPostId(),
-          message,
-          "like");
     }
 
     return ResponseEntity.ok("Liked and notification sent.");
   }
 
+  // @PostMapping("/unlike")
+  // public ResponseEntity<?> unlikePost(
+  //   @RequestParam Integer postId,
+  //   @RequestParam Integer userId
+  // ) {
+  //   likeService.unlikePost(postId, userId);
+  //   UserEntity user = userService.findById(userId);
+
+  //   // Lấy thông tin bài viết mà người dùng đã like
+  //   PostEntity post = postService
+  //     .getPostById(postId)
+  //     .orElseThrow(() -> new RuntimeException("Post not found"));
+
+  //   return ResponseEntity.ok("Unliked");
+  // }
+
   @PostMapping("/unlike")
   public ResponseEntity<?> unlikePost(
-      @RequestParam Integer postId,
-      @RequestParam Integer userId) {
+
+    @RequestParam Integer postId,
+    @RequestParam Integer userId
+  ) {
+    // Gọi service để xử lý việc unlike bài viết
     likeService.unlikePost(postId, userId);
+
+    // Lấy thông tin người dùng thực hiện hành động unlike
     UserEntity user = userService.findById(userId);
 
-    // Lấy thông tin bài viết mà người dùng đã like
+    // Lấy thông tin bài viết mà người dùng đã unlike
     PostEntity post = postService
-        .getPostById(postId)
-        .orElseThrow(() -> new RuntimeException("Post not found"));
+      .getPostById(postId)
+      .orElseThrow(() -> new RuntimeException("Post not found"));
 
-    // Kiểm tra xem người like có phải là chủ bài viết hay không
-    if (!post.getUser().getUserId().equals(userId)) {
-      // Gửi thông báo đến chủ bài viết (người nhận thông báo là chủ bài viết)
-      notificationService.deleteNotificationForLike(
-          post.getPostId(),
-          post.getUser().getUserId());
-    }
-    return ResponseEntity.ok("Unliked");
+    return ResponseEntity.ok("Unliked and notification sent.");
+
   }
 
   @GetMapping("/isLiked")

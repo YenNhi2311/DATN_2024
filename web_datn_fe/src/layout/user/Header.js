@@ -26,12 +26,11 @@ import { getUserData } from "../../services/authService";
 
 const Header = () => {
   const [activeNav, setActiveNav] = useState("");
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [navbarBackground, setNavbarBackground] = useState("transparent");
   const [navbarTextColor, setNavbarTextColor] = useState("black");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Thêm state cho sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Thêm state cho sidebar
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -80,15 +79,6 @@ const Header = () => {
       setNavbarTextColor("black");
     }
   }, [location.pathname, navigate]);
-
-  const handleNavClick = (id) => {
-    setActiveNav(id);
-    if (id === "social") {
-      setIsMenuVisible(true);
-    } else {
-      setIsMenuVisible(false);
-    }
-  };
 
   const handleLogout = () => {
     Cookies.remove("access_token");
@@ -143,7 +133,7 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <InputGroup className="search-bar">
             <FormControl
-              placeholder="Tìm kiếm sản phẩm..."
+              placeholder="Tìm kiếm bài viết..."
               aria-label="Search"
               aria-describedby="basic-addon2"
             />
@@ -151,7 +141,7 @@ const Header = () => {
           <Nav>
             <Nav.Link
               as={Link}
-              to="/"
+              to="/social/"
               className={
                 activeNav === "social" ? "nav-link active-nav" : "nav-link"
               }
@@ -159,13 +149,28 @@ const Header = () => {
             >
               <HomeIcon />
             </Nav.Link>
-            <Nav.Link className="nav-link" style={{ color: navbarTextColor }}>
+            <Nav.Link
+              as={Link}
+              to="/social/notification"
+              className="nav-link"
+              style={{ color: navbarTextColor }}
+            >
               <FaBell />
             </Nav.Link>
-            <Nav.Link className="nav-link" style={{ color: navbarTextColor }}>
+            <Nav.Link
+              as={Link}
+              to="/social/personal"
+              className="nav-link"
+              style={{ color: navbarTextColor }}
+            >
               <FaUserAlt />
             </Nav.Link>
-            <Nav.Link className="nav-link" style={{ color: navbarTextColor }}>
+            <Nav.Link
+              as={Link}
+              to="/social/friends"
+              className="nav-link"
+              style={{ color: navbarTextColor }}
+            >
               <FaUserPlus />
             </Nav.Link>
           </Nav>
@@ -183,7 +188,7 @@ const Header = () => {
               <Image
                 src={
                   isLoggedIn && userData
-                    ? userData.img
+                    ? `http://localhost:8080/assets/img/${userData.img}`
                     : "https://via.placeholder.com/150"
                 }
                 roundedCircle
@@ -228,8 +233,7 @@ const Header = () => {
         </Navbar.Collapse>
       </Navbar>
       {/* Gắn sidebar */}
-      {isSidebarOpen && location.pathname === "/social" && <SidebarLeft />}{" "}
-      {/* Sidebar hiện khi mở */}
+      {isSidebarOpen && <SidebarLeft />} {/* Sidebar hiện khi mở */}
     </>
   );
 };

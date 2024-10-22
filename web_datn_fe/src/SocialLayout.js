@@ -18,7 +18,7 @@ const SocialLayout = () => {
       <div className="social-content">
         <Outlet />
       </div>
-      <FriendSidebar />
+      {/* <FriendSidebar /> */}
     </div>
   );
 };

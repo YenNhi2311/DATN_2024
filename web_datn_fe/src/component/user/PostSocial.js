@@ -1,15 +1,50 @@
 import { ImageOutlined } from "@mui/icons-material";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
+
 import { Form } from "react-bootstrap";
 import "../../assets/css/postsocial.css";
-import Avatar from "../../assets/img/avatar1.jpg";
+import CryptoJS from "crypto-js";
 import { apiClient } from "../../config/apiClient";
 import PostDetail from "./PostDetail";
+import { getUserData, getUserDataById } from "../../services/authService";
+import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 
 const PostSocial = () => {
   const [postContent, setPostContent] = useState("");
   const [posts, setPosts] = useState([]); // State lưu danh sách bài viết
   const [selectedImages, setSelectedImages] = useState([]); // State lưu trữ hình ảnh đã chọn
+
+  const [userData, setUserData] = useState("");
+
+  useEffect(() => {
+    const getUser = () => {
+      const token = Cookies.get("access_token");
+      const encryptedUserData = localStorage.getItem("userData");
+      if (encryptedUserData) {
+        try {
+          //giải mã crypt
+          const decryptedUserId = CryptoJS.AES.decrypt(
+            encryptedUserData,
+            "secret-key"
+          ).toString(CryptoJS.enc.Utf8);
+          const userId = JSON.parse(decryptedUserId).user_id;
+          getUserData(userId, token)
+            .then((data) => {
+              setUserData(data);
+            })
+            .catch((error) => {
+              console.error("Error fetching user data:", error);
+            });
+        } catch (error) {
+          console.error("Lỗi giải mã userId:", error);
+        }
+      }
+    };
+    getUser();
+  }, []);
+
 
   // Hàm xử lý thay đổi nội dung bài viết
   const handlePostChange = (e) => {
@@ -34,6 +69,33 @@ const PostSocial = () => {
   };
 
   // Hàm gửi yêu cầu POST lên server
+  // const handlePostSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const postData = new FormData(); // Dùng FormData để gửi cả text và file
+  //   postData.append("content", postContent);
+  //   selectedImages.forEach((image) => {
+  //     postData.append("images", image); // Append từng ảnh với cùng key 'images'
+  //   });
+
+  //   try {
+  //     // Gọi API để tạo bài đăng
+  //     const response = await apiClient.post("/api/post/create", postData, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+
+  //     // Thêm bài viết mới vào danh sách bài viết
+  //     setPosts([response.data, ...posts]);
+  //     setPostContent(""); // Xóa nội dung sau khi gửi
+  //     setSelectedImages([]); // Xóa hình ảnh đã chọn sau khi gửi
+  //   } catch (error) {
+  //     console.error(
+  //       "Lỗi khi tạo bài viết:",
+  //       error.response ? error.response.data : error.message
+  //     );
+  //   }
+  // };
+
   const handlePostSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,6 +115,16 @@ const PostSocial = () => {
       setPosts([response.data, ...posts]);
       setPostContent(""); // Xóa nội dung sau khi gửi
       setSelectedImages([]); // Xóa hình ảnh đã chọn sau khi gửi
+
+
+      // Hiển thị thông báo thành công
+      Swal.fire({
+        title: "Thành công!",
+        text: "Bài viết đã được đăng thành công.",
+        icon: "success",
+        confirmButtonText: "Đồng ý",
+      });
+
     } catch (error) {
       console.error(
         "Lỗi khi tạo bài viết:",
@@ -65,7 +137,11 @@ const PostSocial = () => {
     <>
       <div className="post-social">
         <div className="post-header">
-          <img src={Avatar} alt="Avatar" className="post-avatar" />
+          <img
+            src={`http://localhost:8080/assets/img/${userData.img}`}
+            alt={getUserDataById().user_id}
+            className="post-avatar"
+          />
           <div className="post-input">
             <h3>Bạn đang nghĩ gì?</h3>
             <Form onSubmit={handlePostSubmit}>
@@ -93,7 +169,9 @@ const PostSocial = () => {
                   className="upload-input"
                   style={{ display: "none" }}
                 />
-                <div className="image-preview">
+
+                <div className="social-image-preview">
+
                   {selectedImages.map((image, index) => (
                     <div key={index} className="image-container">
                       <img

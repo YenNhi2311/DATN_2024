@@ -97,7 +97,11 @@ const PostItem = ({ post, userId }) => {
     <div className="post-item">
       <div className="post-header-post">
         <img
-          src={post.user.img ? post.user.img : Avatar}
+          src={
+            post.user.img
+              ? `http://localhost:8080/assets/img/${post?.user?.img}`
+              : ""
+          }
           alt={post.user.fullname}
           className="post-avatar-post"
         />
@@ -135,7 +139,9 @@ const PostItem = ({ post, userId }) => {
         onMouseLeave={() => setShowActions(false)}
       >
         <p className="post-caption">{post.content}</p>
-        <div className={`post-images post-images-${post.imgposts.length}`}>
+
+        <div className={`post-images post-images-${post?.imgposts?.length}`}>
+
           {post.imgposts?.slice(0, 7).map((imgpost, index) => (
             <div
               key={index}
