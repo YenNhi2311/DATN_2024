@@ -19,12 +19,11 @@ public class AuthenticationResponse {
   private Integer userId;
 
   public AuthenticationResponse(
-    String accessToken,
-    String refreshToken,
-    String role,
-    String message,
-    Integer userId
-  ) {
+      String accessToken,
+      String refreshToken,
+      String role,
+      String message,
+      Integer userId) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.role = role;
@@ -32,7 +31,8 @@ public class AuthenticationResponse {
     this.userId = userId;
   }
 
-  public AuthenticationResponse() {}
+  public AuthenticationResponse() {
+  }
 
   public String getAccessToken() {
     return accessToken;

@@ -239,17 +239,16 @@
 }
 
 .page-header {
-    position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/cart-page-header-img.jpg);
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
+  
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),;
+ 
+   
 }
 
 @media (min-width: 992px) {
     .hero-header,
     .page-header {
-        margin-top: 152px !important;
+        margin-top: 100px !important;
     }
 }
 
@@ -307,7 +306,8 @@
 
 
 .fruite .tab-class .nav-item a.active span {
-    color: #c20000 !important;
+    color: #ffffff !important;
+   
 }
 
 .fruite .fruite-categorie .fruite-name {
@@ -532,7 +532,7 @@
 
 .footer .footer-item .btn-link {
     line-height: 35px;
-    color: rgba(255, 255, 255, .5);
+    color: rgba(255, 255, 255, 0.5);
     transition: 0.5s;
 }
 
@@ -544,70 +544,6 @@
     line-height: 35px;
 }
 
-
-/*** input **/
-
-.filter-container {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 5px;
-    width: 250px;
-}
-
-.price-range-container h3,
-.brand-container h4,
-.hair-condition-container h4 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.price-range-inputs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.price-range-inputs input {
-    width: calc(50% - 5px);
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.apply-button {
-    background-color: #0080ff;
-    color: white;
-    border: none;
-    padding: 10px;
-    width: 100%;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.apply-button:hover {
-    background-color: #0080ff;
-}
-
-.brand-list,
-.hair-condition-list {
-    list-style: none;
-    padding: 0;
-}
-
-.brand-list li,
-.hair-condition-list li {
-    display: flex;
-    justify-content: space-between;
-    font-size: 16px;
-    padding: 5px 0;
-}
-
-.brand-list li span,
-.hair-condition-list li span {
-    color: #777;
-}
 
 
 /* hinh nho */
@@ -648,8 +584,9 @@
 }
 
 .border-rounded img {
-    width: 75%;
+    width: 65%;
     margin-bottom: 15px;
+    margin-right: 15px ;
 }
 
 
@@ -685,7 +622,7 @@
 .txt_price {
     box-sizing: border-box;
     color: rgb(255, 102, 0);
-    display: inline;
+    display: inline-block;
     font-family: line-height 25.7143px;
     margin-right: auto;
     font-size: 30px;
@@ -695,10 +632,16 @@
     margin-right: 10px;
     text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+}
+.vat-included {
+    display: inline-block;
+    margin-left: 10px; /* Adjust this value to increase or decrease the space */
+    vertical-align: middle; /* Align it vertically with the price */
 }
 
 .navbar-brand img {
-    max-height: 240px; /* Điều chỉnh chiều cao tối đa của ảnh */
+    max-height: 170px; /* Điều chỉnh chiều cao tối đa của ảnh */
     width: auto;      /* Để chiều rộng tự động dựa trên tỷ lệ khung hình */
   }
   
@@ -711,3 +654,197 @@
   }
   
 /*** Footer End ***/
+.old-price {
+    text-decoration: line-through;
+    color: #dc3545;
+    margin-left: 5px;
+}
+.discount {
+    color: #090909;
+    margin-left: 5px;
+}
+.discount2{
+    color:  #dc3545;
+}
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .table {
+            max-width: 1000px; /* Set max width for the table */
+           
+        }
+        .table th {
+            text-align: left;
+            font-weight: bold;
+        }
+        .info-cell {
+            background-color: #000000; /* Light gray background */
+        }
+        .table td {
+            vertical-align: middle; /* Center-align vertically */
+            padding: 5px 12px; /* Reduce padding for closer spacing */
+        }
+        h2 {
+            
+            margin-bottom: 20px;
+            font-size: 44px; /* Adjust title font size */
+        }
+        .table td {
+            font-size: 14px;
+            text-align: center; /* Smaller font size for table content */
+        }
+        .table th{
+            font-size: 13px; 
+            text-align: center;
+        }
+       
+        .flash-deal {
+            display: flex;
+            justify-content: space-between; /* Đẩy các phần tử sang hai bên */
+            align-items: center; /* Canh giữa theo chiều dọc */
+            padding: 10px;
+            background-color: #ff6b00; 
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: white;
+          }
+          
+          .flash-deal .text {
+            margin-left: auto; /* Đẩy phần tử này sang bên phải */
+            font-weight: bold;
+          }
+          .flash-deal .textname{
+            font-weight: bold;
+            font-size: 20px;
+          }
+         
+          .input-group .btn {
+            border-radius: 50%;
+            min-width: 30px;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          .input-group .form-control {
+            height: 38px; /* Chỉnh sửa chiều cao trường nhập liệu cho đồng nhất */
+          }
+          
+          .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: 16px;
+            color: #b0b0b0; /* Light gray text color */
+          }
+          
+          .breadcrumb-item a {
+            color: #707070; /* Link color */
+            text-decoration: none;
+          }
+          
+          .breadcrumb-item.active {
+            color: #b0b0b0; /* Active breadcrumb color */
+          }
+          
+          .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+            padding: 0 8px;
+            color: #b0b0b0;
+          }.input-group .form-control {
+            border-radius: 0;
+            border-right: none;
+            border-left: none;
+          }
+          
+          .input-group .btn {
+            border-radius: 0;
+          }
+          
+          .input-group .btn:first-child {
+            border-right: none;
+          }
+          
+          /*** Navbar Start ***/
+
+.navbar .navbar-nav .nav-link {
+    padding: 10px 15px;
+    font-size: 16px;
+    transition: .5s;
+}
+
+.navbar {
+    height: 100px;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+
+.text-blue {
+    color: #1e90ff;
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active,
+.fixed-top.bg-white .navbar .navbar-nav .nav-link:hover,
+.fixed-top.bg-white .navbar .navbar-nav .nav-link.active {
+    color: var(--bs-blue);
+}
+
+.navbar .dropdown-toggle::after {
+    border: none;
+    font-weight: bolder;
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 700;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+@media (min-width: 1200px) {
+    .navbar .nav-item .dropdown-menu {
+        display: block;
+        visibility: hidden;
+        top: 100%;
+        transform: rotateX(-75deg);
+        transform-origin: 0% 0%;
+        border: 0;
+        transition: .5s;
+        opacity: 0;
+    }
+}
+
+:root {
+    --bs-primary: #1e90ff;
+}
+
+
+.dropdown .dropdown-menu a:hover {
+    background: var(--bs-primary);
+    color: var(--bs-white);
+
+}
+
+
+.navbar .dropdown-menu .dropdown-item {
+    font-size: 1em;
+    font-weight: bolder;
+    color: black;
+
+}
+
+
+.navbar .nav-item:hover .dropdown-menu {
+    transform: rotateX(0deg);
+    visibility: visible;
+    background: var(--bs-light) !important;
+    border-radius: 10px !important;
+    transition: .5s;
+    opacity: 1;
+}
+
+#searchModal .modal-content {
+    background: rgba(255, 255, 255, .8);
+}
+
+
+/*** Navbar End ***/

@@ -1,5 +1,6 @@
 package com.edu.datn.controller;
 
+
 import com.edu.datn.dto.PostStatsDTO;
 import com.edu.datn.entities.LikeEntity;
 import com.edu.datn.entities.PostEntity;
@@ -10,8 +11,10 @@ import com.edu.datn.service.NotificationService;
 import com.edu.datn.service.PostService;
 import com.edu.datn.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 
 @RestController
 @RequestMapping("/api/post")
@@ -50,20 +54,20 @@ public class PostController {
   public ResponseEntity<PostEntity> getPostById(@PathVariable Integer postId) {
     Optional<PostEntity> post = postService.getPostById(postId);
     return post
-      .map(postEntity -> new ResponseEntity<>(postEntity, HttpStatus.OK))
-      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        .map(postEntity -> new ResponseEntity<>(postEntity, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @GetMapping("/user/{userId}")
   public ResponseEntity<List<PostEntity>> getPostsByUserId(
-    @PathVariable Integer userId
-  ) {
+      @PathVariable Integer userId) {
     List<PostEntity> posts = postService.getPostsByUserId(userId);
     return new ResponseEntity<>(posts, HttpStatus.OK);
   }
 
   @PostMapping("/create")
   public ResponseEntity<?> createPost(
+
     @RequestParam("content") String content, // Nội dung bài đăng
     @RequestParam(
       value = "images",
@@ -71,13 +75,14 @@ public class PostController {
     ) List<MultipartFile> images, // Các file ảnh (có thể null)
     HttpServletRequest request
   ) {
+
     try {
       // Lấy JWT token từ header Authorization
       String authHeader = request.getHeader("Authorization");
       if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body("Missing or invalid Authorization header");
+            .status(HttpStatus.UNAUTHORIZED)
+            .body("Missing or invalid Authorization header");
       }
 
       String token = authHeader.substring(7); // Bỏ chữ "Bearer " để lấy token
@@ -93,20 +98,18 @@ public class PostController {
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("An error occurred: " + e.getMessage());
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("An error occurred: " + e.getMessage());
     }
   }
 
   @PutMapping("/{postId}")
   public ResponseEntity<PostEntity> updatePost(
-    @PathVariable Integer postId,
-    @RequestBody PostEntity postUpdateRequest
-  ) {
+      @PathVariable Integer postId,
+      @RequestBody PostEntity postUpdateRequest) {
     PostEntity updatedPost = postService.updatePost(
-      postId,
-      postUpdateRequest.getContent()
-    );
+        postId,
+        postUpdateRequest.getContent());
     if (updatedPost != null) {
       return ResponseEntity.ok(updatedPost);
     } else {
@@ -141,9 +144,11 @@ public class PostController {
 
   @PostMapping("/like")
   public ResponseEntity<?> likePost(
+
     @RequestParam Integer postId,
     @RequestParam Integer userId
   ) {
+
     // Gọi service để xử lý việc like bài viết
     likeService.likePost(postId, userId);
 
@@ -152,6 +157,7 @@ public class PostController {
 
     // Lấy thông tin bài viết mà người dùng đã like
     PostEntity post = postService
+
       .getPostById(postId)
       .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -168,6 +174,7 @@ public class PostController {
         post.getUser().getUserId(),
         notification
       );
+
     }
 
     return ResponseEntity.ok("Liked and notification sent.");
@@ -191,6 +198,7 @@ public class PostController {
 
   @PostMapping("/unlike")
   public ResponseEntity<?> unlikePost(
+
     @RequestParam Integer postId,
     @RequestParam Integer userId
   ) {
@@ -206,13 +214,13 @@ public class PostController {
       .orElseThrow(() -> new RuntimeException("Post not found"));
 
     return ResponseEntity.ok("Unliked and notification sent.");
+
   }
 
   @GetMapping("/isLiked")
   public ResponseEntity<Boolean> isPostLiked(
-    @RequestParam Integer postId,
-    @RequestParam Integer userId
-  ) {
+      @RequestParam Integer postId,
+      @RequestParam Integer userId) {
     boolean isLiked = likeService.isPostLikedByUser(postId, userId);
     return ResponseEntity.ok(isLiked);
   }
@@ -226,8 +234,7 @@ public class PostController {
 
   @GetMapping("/{userId}/stats")
   public ResponseEntity<PostStatsDTO> getUserStats(
-    @PathVariable Integer userId
-  ) {
+      @PathVariable Integer userId) {
     PostStatsDTO stats = postService.getUserStatsForCurrentMonth(userId);
     return ResponseEntity.ok(stats);
   }

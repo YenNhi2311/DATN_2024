@@ -1,14 +1,11 @@
 package com.edu.datn.controller;
 
-import com.edu.datn.dto.ProductDTO;
-import com.edu.datn.dto.ProductWithDetailsDTO;
-import com.edu.datn.service.ProductService;
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +14,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.edu.datn.dto.ProductDTO;
+import com.edu.datn.dto.ProductWithDetailsDTO;
+import com.edu.datn.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
@@ -30,8 +31,7 @@ public class ProductController {
     var pageable = PageRequest.of(0, 8);
 
     List<ProductWithDetailsDTO> topProducts = productService.getTop8BestSellingProducts(
-      pageable
-    );
+        pageable);
     return ResponseEntity.ok(topProducts);
   }
 
@@ -50,19 +50,17 @@ public class ProductController {
   // API để tạo mới sản phẩm
   @PostMapping
   public ResponseEntity<ProductDTO> createProduct(
-    @RequestBody ProductDTO productDto
-  )
-    throws IOException {
+      @RequestBody ProductDTO productDto)
+      throws IOException {
     return ResponseEntity.ok(productService.createProduct(productDto));
   }
 
   // API để cập nhật sản phẩm theo ID
   @PutMapping("/{id}")
   public ResponseEntity<ProductDTO> updateProduct(
-    @PathVariable Integer id,
-    @RequestBody ProductDTO productDto
-  )
-    throws IOException {
+      @PathVariable Integer id,
+      @RequestBody ProductDTO productDto)
+      throws IOException {
     return ResponseEntity.ok(productService.updateProduct(id, productDto));
   }
 

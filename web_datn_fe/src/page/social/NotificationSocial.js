@@ -4,9 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../../assets/css/notification.css"; // Import file CSS
 import { formatNotificationTime } from "../../config/formatPostTime";
+
 import { apiClient } from "../../config/apiClient";
 import { Client } from "@stomp/stompjs"; // Import STOMP client
 import SockJS from "sockjs-client"; // Import SockJS
+
 
 const NotificationFullPage = () => {
   const [notifications, setNotifications] = useState([]);
@@ -20,6 +22,7 @@ const NotificationFullPage = () => {
       "secret-key"
     ).toString(CryptoJS.enc.Utf8);
     const userId = JSON.parse(decryptedUserId).user_id;
+
 
     const fetchNotifications = async () => {
       try {
@@ -63,6 +66,7 @@ const NotificationFullPage = () => {
             createdAt: new Date(), // Sử dụng thời gian hiện tại
           };
 
+
           // Cập nhật thông báo mới vào đầu danh sách
           setNotifications((prevNotifications) => [
             newNotification,
@@ -84,6 +88,7 @@ const NotificationFullPage = () => {
     };
   }, [encryptedUserData]); // Chạy lại khi encryptedUserData thay đổi
 
+
   const getNotificationIcon = (type) => {
     switch (type) {
       case "like":
@@ -101,8 +106,10 @@ const NotificationFullPage = () => {
         <h2>Tất cả Thông Báo</h2>
       </div>
 
+
       {/* Trạng thái kết nối WebSocket
       <div className="connection-status">
+
         {isConnected ? (
           <p className="connected">WebSocket đã kết nối</p>
         ) : (

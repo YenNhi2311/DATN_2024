@@ -1,0 +1,6 @@
+.btn-img{
+    margin-top: 100px;
+}
+.my-swal-popup {
+    z-index: 9999 !important; /* Ensure this is higher than other dialogs or modals */
+  }

@@ -1,20 +1,31 @@
-import "bootstrap/dist/css/bootstrap.min.css"; // Đảm bảo bạn đã cài đặt Bootstrap
+import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is installed
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
+// Importing components
 import Admin1Layout from "./Admin1Layout";
 import ChiTietSP from "./component/page/chitietSP";
+import ChiTietSPKM from "./component/page/chitietSPKM";
 import About from "./component/user/About";
 import Friends from "./component/user/Friends";
 import PhotosPage from "./component/user/PhotosPage";
 import Timeline from "./component/user/Timeline";
 import MainLayout from "./MainLayout";
+
+import ResetPassword from "./page/account/ResetPasswordPage.js";
+import ForgotPasswordPage from "./page/account/ForgotPasswordPage.js";
 import LoginRegister from "./page/account/LoginRegister";
+import OTPVerification from "./page/account/OTPVerification.js";
+import ProFile from "./page/account/UpdateProfileForm.js";
+import ChangePassword from "./page/account/ChangePassword.js";
+
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";
 import GioHang from "./page/GioHang";
 import KhuyenMaiList from "./page/khuyenmailist";
 import LienHe from "./page/lienHe";
 import Shop from "./page/Shop";
+import ShopLoai from "./page/ShopLoai";
+import ShopTH from "./page/ShopTH";
 import ChatMessage from "./page/social/ChatMessage";
 import HomeSocial from "./page/social/HomeSocial";
 import NotificationSocial from "./page/social/NotificationSocial";
@@ -23,17 +34,17 @@ import ThanhToan from "./page/ThanhToan";
 import TrangChu from "./page/TrangChu";
 import Social from "./SocialLayout";
 
-//  {/* user */}
-// import TableUser from "./";
-// import FormUser from "./";
-
 //  {/* sản phẩm */}
 import FormProduct from "../src/page/admin1/product/form.js";
 import TableProduct from "../src/page/admin1/product/table.js";
 
-//  {/* sản phẩm chi tiết */}
-// import FormProductDetail from "./";
-// import TableProductDetail from "./";
+//  {/* Thương hiệu*/}
+import FormBrand from "../src/page/admin1/brand/form.js";
+import TableBrand from "../src/page/admin1/brand/list.js";
+
+// {/* sản phẩm chi tiết*/}
+import FormProductDetail from "../src/page/admin1/productdetail/form.js";
+import TableProductDetail from "../src/page/admin1/productdetail/list.js";
 
 //  {/* loại */}
 import FormCategory from "../src/page/admin1/category/form.js";
@@ -60,63 +71,61 @@ import TableIngredient from "../src/page/admin1/ingredient/table.js";
 //  {/* Công dụng*/}
 import FormBenefit from "./page/admin1/benefit/form.js";
 import TableBenefit from "./page/admin1/benefit/table.js";
-
-//  {/* hÓA đơn*/}
-// import TableOder from "../src/page/admin1/";
-// import TableOderDetail from "../src/page/admin1/";
-
-//  {/* khuyến mãi*/}
-// import TablePromotoin from "../src/page/admin1/";
-// import FormPromotoin from "../src/page/admin1/";
-
-
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginRegister />} />
+      <Route path="/login" element={<LoginRegister />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/verify-otp" element={<OTPVerification />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/social/*" element={<Social />}>
-          <Route path="" element={<HomeSocial />}>
-            <Route path="personal" element={<PersonalPage />} />
-            <Route path="timeline" element={<Timeline />} />
-            <Route path="friends" element={<Friends />} />
-            <Route path="about" element={<About />} />
-            <Route path="photos" element={<PhotosPage />} />
-            <Route path="message" element={<ChatMessage />} />
-            <Route path="notification" element={<NotificationSocial />} />
-          </Route>
+          <Route path="" element={<HomeSocial />} />
+          <Route path="personal" element={<PersonalPage />} />
+          <Route path="timeline" element={<Timeline />} />
+          <Route path="friends" element={<Friends />} />
+          <Route path="about" element={<About />} />
+          <Route path="photos" element={<PhotosPage />} />
+          <Route path="message" element={<ChatMessage />} />
+          <Route path="notification" element={<NotificationSocial />} />
         </Route>
+
         <Route element={<MainLayout />}>
           <Route path="/" element={<TrangChu />} />
-          <Route path="/Shop" element={<Shop />} />
-          <Route path="/product/1" element={<ChiTietSP />} />
-          <Route path="/LienHe" element={<LienHe />} />
-          <Route path="/GioHang" element={<GioHang />} />
-          <Route path="/ThanhToan" element={<ThanhToan />} />
-          <Route path="/DanhGia" element={<DanhGia />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/category/:categoryId" element={<ShopLoai />} />
+          <Route path="/shop/brand/:brandId" element={<ShopTH />} />
+          <Route path="/product/:id" element={<ChiTietSP />} />
+          <Route path="/productpromotion/product/:productPromotionId/:productId" element={<ChiTietSPKM />} />
+          <Route path="/lienhe" element={<LienHe />} />
+          <Route path="/cart/:userId" element={<GioHang />} />
+          <Route path="/thanhtoan/:userId" element={<ThanhToan />} />
+          <Route path="/danhgia" element={<DanhGia />} />
           <Route path="/promotions" element={<KhuyenMaiList />} />
+          {/* Thông Tin Người dùng */}
+          <Route path="/profile" element={<ProFile/>} />
+          <Route path="/change-password" element={<ChangePassword/>} />
         </Route>
 
-        {/* Routes quản trị */}
         <Route path="/admin/*" element={<Admin1Layout />}>
-          {/* Dashboard */}
           <Route path="" element={<Dashboard2 />} />
-
-          {/* QL NGười dùng
-          <Route path="tableuser" element={<TableUser />} />
-          <Route path="formuser" element={<FormUser />} />
-          <Route path="formuser/:id" element={<FormUser />} /> */}
-
-          {/* QL Sản phẩm */}
-          <Route path="formproduct" element={<FormProduct />} />
+        </Route>
+        {/* Routes quản trị */}
+       {/* QL Sản phẩm */}
+       <Route path="formproduct" element={<FormProduct />} />
           <Route path="formproduct/:id" element={<FormProduct />} />
           <Route path="tableproduct" element={<TableProduct />} />
 
-          {/* QL Sản phẩm chi tiết
-          <Route path="form-product-detail" element={<FormProductDetail />} />
-          <Route path="form-product-detail/:id" element={<FormProductDetail />} />
-          <Route path="table-product-detail" element={<TableProductDetail />} /> */}
+          {/* QL Thương hiệu */}
+          <Route path="formbrand" element={<FormBrand />} />
+          <Route path="formbrand/:id" element={<FormBrand />} />
+          <Route path="tablebrand" element={<TableBrand />} />
+
+          {/* QL Sản phẩm chi tiết */}
+          <Route path="formproductdetail" element={<FormProductDetail />} />
+          <Route path="formproductdetail/:id" element={<FormProductDetail />} />
+          <Route path="tableproductdetail" element={<TableProductDetail />} />
 
           {/* QL loại */}
           <Route path="formcategory" element={<FormCategory />} />
@@ -148,17 +157,6 @@ const App = () => {
           <Route path="formbenefit" element={<FormBenefit />} />
           <Route path="formbenefit/:id" element={<FormBenefit />} />
           <Route path="tablebenefit" element={<TableBenefit />} />
-
-          {/* QL hóa đơn */}
-          {/* <Route path="tableoder" element={<TableOder />} />
-          <Route path="table-oder-detail" element={<TableOderDetail />} /> */}
-
-          {/* QL khuyến mãi*/}
-          {/* <Route path="formpromotion" element={<FormPromotoin />} />
-          <Route path="formpromotion/:id" element={<FormPromotoin />} />
-          <Route path="tablepromotion" element={<TablePromotoin />} /> */}
-
-        </Route>
       </Routes>
     </Router>
   );

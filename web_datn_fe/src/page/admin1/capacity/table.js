@@ -29,6 +29,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Swal from "sweetalert2";
 import "../../../assets/css/admin/formCapacity.css";
 import CloseIcon from '@mui/icons-material/Close';
+import { Edit, Delete } from '@mui/icons-material';
 
 const TableSCapacity = () => {
     const theme = useTheme();
@@ -225,20 +226,20 @@ const TableSCapacity = () => {
                                         <TableCell>{row.id}</TableCell>
                                         <TableCell>{row.name}</TableCell>
                                         <TableCell>
-                                            <Button
+                                            <IconButton
                                                 variant="contained"
                                                 onClick={() => handleOpenForm(row)} // Mở form với dữ liệu của dung tích đang chọn
                                                 sx={{ marginRight: "10px" }}
                                             >
-                                                Sửa
-                                            </Button>
-                                            <Button
+                                                <Edit color="primary"/>
+                                            </IconButton>
+                                            <IconButton
                                                 variant="outlined"
                                                 color="error"
                                                 onClick={() => handleDelete(row.id)} // Gọi hàm xóa dung tích
                                             >
-                                                Xóa
-                                            </Button>
+                                                <Delete color="secondary"/>
+                                            </IconButton>
                                         </TableCell>
                                     </TableRow>
                                 ))}

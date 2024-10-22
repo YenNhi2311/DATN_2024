@@ -1,34 +1,35 @@
+import { Delete, Edit } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close'; // Nhập CloseIcon
+import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
+    Button, // Nhập InputLabel cho Select
+    Dialog,
+    DialogContent,
+    DialogTitle, // Nhập MenuItem cho các lựa chọn trong Select
+    FormControl,
+    IconButton,
+    InputAdornment, // Nhập FormControl để bọc Select
+    InputLabel, // Nhập Select cho thanh lọc
+    MenuItem, // Nhập TextField cho input tìm kiếm
+    Select,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
     TablePagination,
-    Button,
-    InputAdornment,
-    TextField, // Nhập TextField cho input tìm kiếm
-    Select, // Nhập Select cho thanh lọc
-    MenuItem, // Nhập MenuItem cho các lựa chọn trong Select
-    FormControl, // Nhập FormControl để bọc Select
-    InputLabel, // Nhập InputLabel cho Select
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    useTheme,
-    IconButton
+    TableRow,
+    TextField,
+    useTheme
 } from "@mui/material"; // Nhập các component từ thư viện MUI để xây dựng UI
-import { tokens } from "../../../theme"; // Nhập theme để lấy màu sắc
-import Header from "../../../component/chart/Header"; // Nhập header tùy chỉnh
 import { useEffect, useState } from "react"; // Nhập hooks từ React
-import { apiClient } from "../../../config/apiClient"; // Nhập client API để gọi backend
-import FormSkinType from "./form"; // Nhập form quản lý loại da
-import SearchIcon from '@mui/icons-material/Search';
 import Swal from "sweetalert2"; // Nhập thư viện Swal để hiển thị thông báo
 import "../../../assets/css/admin/formSkinType.css";
-import CloseIcon from '@mui/icons-material/Close'; // Nhập CloseIcon
+import Header from "../../../component/chart/Header"; // Nhập header tùy chỉnh
+import { apiClient } from "../../../config/apiClient"; // Nhập client API để gọi backend
+import { tokens } from "../../../theme"; // Nhập theme để lấy màu sắc
+import FormSkinType from "./form"; // Nhập form quản lý loại da
 
 const TableSkinType = () => {
     const theme = useTheme(); // Lấy theme hiện tại
@@ -238,20 +239,20 @@ const TableSkinType = () => {
                                     <TableCell>{row.id}</TableCell>
                                     <TableCell>{row.name}</TableCell>
                                     <TableCell>
-                                        <Button
+                                        <IconButton
                                             variant="contained"
                                             onClick={() => handleOpenForm(row)} // Mở form với dữ liệu của loại da đang chọn
                                             sx={{ marginRight: "10px" }}
                                         >
-                                            Sửa
-                                        </Button>
-                                        <Button
+                                            <Edit color="primary"/>
+                                        </IconButton>
+                                        <IconButton
                                             variant="outlined"
                                             color="error"
                                             onClick={() => handleDelete(row.id)} // Gọi hàm xóa loại da
                                         >
-                                            Xóa
-                                        </Button>
+                                            <Delete color="secondary"/>
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}

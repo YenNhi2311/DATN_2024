@@ -2,18 +2,24 @@ import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Form, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2"; // Thêm SweetAlert2 cho popup xác nhận
+
 import { apiClient } from "../../config/apiClient";
 import Cookies from "js-cookie";
 import { getUserData } from "../../services/authService";
+
 
 const CommentSection = ({ postId, userId }) => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [visibleComments, setVisibleComments] = useState(2);
   const [comments, setComments] = useState([]); // State để quản lý danh sách bình luận
+
   const [userData, setUserData] = useState("");
 
+
+  // Fetch bình luận
   useEffect(() => {
+
     const getUser = () => {
       const token = Cookies.get("access_token");
       getUserData(userId, token)
@@ -30,13 +36,16 @@ const CommentSection = ({ postId, userId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       // setLoading(true); // Bắt đầu tải
+
       try {
         const response = await apiClient.get(`/api/comments/post/${postId}`);
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
       } finally {
+
         // setLoading(false); // Kết thúc tải
+
       }
     };
     fetchComments();
@@ -48,8 +57,10 @@ const CommentSection = ({ postId, userId }) => {
   };
 
   // Gửi bình luận mới
+
   const handleCommentSubmit = async (e) => {
     // setLoading(false);
+
     if (newComment.trim() === "") return;
 
     const comment = {
@@ -177,13 +188,17 @@ const CommentSection = ({ postId, userId }) => {
             value={newComment}
             onChange={handleCommentChange}
             placeholder="Viết bình luận của bạn"
+
             // disabled={loading}
+
           />
           <Button
             type="submit"
             variant="link"
             className="comment-send-btn"
+
             // disabled={loading}
+
           >
             {loading ? (
               <Spinner animation="border" size="sm" />

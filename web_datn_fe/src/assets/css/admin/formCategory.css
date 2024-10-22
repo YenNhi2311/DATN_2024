@@ -5,6 +5,23 @@
 .mb-4{
     font-size: 1.2em;
 }
+.image-preview-container {
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+    align-items: center;
+    margin-top: -80px;
+}
+
+.image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(107, 107, 107, 0.2);
+    margin-left: 15px; /* Adjust the margin as needed */
+}
+
 .custom-button {
     display: inline-block;
     padding: 10px 20px;
@@ -48,3 +65,4 @@
     max-width: 550px; /* Hoặc kích thước mà bạn muốn */
     width: 100%; /* Để sử dụng hết không gian có sẵn */
 }
+

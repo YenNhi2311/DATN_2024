@@ -20,6 +20,7 @@ import {
     useTheme,
     IconButton
 } from "@mui/material"; // Nhập các component từ thư viện MUI để xây dựng UI
+import { Edit, Delete } from '@mui/icons-material';
 import { tokens } from "../../../theme"; // Nhập theme để lấy màu sắc
 import Header from "../../../component/chart/Header"; // Nhập header tùy chỉnh
 import { useEffect, useState } from "react"; // Nhập hooks từ React
@@ -238,20 +239,20 @@ const TableBenefit = () => {
                                     <TableCell>{row.id}</TableCell>
                                     <TableCell>{row.name}</TableCell>
                                     <TableCell>
-                                        <Button
+                                        <IconButton
                                             variant="contained"
                                             onClick={() => handleOpenForm(row)} // Mở form với dữ liệu của công dụng đang chọn
                                             sx={{ marginRight: "10px" }}
                                         >
-                                            Sửa
-                                        </Button>
-                                        <Button
+                                            <Edit color="primary"/>
+                                        </IconButton>
+                                        <IconButton
                                             variant="outlined"
                                             color="error"
                                             onClick={() => handleDelete(row.id)} // Gọi hàm xóa công dụng
                                         >
-                                            Xóa
-                                        </Button>
+                                            <Delete color="secondary"/>
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}

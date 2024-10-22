@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/css/friends.css"; // Import CSS tùy chỉnh
 import FriendCard from "../../component/user/FriendCard"; // Component con để hiển thị từng mục bạn bè
+
 import { apiClient } from "../../config/apiClient";
 import { getUserDataById } from "../../services/authService";
+
 
 const Friends = () => {
   // Nhận userId như một props

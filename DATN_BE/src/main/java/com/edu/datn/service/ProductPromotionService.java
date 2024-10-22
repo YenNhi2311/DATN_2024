@@ -1,17 +1,17 @@
 package com.edu.datn.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.edu.datn.dto.ProductPromotionDTO;
 import com.edu.datn.entities.ProductPromotionEntity;
 import com.edu.datn.jpa.ProductJPA;
 import com.edu.datn.jpa.ProductPromotionJPA;
 import com.edu.datn.jpa.PromotionJPA;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductPromotionService {
@@ -24,6 +24,12 @@ public class ProductPromotionService {
 
     @Autowired
     private PromotionJPA promotionRepository;
+
+    public ProductPromotionEntity getProductPromotionById(int productPromotionId) {
+        // Sử dụng repository để tìm khuyến mãi
+        Optional<ProductPromotionEntity> promotion = productPromotionRepository.findById(productPromotionId);
+        return promotion.orElse(null); // Trả về khuyến mãi nếu có, ngược lại trả về null
+    }
 
     // Chuyển từ ProductPromotionEntity sang ProductPromotionDTO
     private ProductPromotionDTO convertToDTO(ProductPromotionEntity entity) {
@@ -49,8 +55,8 @@ public class ProductPromotionService {
     }
 
     // Lấy thông tin chi tiết product promotion theo ID
-    public ProductPromotionDTO getProductPromotionById(Integer id) {
-        Optional<ProductPromotionEntity> productPromotion = productPromotionRepository.findById(id);
+    public ProductPromotionDTO getProductPromotionById(Integer productpromotionId) {
+        Optional<ProductPromotionEntity> productPromotion = productPromotionRepository.findById(productpromotionId);
         return productPromotion.map(this::convertToDTO).orElse(null);
     }
 
@@ -69,7 +75,7 @@ public class ProductPromotionService {
             ProductPromotionEntity updatedEntity = productPromotionRepository.save(entity);
             return convertToDTO(updatedEntity);
         } else {
-            return null;  // Nếu không tìm thấy product promotion để cập nhật
+            return null; // Nếu không tìm thấy product promotion để cập nhật
         }
     }
 

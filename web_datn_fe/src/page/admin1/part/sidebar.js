@@ -13,6 +13,8 @@ const Sidebar = () => {
           </Link>
         </li>
 
+        
+
         <li className="nav-item">
           <a className="nav-link collapsed" data-bs-target="#user-management-nav" data-bs-toggle="collapse" href="#">
             <i className="bi bi-file-person"></i>
@@ -22,6 +24,21 @@ const Sidebar = () => {
           <ul id="user-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
             <li>
               <Link to="/user-list">
+                <i className="bi bi-circle"></i><span>Danh Sách</span>
+              </Link>
+            </li>
+          </ul>
+        </li>
+
+        <li className="nav-item">
+          <a className="nav-link collapsed" data-bs-target="#brand-management-nav" data-bs-toggle="collapse" href="#">
+            <i className="bi bi-file-brand"></i>
+            <span>Quản Lý Thương Hiệu</span>
+            <i className="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="brand-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
+            <li>
+              <Link to="/admin/tablebrand">
                 <i className="bi bi-circle"></i><span>Danh Sách</span>
               </Link>
             </li>
@@ -53,7 +70,7 @@ const Sidebar = () => {
           </a>
           <ul id="detailed-product-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
             <li>
-              <Link to="/detailed-product-list">
+              <Link to="/admin/tableproductdetail">
                 <i className="bi bi-circle"></i><span>Danh Sách</span>
               </Link>
             </li>

@@ -52,7 +52,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             req -> req
                 // Các endpoint không yêu cầu xác thực
-                .requestMatchers("/login/**", "/register/**", "/api/home/**", "/api/**")
+                .requestMatchers("/login/**", "/register/**", "/forgot-password/**", "/password-reset/**",
+                    "/api/home/**",  "/api/**","/assets/img/**", "/ws/**","/profile/**")
                 .permitAll()
                 // Các endpoint chỉ cho phép quyền ADMIN truy cập
                 .requestMatchers("/admin/**")
@@ -112,7 +113,6 @@ public class SecurityConfig {
     configuration.addAllowedMethod("*"); // Cho phép tất cả các phương thức (GET, POST, PUT, DELETE...)
     configuration.addAllowedHeader("*"); // Cho phép tất cả các headers
     configuration.setAllowCredentials(true); // Để gửi cookie hoặc token từ trình duyệt
-
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration); // Cấu hình CORS cho tất cả các đường dẫn
     return source;

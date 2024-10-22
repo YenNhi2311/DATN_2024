@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import "../assets/css/address.css";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/brand.css";
@@ -9,97 +11,106 @@ import "../assets/css/shop.css";
 import "../assets/css/style.css";
 import Address from "../component/web/Address";
 import AddressModal from "../component/web/AddressModel";
+
 const ThanhToan = () => {
-  // Quản lý trạng thái mở/đóng của modal
+  const [cartItems, setCartItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const shippingFee = 200000; // Giả sử phí vận chuyển là 20.000
+  const { userId } = useParams();
 
-  const handleOpenModal = () => {
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      console.log("Fetching cart items for user ID:", userId);
+      try {
+        const response = await axios.get(`http://localhost:8080/api/cart/items/${userId}`);
+        setCartItems(response.data);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+  
+    fetchCartItems();
+  }, [userId]);
+
+  const handleOpenModal = (event) => {
+    event.preventDefault(); // Ngăn chặn hành động mặc định
     setIsModalOpen(true);
   };
-
+  
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
   const handleOpenAddressModal = () => {
     setIsAddressModalOpen(true);
-    setIsModalOpen(false); // Ẩn Address Modal và hiện AddressModal
+    setIsModalOpen(false); // Ẩn modal địa chỉ
   };
 
   const handleCloseAddressModal = () => {
     setIsAddressModalOpen(false);
   };
+
   const handleAddressSubmit = (formData) => {
     console.log("Address Data Submitted:", formData);
     setIsAddressModalOpen(false);
     // Xử lý dữ liệu form khi người dùng bấm "Tiếp tục"
   };
+
+  const calculateTotal = () => {
+    const total = cartItems.reduce((acc, item) => acc + (item.discountedPrice * item.quantity), 0);
+    return total + shippingFee; 
+  };
+
   return (
     <>
-      {/* Single Page Header start */}
       <div className="container-fluid page-header py-5">
-        <h1 className="text-center text-white display-6">Checkout</h1>
-        <ol className="breadcrumb justify-content-center mb-0">
-          <li className="breadcrumb-item">
-            <a href="#">Home</a>
-          </li>
-          <li className="breadcrumb-item">
-            <a href="#">Pages</a>
-          </li>
-          <li className="breadcrumb-item active text-white">Checkout</li>
-        </ol>
-      </div>
-      {/* Single Page Header End */}
+      
 
-      {/* Checkout Page Start */}
       <div className="container-fluid py-5">
         <div className="container py-5">
-          <form action="#">
+          <form>
             <div className="row g-5">
-              <div className="col-md-12 col-lg-6 col-xl-7">
+              <div className="col-md-12 col-lg-6 col-xl-8">
                 <div className="table-responsive">
                   <table className="table">
                     <thead>
                       <tr>
                         <th scope="col">Sản phẩm</th>
-                        <th scope="col">Tên sản phẩm</th>
+                        <th scope="col"></th>
                         <th scope="col">Giá</th>
                         <th scope="col">Số lượng</th>
                         <th scope="col">Thành tiền</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* Sản phẩm */}
-                      <tr>
-                        <th scope="row">
-                          <div className="d-flex align-items-center mt-2">
+                      {cartItems.map((item) => (
+                        <tr key={item.cartItemId}>
+                          <th scope="row">
                             <img
-                              src="img/vegetable-item-2.jpg"
-                              className="img-fluid rounded-circle"
-                              style={{ width: "70px", height: "70px" }}
-                              alt="Sản phẩm 1"
+                              src={require(`../assets/img/${item.productDetail?.img}`)}
+                              className="img-fluid"
+                              alt={item.productDetail?.name || "Product Image"}
+                              style={{ width: "80px", height: "80px" }}
                             />
-                          </div>
-                        </th>
-                        <td className="py-3">Awesome Brocoli</td>
-                        <td className="py-3">$69.00</td>
-                        <td className="py-3">2</td>
-                        <td className="py-3">$138.00</td>
-                      </tr>
+                          </th>
+                          <td className="py-3">{item.productDetail?.product?.name}</td>
+                          <td className="py-3">{item.discountedPrice.toLocaleString()}đ</td>
+                          <td className="py-3">{item.quantity}</td>
+                          <td className="py-3">{(item.discountedPrice * item.quantity).toLocaleString()}đ</td>
+                        </tr>
+                      ))}
                       {/* Tổng kết */}
                       <tr>
                         <th scope="row"></th>
                         <td className="py-3"></td>
                         <td className="py-3"></td>
                         <td className="py-3">
-                          <p className="mb-0 text-dark py-2">
-                            Tổng giá sản phẩm
-                          </p>
+                          <p className="mb-0 text-dark py-2">Tổng giá sản phẩm</p>
                         </td>
                         <td className="py-3">
                           <div className="py-2 border-bottom border-top">
-                            <p className="mb-0 text-dark">$414.00</p>
+                            <p className="mb-0 text-dark">{(calculateTotal() - shippingFee).toLocaleString()}đ</p>
                           </div>
                         </td>
                       </tr>
@@ -113,7 +124,7 @@ const ThanhToan = () => {
                         </td>
                         <td className="py-3">
                           <div className="py-2 border-bottom border-top">
-                            <p className="mb-0 text-dark">$20.00</p>
+                            <p className="mb-0 text-dark">{shippingFee.toLocaleString()}đ</p>
                           </div>
                         </td>
                       </tr>
@@ -127,7 +138,7 @@ const ThanhToan = () => {
                         </td>
                         <td className="py-3">
                           <div className="py-2 border-bottom border-top">
-                            <p className="mb-0 text-dark">$20123.00</p>
+                            <p className="mb-0 text-dark">{calculateTotal().toLocaleString()}đ</p>
                           </div>
                         </td>
                       </tr>
@@ -135,7 +146,7 @@ const ThanhToan = () => {
                   </table>
                 </div>
               </div>
-              <div className="col-md-12 col-lg-6 col-xl-5 justify-content-center">
+              <div className="col-md-12 col-lg-6 col-xl-4 justify-content-center">
                 <div className="checkout-right">
                   <div className="address-section">
                     <h3>Địa chỉ nhận hàng</h3>
@@ -163,8 +174,7 @@ const ThanhToan = () => {
                           value="vnpay"
                         />
                         <label htmlFor="vnpay">
-                          <img src="vnpay-icon.png" alt="VNPay" /> Thanh toán
-                          VNPay
+                          <img src="vnpay-icon.png" alt="VNPay" /> Thanh toán VNPay
                         </label>
                       </div>
                       <input
@@ -175,8 +185,7 @@ const ThanhToan = () => {
                         defaultChecked
                       />
                       <label htmlFor="cod">
-                        <img src="cod-icon.png" alt="COD" /> Thanh toán khi nhận
-                        hàng (COD)
+                        <img src="cod-icon.png" alt="COD" /> Thanh toán khi nhận hàng (COD)
                       </label>
                     </div>
                   </div>
@@ -190,29 +199,19 @@ const ThanhToan = () => {
           </form>
         </div>
       </div>
-      {/* Checkout Page End */}
+      </div>
+
+      {/* Address Modal */}
       <Address
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onAddAddress={handleOpenAddressModal}
       />
-
-      {/* Hiển thị AddressModal khi isAddressModalOpen là true */}
       <AddressModal
         show={isAddressModalOpen}
         handleClose={handleCloseAddressModal}
         onSubmit={handleAddressSubmit}
       />
-      {/* Modal nếu có thể */}
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Thay đổi địa chỉ</h2>
-            {/* Form thay đổi địa chỉ */}
-            <button onClick={handleCloseModal}>Đóng</button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

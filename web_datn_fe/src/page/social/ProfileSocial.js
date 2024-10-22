@@ -3,7 +3,9 @@ import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
+
 import { FaHeart, FaMailBulk, FaMapMarkedAlt } from "react-icons/fa";
+
 import "../../assets/css/profilesocial.css"; // Import CSS
 import { apiClient } from "../../config/apiClient";
 import { getUserData } from "../../services/authService";
@@ -81,8 +83,7 @@ const ProfileSocial = () => {
                       (address) => address.status === true
                     )?.district || "Chưa có địa chỉ"}
                     ,{" "}
-                    {profileData.addresses.find(
-                      (address) => address.status === true
+                    {profileData.addresses.find((address) => address.status === true
                     )?.province || "Chưa có địa chỉ"}
                   </p>
                 </>

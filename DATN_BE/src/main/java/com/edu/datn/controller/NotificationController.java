@@ -1,5 +1,6 @@
 package com.edu.datn.controller;
 
+
 import com.edu.datn.model.Notification;
 import com.edu.datn.service.NotificationService;
 import java.util.List;
@@ -30,4 +31,5 @@ public class NotificationController {
       notification
     );
   }
+
 }

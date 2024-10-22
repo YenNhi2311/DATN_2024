@@ -1,5 +1,7 @@
 import { ImageOutlined } from "@mui/icons-material";
+
 import React, { useEffect, useState } from "react";
+
 import { Form } from "react-bootstrap";
 import "../../assets/css/postsocial.css";
 import CryptoJS from "crypto-js";
@@ -13,6 +15,7 @@ const PostSocial = () => {
   const [postContent, setPostContent] = useState("");
   const [posts, setPosts] = useState([]); // State lưu danh sách bài viết
   const [selectedImages, setSelectedImages] = useState([]); // State lưu trữ hình ảnh đã chọn
+
   const [userData, setUserData] = useState("");
 
   useEffect(() => {
@@ -41,6 +44,7 @@ const PostSocial = () => {
     };
     getUser();
   }, []);
+
 
   // Hàm xử lý thay đổi nội dung bài viết
   const handlePostChange = (e) => {
@@ -112,6 +116,7 @@ const PostSocial = () => {
       setPostContent(""); // Xóa nội dung sau khi gửi
       setSelectedImages([]); // Xóa hình ảnh đã chọn sau khi gửi
 
+
       // Hiển thị thông báo thành công
       Swal.fire({
         title: "Thành công!",
@@ -119,6 +124,7 @@ const PostSocial = () => {
         icon: "success",
         confirmButtonText: "Đồng ý",
       });
+
     } catch (error) {
       console.error(
         "Lỗi khi tạo bài viết:",
@@ -163,7 +169,9 @@ const PostSocial = () => {
                   className="upload-input"
                   style={{ display: "none" }}
                 />
+
                 <div className="social-image-preview">
+
                   {selectedImages.map((image, index) => (
                     <div key={index} className="image-container">
                       <img

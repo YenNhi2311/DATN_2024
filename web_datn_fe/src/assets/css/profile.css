@@ -2,26 +2,27 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #c9d6ff;
-    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    margin-top: 150px;
+    height: 90vh;
+    /* background: linear-gradient(to right, #e2e2e2, #c9d6ff); */
     font-family: "Poppins", system-ui;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-    position: relative;
 }
 
 .profile-form {
     background-color: #fff;
     padding: 30px;
     border-radius: 10px;
+      background: linear-gradient(to right, #e2e2e2, #c9d6ff);
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
     width: 700px;
-    height: 600px;
+    height: fit-content; /* Cập nhật để tự động điều chỉnh chiều cao */
 }
 
 .profile-form h2 {
     text-align: center;
     margin-bottom: 20px;
+    font-size: 24px;
+    color: #34465d; /* Màu chữ cho tiêu đề */
 }
 
 .form-group {
@@ -31,35 +32,16 @@
 }
 
 .form-group input {
-    width: 48%;
+    width: 100%; /* Đặt chiều rộng 100% */
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
+    transition: border-color 0.3s ease; /* Hiệu ứng khi hover */
 }
 
-.gender-group {
-    margin-bottom: 20px;
-}
-
-.gender-group label {
-    margin-right: 15px;
-
-}
-
-.profile-form button {
-    width: 100%;
-    padding: 15px;
-    background-color: #34465d;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #2575fc;
+.form-group input:focus {
+    border-color: #2575fc; /* Thay đổi màu biên khi focus */
+    outline: none; /* Xóa outline mặc định */
 }
 
 .profile-image-section {
@@ -74,13 +56,49 @@ button:hover {
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
+    border: 3px solid #2575fc; /* Thêm viền cho hình ảnh */
+    transition: transform 0.3s ease; /* Hiệu ứng phóng to */
 }
 
-.profile-container a {
-    position: absolute;
-    color: #000 !important;
-    text-decoration: none;
+.profile-image:hover {
+    transform: scale(1.05); /* Phóng to khi hover */
+}
+
+.profile-form button {
+    width: 100%;
+    padding: 15px;
+    background-color: #34465d;
+    color: #fff;
     border: none;
-    top: 90%;
-    right: 65%;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.profile-form button:hover {
+    background-color: #2575fc; /* Thay đổi màu nút khi hover */
+}
+
+.loading-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }

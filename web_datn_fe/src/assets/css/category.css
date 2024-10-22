@@ -202,7 +202,7 @@
     text-align: center;
     padding: 10px;
     background: #fff; /* Nền trắng cho mỗi mục */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Thêm bóng */
+
     border-radius: 12px; /* Bo tròn góc */
     transition: transform .3s; /* Hiệu ứng chuyển đổi */
  
@@ -211,6 +211,9 @@
   
   .category-item:hover {
     transform: translateY(-5px); /* Di chuyển lên khi hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Thêm bóng */
+
+    
   }
   
   .category-item img {
