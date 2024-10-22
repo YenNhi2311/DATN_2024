@@ -12,5 +12,4 @@ import lombok.Setter;
 public class ProductWithDetailsDTO {
     private ProductDTO product;
     private ProductDetailsDTO productDetails;
-    private Integer totalSold;
 }

@@ -18,7 +18,6 @@ import lombok.Setter;
 public class Notification {
     @Id
     private String id;
-
     private Integer postId;
     private Integer receiverId;
     private String message;

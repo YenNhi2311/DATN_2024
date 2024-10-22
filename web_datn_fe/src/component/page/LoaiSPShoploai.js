@@ -493,7 +493,7 @@ export default class LoaiSPShoploai extends Component {
                         (brand) =>
                           (selectedBrandId === null ||
                             selectedBrandId === brand.brandId) && (
-                            <li    style={{ display: "flex" }} key={brand.brandId}>
+                            <li key={brand.brandId}>
                               <input
                                 type="checkbox"
                                 checked={selectedBrandId === brand.brandId}
@@ -517,7 +517,7 @@ export default class LoaiSPShoploai extends Component {
                   <div className="scrollable-container">
                     <ul className="brand-list">
                       {categories.map((category) => (
-                        <li    style={{ display: "flex" }} key={category.categoryId}>
+                        <li key={category.categoryId}>
                           <input
                             type="checkbox"
                             checked={selectedCategoryId === category.categoryId}
@@ -543,7 +543,7 @@ export default class LoaiSPShoploai extends Component {
                         (skintype) =>
                           (selectedSkintypeId === null ||
                             selectedSkintypeId === skintype.skintypeId) && (
-                            <li    style={{ display: "flex" }} key={skintype.skintypeId}>
+                            <li key={skintype.skintypeId}>
                               <input
                                 type="checkbox"
                                 checked={
@@ -576,7 +576,7 @@ export default class LoaiSPShoploai extends Component {
                         (place) =>
                           (selectedPlace === null ||
                             selectedPlace === place) && (
-                            <li    style={{ display: "flex" }} key={place}>
+                            <li key={place}>
                               <input
                                 type="checkbox"
                                 checked={selectedPlace === place}

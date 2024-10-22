@@ -100,16 +100,16 @@ public class AuthenticationController {
   }
 
   // Endpoint lấy thông tin người dùng theo userId
-@GetMapping("/user/{userId}")
-public ResponseEntity<UserEntity> getUserById(@PathVariable Integer userId) {
+  @GetMapping("/user/{userId}")
+  public ResponseEntity<UserEntity> getUserById(@PathVariable Integer userId) {
     try {
-        UserEntity user = userJPA.findUserOrThrow(userId); // Lấy người dùng hoặc ném ngoại lệ
-        return ResponseEntity.ok(user); // Trả về thông tin người dùng
+      UserEntity user = userJPA.findUserOrThrow(userId); // Lấy người dùng hoặc ném ngoại lệ
+      return ResponseEntity.ok(user); // Trả về thông tin người dùng
     } catch (EntityNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Nếu không tìm thấy người dùng
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Nếu không tìm thấy người dùng
     } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Xử lý lỗi khác
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Xử lý lỗi khác
     }
-}
+  }
 
 }

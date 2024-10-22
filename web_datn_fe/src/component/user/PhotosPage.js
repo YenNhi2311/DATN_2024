@@ -3,19 +3,9 @@ import ImageSearchBar from "../../component/ImageSearchBar";
 import PhotoGrid from "../../component/user/PhotoGrid";
 import "../../assets/css/photospage.css"; // Đảm bảo bạn có file CSS
 import Img1 from "../../assets/img/avatar1.jpg";
-import Img2 from "../../assets/img/logoYNB.webp";
-import Img3 from "../../assets/img/logoYNB1.webp";
 
 const initialPhotos = [
-  { src: Img1 },
-  { src: Img2 },
-  { src: Img3 },
-  { src: Img1 },
-  { src: Img2 },
-  { src: Img3 },
-  { src: Img1 },
-  { src: Img2 },
-  { src: Img3 },
+
 ];
 
 const PhotosPage = () => {

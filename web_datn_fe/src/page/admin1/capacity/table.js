@@ -146,6 +146,8 @@ const TableSCapacity = () => {
         return matchesSearch;
     });
 
+
+
     return (
         <Box>
             <Header subtitle="Danh Sách dung tích" />
@@ -207,54 +209,56 @@ const TableSCapacity = () => {
             </div>
 
             {/* Bảng dung tích */}
-            <TableContainer>
-                <Table stickyHeader>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell style={{ width: "100px" }}>ID</TableCell>
-                            <TableCell style={{ width: "300px" }}>Dung tích</TableCell>
-                            <TableCell style={{ width: "150px" }}>Hành Động</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell>{row.id}</TableCell>
-                                    <TableCell>{row.name}</TableCell>
-                                    <TableCell>
-                                        <IconButton
-                                            variant="contained"
-                                            onClick={() => handleOpenForm(row)} // Mở form với dữ liệu của dung tích đang chọn
-                                            sx={{ marginRight: "10px" }}
-                                        >
-                                            <Edit color="primary"/>
-                                        </IconButton>
-                                        <IconButton
-                                            variant="outlined"
-                                            color="error"
-                                            onClick={() => handleDelete(row.id)} // Gọi hàm xóa dung tích
-                                        >
-                                            <Delete color="secondary"/>
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <TableContainer style={{ flex: '1', minHeight: '400px', maxHeight: '400px', overflowY: 'auto', marginTop: '30px' }}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ width: "100px" }}>ID</TableCell>
+                                <TableCell style={{ width: "300px" }}>Dung tích</TableCell>
+                                <TableCell style={{ width: "150px" }}>Thao tác</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableCell>{row.id}</TableCell>
+                                        <TableCell>{row.name}</TableCell>
+                                        <TableCell>
+                                            <IconButton
+                                                variant="contained"
+                                                onClick={() => handleOpenForm(row)} // Mở form với dữ liệu của dung tích đang chọn
+                                                sx={{ marginRight: "10px" }}
+                                            >
+                                                <Edit color="primary"/>
+                                            </IconButton>
+                                            <IconButton
+                                                variant="outlined"
+                                                color="error"
+                                                onClick={() => handleDelete(row.id)} // Gọi hàm xóa dung tích
+                                            >
+                                                <Delete color="secondary"/>
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-            {/* Phần phân trang cố định */}
-            <div style={{ marginTop: '16px', alignSelf: 'center' }}>
-                <TablePagination
-                    rowsPerPageOptions={[24, 36, 48]}
-                    component="div"
-                    count={filteredRows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleRowsPerPageOptionChange}
-                />
+                {/* Phần phân trang cố định */}
+                <div style={{ marginTop: '16px', alignSelf: 'center' }}>
+                    <TablePagination
+                        rowsPerPageOptions={[24, 36, 48]}
+                        component="div"
+                        count={filteredRows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleRowsPerPageOptionChange}
+                    />
+                </div>
             </div>
 
             {/* Dialog cho form thêm/cập nhật dung tích */}
@@ -265,7 +269,7 @@ const TableSCapacity = () => {
                 fullWidth
             >
                 <DialogTitle style={{ fontWeight: 'bolder', fontSize: '1.5em' }}>
-                    {editData ? "Cập Nhật" : "Thêm Mới"}
+                    {editData ? "Chỉnh sửa dung tích" : "Thêm mới dung tích"}
                     <IconButton
                         edge="end"
                         style={{ float: 'right', right: 2, color: 'red', fontWeight: 'bolder' }}
@@ -283,7 +287,8 @@ const TableSCapacity = () => {
                 </DialogContent>
             </Dialog>
         </Box>
+
     );
 };
 
-export default TableSCapacity;
+export default TableSCapacity; // Xuất component để sử dụng ở nơi khác

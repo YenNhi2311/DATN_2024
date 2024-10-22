@@ -1,10 +1,10 @@
 package com.edu.datn.controller;
 
-import com.edu.datn.dto.ProductDetailsDTO;
-import com.edu.datn.service.ProductDetailsService;
 import static com.edu.datn.utils.ImageUtils.*;
+
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.edu.datn.dto.ProductDetailsDTO;
+import com.edu.datn.service.ProductDetailsService;
 
 @RestController
 @RequestMapping("/api/productdetails")
@@ -34,12 +37,6 @@ public class ProductDetailsController {
     public ResponseEntity<ProductDetailsDTO> getProductDetailsById(
             @PathVariable Integer id) {
         return ResponseEntity.ok(productDetailsService.getProductDetailsById(id));
-    }
-
-    @GetMapping("/product/{productId}/details")
-    public ResponseEntity<List<ProductDetailsDTO>> getProductDetailsByProductId(@PathVariable Integer productId) {
-        List<ProductDetailsDTO> productDetails = productDetailsService.getProductDetailsByProductId(productId);
-        return ResponseEntity.ok(productDetails);
     }
 
     @PostMapping
@@ -94,14 +91,11 @@ public class ProductDetailsController {
             @RequestParam("ingredientId") Integer ingredientId,
             @RequestParam("benefitId") Integer benefitId) throws IOException {
 
-        // Tìm chi tiết sản phẩm hiện tại
-        ProductDetailsDTO existingProductDetails = productDetailsService.getProductDetailsById(id);
-        if (existingProductDetails == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Tạo một ProductDetailsDTO mới để cập nhật
+        // Create a ProductDetailsDTO object to hold the updated values
         ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO();
+
+        // Set the fields of ProductDetailsDTO with the values from the request
+        // parameters
         productDetailsDTO.setPrice(price);
         productDetailsDTO.setQuantity(quantity);
         productDetailsDTO.setProductId(productId);
@@ -111,18 +105,17 @@ public class ProductDetailsController {
         productDetailsDTO.setIngredientId(ingredientId);
         productDetailsDTO.setBenefitId(benefitId);
 
-        // Giữ lại hình ảnh cũ nếu không có hình ảnh mới
+        // Handle the image file if it is provided
         if (imgFile != null && !imgFile.isEmpty()) {
             String imageName = imgFile.getOriginalFilename();
             saveImage(imgFile);
             productDetailsDTO.setImg(imageName);
-        } else {
-            // Nếu không có hình ảnh mới, giữ lại hình ảnh cũ
-            productDetailsDTO.setImg(existingProductDetails.getImg());
         }
 
         try {
-            ProductDetailsDTO updatedProductDetails = productDetailsService.updateProductDetails(id, productDetailsDTO, imgFile);
+            // Update the product details using the service
+            ProductDetailsDTO updatedProductDetails = productDetailsService.updateProductDetails(id, productDetailsDTO,
+                    imgFile);
             return ResponseEntity.ok(updatedProductDetails);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

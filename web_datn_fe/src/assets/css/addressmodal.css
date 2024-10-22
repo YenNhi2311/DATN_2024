@@ -16,7 +16,6 @@
 }
 
 .form-control {
-    margin-bottom: 15px;
     border-radius: 10px;
     background-color: #f8f9fa;
 }
@@ -48,7 +47,7 @@
 }
 
 .btn-success {
-    background-color: #1d51cb;
+    background-color: #28a745;
     border: none;
     font-weight: bold;
 }

@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import "../../assets/css/friends.css"; // Import CSS tùy chỉnh
 import FriendCard from "../../component/user/FriendCard"; // Component con để hiển thị từng mục bạn bè
-import Avatar from "../../assets/img/avatar1.jpg";
-import Banner from "../../assets/img/logoYNB1.webp";
+
 
 const friendsList = [
   {
     id: 1,
     name: "Adam James",
     location: "California, USA",
-    avatar: Avatar,
-    background: Banner,
     followers: 120,
     friends: 223,
     videos: 240,

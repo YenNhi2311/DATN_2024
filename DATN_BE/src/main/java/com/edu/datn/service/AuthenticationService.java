@@ -139,7 +139,6 @@ public class AuthenticationService {
   }
 
   // Lưu token vào cơ sở dữ liệu
-
   public void saveUserToken(String accessToken, String refreshToken, UserEntity user) {
     TokenEntity token = new TokenEntity();
     token.setAccessToken(accessToken);
@@ -180,4 +179,5 @@ public class AuthenticationService {
 
     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
   }
+  
 }

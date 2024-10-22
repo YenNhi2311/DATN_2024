@@ -1,22 +1,11 @@
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer và toast
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS
 import "../../assets/css/category.css";
 import { useCart } from '../../component/page/CartContext';
-
 const LoaiSPBanChay = () => {
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   const { cartItems, fetchCartItems } = useCart();
-  const navigate = useNavigate();
-
-  const handleViewProduct = (productId) => {
-    localStorage.setItem("selectedProductId", productId); // Lưu productId vào localStorage
-    navigate("/product"); // Điều hướng mà không cần truyền id
-  };
-  
   useEffect(() => {
     fetchBestSellingProducts();
   }, []);
@@ -114,7 +103,7 @@ const LoaiSPBanChay = () => {
 
         if (updateResponse.status === 200) {
           fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!"); // Thông báo thành công
+          alert("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
         }
       } else {
         // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
@@ -124,18 +113,15 @@ const LoaiSPBanChay = () => {
 
         if (addResponse.status === 201) {
           fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
-          toast.success("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo thành công
         }
       }
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
-      toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!"); // Thông báo lỗi
     }
   };
 
   return (
     <div className="container py-5">
-      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="tab-class text-center">
         <div className="row g-4">
           <div className="col-lg-5 col-12 text-start">
@@ -152,7 +138,7 @@ const LoaiSPBanChay = () => {
                 >
                   <div className="pro-container">
                     <div className="pro">
-                      <a   onClick={() => handleViewProduct(item.product.productId)}>
+                      <a href={`/product/${item.product.productId}`}>
                         <img
                           src={require(`../../assets/img/${item.productDetails?.img || "default.jpg"}`)}
                           alt={item.name}
@@ -173,12 +159,9 @@ const LoaiSPBanChay = () => {
                         >
                           <i className="fas fa-shopping-cart"></i>
                         </a>
-                        <a
-                    className="btn"
-                    onClick={() => handleViewProduct(item.product.productId)}
-                  >
-                    <i className="fas fa-eye"></i>
-                  </a>
+                        <a href={`/product/${item.product.productId}`}>
+                          <i className="fas fa-eye"></i>
+                        </a>
                       </div>
                       <div className="des">
                         <div className="price">
@@ -186,14 +169,7 @@ const LoaiSPBanChay = () => {
                             {item.productDetails.price.toLocaleString()} đ
                           </h4>
                         </div>
-                        <div className="brand-sold-container">
-                          <span className="brand-name">{item.brand?.name || "Unnamed Product"}</span>
-                          <div className="sold-quantity-container">
-                            <span className="fas fa-shopping-cart"></span>
-                            <span className="sold-quantity">{item.totalSold || 0} đã bán</span>
-                          </div>
-                        </div>
-
+                        <span>{item.brand?.name || "Unnamed Product"}</span>
                         <h6>{item.product.name}</h6>
                         <div className="star">
                           <i className="fas fa-star"></i>

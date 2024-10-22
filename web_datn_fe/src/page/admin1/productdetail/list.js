@@ -273,7 +273,7 @@ const ProductDetailList = ({ productId }) => {
                   dung tích ${capacities.find((c) => c.capacityId === detail.capacityId)
                           ?.value || "Không có dung tích"
                         }
-                      [${colors.find((c) => c.colorId === detail.colorId)?.name ||
+              [${colors.find((c) => c.colorId === detail.colorId)?.name ||
                         "Không có màu"
                         }]`}
                     </TableCell>

@@ -224,7 +224,7 @@
     height: 48px;
     border-radius: 48px;
     border: 1px solid var(--bs-white);
-    background: var(--bs-black);
+    background: var(--bs-blue);
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -248,24 +248,7 @@
 @media (min-width: 992px) {
     .hero-header,
     .page-header {
-        margin-top: 140px !important;
-    }
-}
-@media (min-width: 992px) {
-    .hero-header2,
-    .page-header2 {
-        margin-top: 80px !important;
-    }
-}@media (min-width: 992px) {
-    .hero-header4,
-    .page-header4 {
         margin-top: 100px !important;
-    }
-}
-@media (min-width: 992px) {
-    .hero-header3,
-    .page-header3 {
-        margin-top: 50px !important;
     }
 }
 
@@ -561,79 +544,6 @@
     line-height: 35px;
 }
 
-** input *
-
-.filter-container {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 5px;
-    width: 250px;
-}
-
-.price-range-container h3,
-.brand-container h4,
-.hair-condition-container h4 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.price-range-inputs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.price-range-inputs input {
-    width: calc(50% - 5px);
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.apply-button {
-    background-color: #0080ff;
-    color: white;
-    border: none;
-    padding: 10px;
-    width: 100%;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.apply-button:hover {
-    background-color: #0080ff;
-}
-
-
-  
-
-
-  /* Nền của phần track */
-  .scrollable-container::-webkit-scrollbar-track {
-    background-color: #f1f1f1; /* Màu nền của phần track */
-  }
-  
-  /* Thiết lập danh sách không bị tràn và giữ khoảng cách */
-  ul {
-    /* list-style: none; Bỏ chấm đầu dòng trong danh sách */
-    padding: 0;
-    margin: 0;
-    
-  }
-  
-  /* Thiết lập cho các phần tử li */
-  li {
-   /* Hiển thị các mục dạng flex để checkbox và text nằm cạnh nhau */
-    align-items: center; /* Canh giữa checkbox và text theo chiều dọc */
-    margin-bottom: 8px; /* Khoảng cách giữa các mục trong danh sách */
-  }
-  
-  input[type="checkbox"] {
-    margin-right: 10px; /* Khoảng cách giữa checkbox và text */
-  }
-  
 
 
 /* hinh nho */
@@ -770,25 +680,24 @@
         .info-cell {
             background-color: #000000; /* Light gray background */
         }
+        .table td {
+            vertical-align: middle; /* Center-align vertically */
+            padding: 5px 12px; /* Reduce padding for closer spacing */
+        }
         h2 {
             
             margin-bottom: 20px;
             font-size: 44px; /* Adjust title font size */
         }
         .table td {
-            font-size: 12px;
-            text-align: center;
-            vertical-align: middle; 
-          
+            font-size: 14px;
+            text-align: center; /* Smaller font size for table content */
         }
         .table th{
-            font-size: 14px; 
+            font-size: 13px; 
             text-align: center;
         }
-
-        .align-middle{
-            vertical-align: middle; /* Center-align vertically */
-          }
+       
         .flash-deal {
             display: flex;
             justify-content: space-between; /* Đẩy các phần tử sang hai bên */
@@ -821,7 +730,7 @@
           .input-group .form-control {
             height: 38px; /* Chỉnh sửa chiều cao trường nhập liệu cho đồng nhất */
           }
-        
+          
           .breadcrumb {
             background-color: transparent;
             padding: 0;
@@ -936,24 +845,6 @@
 #searchModal .modal-content {
     background: rgba(255, 255, 255, .8);
 }
+
+
 /*** Navbar End ***/
-.carousel-control-prev,
-.carousel-control-next {
-  display: none; /* Ẩn các nút mặc định */
-}
-.carousel:hover .carousel-control-prev,
-.carousel:hover .carousel-control-next {
-  display: block; /* Hiển thị nút khi hover vào carousel */
-  background-color: #545353;
-}
-.carousel-inner {
-    width: 700px;
-    display: flex; /* Chiều cao của carousel, bạn có thể điều chỉnh */
-  }
-  
-  .carousel-item img {
-    height: 100%; /* Kéo dài hình ảnh để lấp đầy chiều cao của carousel */
-    width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng */
-    object-fit: cover; /* Giữ tỷ lệ khung hình và cắt bớt ảnh nếu cần */
-  }
-/** banner end**/  

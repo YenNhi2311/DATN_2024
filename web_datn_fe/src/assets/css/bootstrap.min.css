@@ -519,7 +519,7 @@ progress {
 
 @media(min-width: 1200px) {
     .display-3 {
-        font-size: 47px;
+        font-size: 3rem
     }
 }
 
@@ -3001,14 +3001,14 @@ fieldset:disabled .btn {
 
 .btn-success {
     color: #fff;
-    background-color: #1d51cb;
-    background-color: #123da2;
+    background-color: #198754;
+    border-color: #198754
 }
 
 .btn-success:hover {
     color: #fff;
-    background-color: #1d51cb;
-    background-color: #123da2;
+    background-color: #157347;
+    border-color: #146c43
 }
 
 .btn-check:focus+.btn-success,

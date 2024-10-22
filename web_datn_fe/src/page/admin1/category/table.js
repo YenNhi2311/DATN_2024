@@ -31,6 +31,7 @@ import { tokens } from "../../../theme";
 import FormCategory from "./form"; // Changed to match the form for categories
 import { Edit, Delete } from '@mui/icons-material';
 
+
 const TableCategory = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -93,6 +94,7 @@ const TableCategory = () => {
             });
         }
     };
+
 
     const handleOpenForm = (category = null) => {
         if (category) {
@@ -168,7 +170,7 @@ const TableCategory = () => {
 
                 <div style={{ display: "flex", gap: "10px" }}>
                     <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-                        <InputLabel id="sort-label">Sắp Xếp</InputLabel>
+                        <InputLabel id="sort-label">Sort</InputLabel>
                         <Select
                             labelId="sort-label"
                             value={sortValue}
@@ -201,7 +203,7 @@ const TableCategory = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <TableContainer style={{ flex: '1', minHeight: '400px', marginTop: '30px' }}>
+                <TableContainer style={{ flex: '1', minHeight: '400px', maxHeight: '400px', overflowY: 'auto', marginTop: '30px' }}>
                     <Table stickyHeader>
                         <TableHead>
                             <TableRow>
@@ -272,7 +274,7 @@ const TableCategory = () => {
                 fullWidth
             >
                 <DialogTitle style={{ fontWeight: 'bolder', fontSize: '1.5em' }}>
-                    {editData ? "Cập Nhật" : "Thêm Mới"}
+                    {editData ? "Edit Category" : "Add New Category"}
                     <IconButton
                         edge="end"
                         style={{ float: 'right', right: 2, color: 'red', fontWeight: 'bolder' }}

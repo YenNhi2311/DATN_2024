@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Image } from "react-bootstrap";
 import "../../assets/css/personalpage.css"; // Import CSS cho ProfileHeader
-import Banner from "../../assets/img/logoYNB.webp";
-import Avatar from "../../assets/img/logoYNB.webp";
 import { Link } from "react-router-dom";
 import Timeline from "../../component/user/Timeline";
 import Friends from "../../component/user/Friends";
@@ -19,8 +17,6 @@ const UserProfileHeader = () => {
   const user = {
     name: "Jack Carter",
     location: "Ontario, CA",
-    avatar: Avatar,
-    coverPhoto: Banner,
   };
 
   return (
