@@ -84,7 +84,7 @@ const Header = () => {
                         <small className="me-3">
                             <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
                             <Link to="#" className="text-white">
-                                Trần Chiên,P.Lê Bình,Q.Cái Răng,TP.Cần thơ
+                                Trần Chiên, P.Lê Bình, Q.Cái Răng, TP.Cần Thơ
                             </Link>
                         </small>
                         <small className="me-3">
@@ -98,7 +98,7 @@ const Header = () => {
             </div>
             <div className="container px-0">
                 <nav className="navbar navbar-light bg-white navbar-expand-xl">
-                    <Link className="navbar-brand">
+                    <Link to="/" className="navbar-brand">
                         <img src={require("../../assets/img/logo-removebg-preview.png")} alt="logo" />
                     </Link>
                     <button className="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -128,28 +128,29 @@ const Header = () => {
                         <div className="nav-item dropdown my-auto me-0">
                             <Link to="#" className="nav-link" data-bs-toggle="dropdown">
                                 {isLoggedIn && userData ? (
-                                    // Hiển thị icon giỏ hàng nếu đã đăng nhập
                                     <div className="user-profile">
                                         <img
-                                            src={userData.img || "link-to-default-avatar.png"} // Thêm ảnh mặc định nếu không có ảnh người dùng
+                                            src={userData.img ? `http://localhost:8080/assets/img/${userData.img}` : "link-to-default-avatar.png"} // Thêm ảnh mặc định nếu không có ảnh người dùng
                                             alt="User Profile"
                                             className="user-avatar"
-                                            style={{ width: '40px',height: '40px',borderRadius:'50%',
-                                                objectFit:'cover',border:'2px solid #ccc'
+                                            style={{
+                                                width: '60px',
+                                                height: '60px',
+                                                borderRadius: '50%',
+                                                objectFit: 'cover',
+                                                border: '2px solid #ccc'
                                             }}
                                         />
                                     </div>
                                 ) : (
-                                    <i className="fas fa-user text-blue fa-2x"></i>// Icon giỏ hàng nếu chưa đăng nhập
+                                    <i className="fas fa-user text-blue fa-2x"></i>
                                 )}
-
-                              
                             </Link>
                             <div className="dropdown-menu m-0 bg-secondary rounded-0">
                                 {isLoggedIn && userData ? (
                                     <>
                                         <Link to="/profile" className="dropdown-item">Quản Lý Thông Tin</Link>
-                                        <Link to="/change-password" className="dropdown-item" >Đổi Mật Khẩu</Link>
+                                        <Link to="/change-password" className="dropdown-item">Đổi Mật Khẩu</Link>
                                         <a className="dropdown-item" onClick={handleLogout}>Đăng Xuất</a>
                                     </>
                                 ) : (

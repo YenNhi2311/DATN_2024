@@ -10,9 +10,10 @@
     margin-bottom: 20px;
 }
 
-.header h2 {
+.friends-followers-container .header h2 {
     font-size: 24px;
     color: #34465d;
+    margin-bottom: 0px;
 }
 
 .badge {
@@ -140,7 +141,7 @@
     cursor: pointer;
     transition: width 0.3s ease, padding 0.3s ease;
     /* Thêm transition cho width và padding */
-    width: 35px;
+    width: 150px;
     /* Chiều rộng ban đầu */
     overflow: hidden;
     white-space: nowrap;
@@ -150,7 +151,7 @@
 .message-btn:hover {
     width: 150px;
     /* Chiều rộng khi hover */
-    padding: 5px 25px;
+    /* padding: 5px 25px; */
     /* Thay đổi padding khi hover */
 }
 

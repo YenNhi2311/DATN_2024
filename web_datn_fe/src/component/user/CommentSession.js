@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Form, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2"; // Thêm SweetAlert2 cho popup xác nhận
-import Avatar from "../../assets/img/avatar1.jpg";
+
 import { apiClient } from "../../config/apiClient";
+import Cookies from "js-cookie";
+import { getUserData } from "../../services/authService";
+
 
 const CommentSection = ({ postId, userId }) => {
   const [newComment, setNewComment] = useState("");
@@ -11,17 +14,38 @@ const CommentSection = ({ postId, userId }) => {
   const [visibleComments, setVisibleComments] = useState(2);
   const [comments, setComments] = useState([]); // State để quản lý danh sách bình luận
 
+  const [userData, setUserData] = useState("");
+
+
+  // Fetch bình luận
+  useEffect(() => {
+
+    const getUser = () => {
+      const token = Cookies.get("access_token");
+      getUserData(userId, token)
+        .then((data) => {
+          setUserData(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    };
+    getUser();
+  }, []);
   // Fetch bình luận
   useEffect(() => {
     const fetchComments = async () => {
-      setLoading(true); // Bắt đầu tải
+      // setLoading(true); // Bắt đầu tải
+
       try {
         const response = await apiClient.get(`/api/comments/post/${postId}`);
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
       } finally {
-        setLoading(false); // Kết thúc tải
+
+        // setLoading(false); // Kết thúc tải
+
       }
     };
     fetchComments();
@@ -33,7 +57,10 @@ const CommentSection = ({ postId, userId }) => {
   };
 
   // Gửi bình luận mới
-  const handleCommentSubmit = async () => {
+
+  const handleCommentSubmit = async (e) => {
+    // setLoading(false);
+
     if (newComment.trim() === "") return;
 
     const comment = {
@@ -98,7 +125,11 @@ const CommentSection = ({ postId, userId }) => {
 
         {comments.slice(0, visibleComments).map((comment) => (
           <div key={comment.commentId} className="post-comment">
-            <img src={Avatar} alt="Avatar" className="comment-avatar" />
+            <img
+              src={`http://localhost:8080/assets/img/${comment.user.img}`}
+              alt="Avatar"
+              className="comment-avatar"
+            />
             <div className="comment-info">
               <span className="comment-username">{comment.user?.fullname}</span>
               <p className="comment-text">{comment.content}</p>
@@ -145,7 +176,11 @@ const CommentSection = ({ postId, userId }) => {
       </div>
 
       <div className="post-comment-box">
-        <img src={Avatar} alt="Avatar" className="comment-avatar" />
+        <img
+          src={`http://localhost:8080/assets/img/${userData.img}`}
+          alt="Avatar"
+          className="comment-avatar"
+        />
         <Form onSubmit={handleCommentSubmit} className="comment-form">
           <Form.Control
             as="textarea"
@@ -153,13 +188,17 @@ const CommentSection = ({ postId, userId }) => {
             value={newComment}
             onChange={handleCommentChange}
             placeholder="Viết bình luận của bạn"
-            disabled={loading}
+
+            // disabled={loading}
+
           />
           <Button
             type="submit"
             variant="link"
             className="comment-send-btn"
-            disabled={loading}
+
+            // disabled={loading}
+
           >
             {loading ? (
               <Spinner animation="border" size="sm" />

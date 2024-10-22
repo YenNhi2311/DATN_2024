@@ -1,72 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../assets/css/friends.css"; // Import CSS tùy chỉnh
 import FriendCard from "../../component/user/FriendCard"; // Component con để hiển thị từng mục bạn bè
-import Avatar from "../../assets/img/avatar1.jpg";
-import Banner from "../../assets/img/logoYNB1.webp";
 
-const friendsList = [
-  {
-    id: 1,
-    name: "Adam James",
-    location: "California, USA",
-    avatar: Avatar,
-    background: Banner,
-    followers: 120,
-    friends: 223,
-    videos: 240,
-    photos: 144,
-    posts: 250,
-    since: "December, 2014",
-  },
-  {
-    id: 2,
-    name: "Andrew",
-    location: "Toronto, Canada",
-    avatar: "path_to_avatar_image_2.jpg",
-    background: "path_to_background_image_2.jpg",
-    followers: 450,
-    friends: 223,
-    videos: 240,
-    photos: 144,
-    posts: 250,
-    since: "December, 2014",
-  },
-  {
-    id: 3,
-    name: "Arnold",
-    location: "Istanbul, Turkey",
-    avatar: "path_to_avatar_image_3.jpg",
-    background: "path_to_background_image_3.jpg",
-    followers: 50,
-    friends: 223,
-    videos: 240,
-    photos: 144,
-    posts: 250,
-    since: "December, 2014",
-  },
-  {
-    id: 4,
-    name: "Ella John",
-    location: "Mexico city, USA",
-    avatar: "path_to_avatar_image_4.jpg",
-    background: "path_to_background_image_4.jpg",
-    followers: 410,
-    friends: 223,
-    videos: 240,
-    photos: 144,
-    posts: 250,
-    since: "December, 2014",
-  },
-];
+import { apiClient } from "../../config/apiClient";
+import { getUserDataById } from "../../services/authService";
+
 
 const Friends = () => {
+  // Nhận userId như một props
+  const [friendsList, setFriendsList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // Trạng thái loading
+  const [error, setError] = useState(null); // Trạng thái lỗi
   const friendsPerPage = 8;
+
+  // Gọi API để lấy danh sách người dùng
+  const fetchFriends = async () => {
+    try {
+      const response = await apiClient.get("/api/user");
+      setFriendsList(response.data); // axios tự động xử lý JSON
+      setLoading(false); // Tắt loading sau khi dữ liệu được tải
+    } catch (error) {
+      console.error("Error fetching friends: ", error);
+      setError("Failed to fetch friends.");
+      setLoading(false); // Tắt loading khi gặp lỗi
+    }
+  };
+
+  const refreshFriendList = () => {
+    fetchFriends(); // Gọi lại hàm fetchFriends để cập nhật danh sách bạn bè
+  };
+
+  useEffect(() => {
+    fetchFriends();
+  }, []);
 
   // Tính toán chỉ số đầu và cuối của bạn bè trên trang hiện tại
   const indexOfLastFriend = currentPage * friendsPerPage;
   const indexOfFirstFriend = indexOfLastFriend - friendsPerPage;
-  const currentFriends = friendsList.slice(
+  const idUser = getUserDataById().user_id;
+
+  // Lọc bạn bè để loại bỏ friend có id bằng với userId
+  const filteredFriendsList = friendsList.filter(
+    (friend) => friend.userId !== idUser
+  );
+
+  const currentFriends = filteredFriendsList.slice(
     indexOfFirstFriend,
     indexOfLastFriend
   );
@@ -74,44 +53,50 @@ const Friends = () => {
   // Xử lý chuyển trang
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const totalPages = Math.ceil(friendsList.length / friendsPerPage);
+  const totalPages = Math.ceil(filteredFriendsList.length / friendsPerPage);
+
+  // Hiển thị thông báo khi đang load hoặc gặp lỗi
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="friends-followers-container">
       <div className="header">
         <h2>
-          Friends / Followers{" "}
-          <span className="badge">{friendsList.length}</span>
+          Gợi ý kết bạn{" "}
+          <span className="badge">{filteredFriendsList.length}</span>
         </h2>
-        <div className="header-actions">
-          <input
-            type="text"
-            placeholder="Search Friend"
-            className="search-input"
-          />
-          <select className="sort-select">
-            <option value="name">Sort by</option>
-            <option value="name">Name</option>
-            <option value="followers">Followers</option>
-          </select>
-        </div>
       </div>
       <div className="friends-list">
         {currentFriends.map((friend) => (
-          <FriendCard key={friend.id} friend={friend} />
+          <FriendCard
+            key={friend.id}
+            friend={friend}
+            onFriendRequestSent={refreshFriendList}
+          />
         ))}
       </div>
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => paginate(index + 1)}
-            className={`page-link ${currentPage === index + 1 ? "active" : ""}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => paginate(index + 1)}
+              className={`page-link ${
+                currentPage === index + 1 ? "active" : ""
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

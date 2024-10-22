@@ -11,12 +11,12 @@ import PhotosPage from "./component/user/PhotosPage";
 import Timeline from "./component/user/Timeline";
 import MainLayout from "./MainLayout";
 
-import ResetPassword from "./page/account/ChangePasswordPage.js";
+import ResetPassword from "./page/account/ResetPasswordPage.js";
 import ForgotPasswordPage from "./page/account/ForgotPasswordPage.js";
 import LoginRegister from "./page/account/LoginRegister";
 import OTPVerification from "./page/account/OTPVerification.js";
 import ProFile from "./page/account/UpdateProfileForm.js";
-import ChangePassword from "./page/account/UpdateProfileForm.js";
+import ChangePassword from "./page/account/ChangePassword.js";
 
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";

@@ -1,32 +1,35 @@
 package com.edu.datn.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.edu.datn.model.Notification;
 import com.edu.datn.service.NotificationService;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/notifications")
 public class NotificationController {
-    @Autowired
-    private NotificationService notificationService;
+  @Autowired
+  private NotificationService notificationService;
 
-    // Endpoint lấy tất cả thông báo
-    @GetMapping
-    public List<Notification> getNotifications() {
-        return notificationService.getAllNotifications();
-    }
+  // API để lấy danh sách thông báo của người dùng
+  @GetMapping("/api/notifications/receiver/{receiverId}")
+  public List<Notification> getNotifications(@PathVariable Integer receiverId) {
+    return notificationService.getNotificationsByReceiverId(receiverId);
+  }
 
-    // Endpoint lấy thông báo theo ID người nhận
-    @GetMapping("/receiver/{id}")
-    public List<Notification> getNotificationsByReceiverId(
-            @PathVariable("id") Integer receiverId) {
-        return notificationService.getNotificationsByReceiverId(receiverId);
-    }
+  // WebSocket để nhận thông báo từ client và gửi lại cho người dùng
+  @MessageMapping("/notifications") // /app/notifications
+  public void receiveNotification(Notification notification) {
+    // Gửi thông báo qua WebSocket và lưu vào MongoDB
+    notificationService.sendNotificationToUser(
+      notification.getReceiverId(),
+      notification
+    );
+  }
+
 }
