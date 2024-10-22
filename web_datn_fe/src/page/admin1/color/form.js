@@ -113,7 +113,7 @@ const FormColor = ({ onClose, editData }) => {
                 <div className="col-sm-12" >
                     <button type="submit" className="btn btn-primary custom-button">
                         {/* Đổi nhãn nút bấm tùy theo chế độ */}
-                        {isUpdating ? 'Cập nhật ' : 'Thêm '}
+                        {isUpdating ? 'Cập Nhật ' : 'Thêm Mới'}
                     </button>
                 </div>
             </div>
