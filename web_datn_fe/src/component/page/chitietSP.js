@@ -3,10 +3,11 @@ import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
+import { toast, ToastContainer } from 'react-toastify'; // Import ToastContainer và toast
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import "../../assets/css/loaispplq.css";
-import { useCart } from '../../component/page/CartContext';
+import { useCart } from "../../component/page/CartContext";
 const ChiTietSP = () => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
@@ -20,7 +21,23 @@ const ChiTietSP = () => {
     if (quantity < product.productDetails?.quantity) {
       setQuantity((prevQuantity) => prevQuantity + 1);
     } else {
-      alert("Không đủ hàng trong kho");
+      toast.error("Không đủ hàng trong kho");
+    }
+  };
+  // Hàm xử lý khi người dùng nhập số lượng trực tiếp vào ô input
+  const handleInputChange = (e) => {
+    const inputValue = Number(e.target.value);
+
+    // Kiểm tra xem giá trị có phải là số hợp lệ và không lớn hơn số lượng còn trong kho
+    if (inputValue > 0 && inputValue <= product.productDetails?.quantity) {
+      setQuantity(inputValue);
+    } else if (inputValue > product.productDetails?.quantity) {
+      // Nếu số lượng nhập lớn hơn số lượng còn trong kho
+      
+      setQuantity(product.productDetails?.quantity); // Đặt lại giá trị tối đa là số lượng còn trong kho
+    } else {
+      // Nếu người dùng nhập số nhỏ hơn hoặc bằng 0, đặt lại về 1
+      setQuantity(1);
     }
   };
 
@@ -80,95 +97,93 @@ const ChiTietSP = () => {
       },
     ],
   };
-  
-  
 
   // Fetch product details when component mounts or id changes
   useEffect(() => {
+    // Lấy productId từ localStorage
+    const productId = localStorage.getItem("selectedProductId");
+  
+    if (!productId) {
+      console.error("Product ID not found");
+      return;
+    }
+  
     const fetchProduct = async () => {
-      setLoading(true); // Start loading
+      setLoading(true); // Bắt đầu trạng thái loading
       try {
-        // Fetch product details by product ID
+        // Lấy thông tin chi tiết sản phẩm theo productId
         const response = await axios.get(
-          `http://localhost:8080/api/products/${id}`
+          `http://localhost:8080/api/products/${productId}`
         );
         const productData = response.data;
-
-        // Fetch the product details related to the fetched product
+  
+        // Lấy thông tin chi tiết sản phẩm liên quan
         const productDetailsResponse = await axios.get(
           `http://localhost:8080/api/productdetails/${productData.productId}`
         );
         const productDetails = productDetailsResponse.data;
-
-        // Fetch brand details related to the fetched product
+  
+        // Lấy thông tin thương hiệu liên quan
         const brandResponse = await axios.get(
           `http://localhost:8080/api/brands/${productData.brandId}`
         );
         const brandData = brandResponse.data;
-
-        // Fetch category details related to the fetched product
+  
+        // Lấy thông tin danh mục liên quan
         const categoryResponse = await axios.get(
           `http://localhost:8080/api/categories/${productData.categoryId}`
         );
         const categoryData = categoryResponse.data;
-
-        // Fetch capacity details if available in the product details
+  
+        // Lấy thông tin về dung tích nếu có trong chi tiết sản phẩm
         const capacityResponse = await axios.get(
           `http://localhost:8080/api/capacities/${productDetails.capacityId}`
         );
         const capacityData = capacityResponse.data;
-
+  
         const skintypeResponse = await axios.get(
           `http://localhost:8080/api/skintypes/${productDetails.skintypeId}`
         );
         const skinTypeData = skintypeResponse.data;
-
+  
         const benefitResponse = await axios.get(
           `http://localhost:8080/api/benefits/${productDetails.benefitId}`
         );
         const benefitData = benefitResponse.data;
-
+  
         const ingredientResponse = await axios.get(
           `http://localhost:8080/api/ingredients/${productDetails.ingredientId}`
         );
         const ingredientData = ingredientResponse.data;
+  
+       
+      
 
-        // Fetch related products
         const relatedProductsResponse = await axios.get(
           `http://localhost:8080/api/products?categoryId=${productData.categoryId}`
         );
+        const relatedProductsData = relatedProductsResponse.data;
 
         // Fetch details and brand for each related product concurrently
-        const relatedProductsData = relatedProductsResponse.data;
-        console.log("Related Products Data:", relatedProductsData);
-    
-        // Sử dụng productData.categoryId để định nghĩa selectedCategoryId
-        const selectedCategoryId = productData.categoryId;
-    
-        // Fetch details and category for each related product concurrently
         const relatedProductDetails = await Promise.all(
-          relatedProductsData
-            .filter(product => product.categoryId === selectedCategoryId) // Lọc sản phẩm thuộc cùng category
-            .map(async (relatedProduct) => {
-              const detailResponse = await axios.get(
-                `http://localhost:8080/api/productdetails/${relatedProduct.productId}`
+          relatedProductsData.map(async (relatedProduct) => {
+            const detailResponse = await axios.get(
+              `http://localhost:8080/api/productdetails/${relatedProduct.productId}`
+         
               );
-              const categoryResponse = await axios.get(
-                `http://localhost:8080/api/categories/${relatedProduct.categoryId}`
-              );
-              
+  
               return {
                 ...relatedProduct,
                 details: detailResponse.data,
-                category: categoryResponse.data, // Thay vì brand, trả về category
+                category: categoryResponse.data,
               };
             })
         );
-
+  
         // Set sản phẩm liên quan
         setRelatedProducts(relatedProductDetails);
-
-        // Set the main product state
+  
+        // Set trạng thái chính của sản phẩm
         setProduct({
           ...productData,
           productDetails,
@@ -179,16 +194,17 @@ const ChiTietSP = () => {
           benefit: benefitData,
           ingredient: ingredientData,
         });
-
-        setLoading(false); // Stop loading
+  
+        setLoading(false); // Kết thúc trạng thái loading
       } catch (error) {
         console.error("Error fetching product:", error.message);
         setLoading(false);
       }
     };
-
+  
     fetchProduct();
-  }, [id]);
+  }, []); // Không cần dependency 'id' nữa
+  
 
   if (loading) {
     return <div>Loading...</div>; // Loading state
@@ -204,12 +220,12 @@ const ChiTietSP = () => {
     quantity // Lấy quantity từ input truyền vào
   ) => {
     const userData = localStorage.getItem("userData");
-  
+
     if (!userData) {
-      alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
+      toast.error("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
       return;
     }
-  
+
     try {
       // Giải mã dữ liệu người dùng đã lưu để lấy user ID
       const decryptedData = CryptoJS.AES.decrypt(
@@ -218,31 +234,31 @@ const ChiTietSP = () => {
       ).toString(CryptoJS.enc.Utf8);
       const parsedData = JSON.parse(decryptedData);
       const userId = parsedData.user_id;
-  
+
       if (!userId) {
-        alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+        toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
         return;
       }
-  
+
       // Gọi API để lấy cartId
       const cartResponse = await axios.get(
         `http://localhost:8080/api/cart/${userId}`
       );
       const cartData = cartResponse.data;
-  
+
       if (cartData.length === 0) {
         console.error("Không tìm thấy cartId");
         return;
       }
-  
+
       const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
-  
+
       // Lấy các mục trong giỏ hàng để kiểm tra
       const cartItemsResponse = await axios.get(
         `http://localhost:8080/api/cart/items/${userId}`
       );
       const cartItems = cartItemsResponse.data;
-  
+
       // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
       const existingCartItem = cartItems.find(
         (item) =>
@@ -251,18 +267,18 @@ const ChiTietSP = () => {
             ? item.productPromotion.productPromotionId === productPromotionId
             : productPromotionId === 0)
       );
-  
+
       if (existingCartItem) {
         // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
         const updatedQuantity = existingCartItem.quantity + quantity;
-  
+
         // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
         const updateResponse = await axios.post(
           `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
         );
-  
+
         if (updateResponse.status === 200) {
-          alert("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
+          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
           fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
         }
       } else {
@@ -270,8 +286,9 @@ const ChiTietSP = () => {
         const addResponse = await axios.post(
           `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/0/${quantity}`
         );
-  
+
         if (addResponse.status === 201) {
+          toast.success("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo thành công
           fetchCartItems(userId); // Lấy lại giỏ hàng sau khi thêm sản phẩm
         }
       }
@@ -279,7 +296,6 @@ const ChiTietSP = () => {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
     }
   };
-  
 
   const handleTabClick = (tab) => {
     setActiveTab(tab); // Set the active tab
@@ -291,7 +307,8 @@ const ChiTietSP = () => {
   const barcode = product?.id ? generateBarcode(product.id) : "N/A";
   return (
     <div className="container">
-      <div className="container-fluid page-header py-5 text-center"></div>
+      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <div className="container-fluid page-header2 py-5 text-center"></div>
       <div className="container-fluid py-3 mt-3">
         <div className="container py-5">
           <div className="row">
@@ -334,38 +351,42 @@ const ChiTietSP = () => {
                     className="d-flex align-items-center mb-3 "
                     style={{ width: "100%", maxWidth: "350px" }} // Adjust width as needed
                   >
+                    <button
+                      className="btn btn-outline-primary"
+                      onClick={handleDecrease}
+                      disabled={quantity <= 1} // Disable the button if quantity is 1
+                    >
+                      <i className="fa fa-minus"></i>
+                    </button>
+                    <input
+                      type="text"
+                      className="form-control mx-2" // Thêm margin cho khoảng cách giữa các phần tử
+                      value={quantity}
+                      onChange={(e) => {
+                        const inputValue = Math.max(
+                          1,
+                          parseInt(e.target.value) || 1
+                        ); // Giá trị tối thiểu là 1
+                        if (inputValue <= product.productDetails?.quantity) {
+                          setQuantity(inputValue); // Cập nhật nếu số lượng hợp lệ
+                        } else {
+                          toast.error("Số lượng nhập vượt quá số lượng trong kho");
+                          setQuantity(product.productDetails?.quantity); // Giới hạn giá trị theo số lượng trong kho
+                        }
+                      }}
+                      min="1"
+                      style={{
+                        width: "50px", // Điều chỉnh chiều rộng để dễ nhập hơn
+                        textAlign: "center", // Canh giữa text
+                      }}
+                    />
 
-                      <button
-                        className="btn btn-outline-primary"
-                        onClick={handleDecrease}
-                        disabled={quantity <= 1} // Disable the button if quantity is 1
-                      >
-                        <i className="fa fa-minus"></i>
-                      </button>
-
-                      <input
-                        type="text"
-                        className="form-control mx-2" // Thêm margin cho khoảng cách giữa các phần tử
-                        value={quantity}
-                        onChange={(e) =>
-                          setQuantity(
-                            Math.max(1, parseInt(e.target.value) || 1)
-                          )
-                        } // Ensure quantity is at least 1
-                        min="1"
-                        style={{
-                          width: "50px", // Điều chỉnh chiều rộng để dễ nhập hơn
-                          textAlign: "center", // Center text
-                        }}
-                      />
-
-                      <button
-                        className="btn btn-outline-primary"
-                        onClick={handleIncrease}
-                      >
-                        <i className="fa fa-plus"></i>
-                      </button>
-                 
+                    <button
+                      className="btn btn-outline-primary"
+                      onClick={handleIncrease}
+                    >
+                      <i className="fa fa-plus"></i>
+                    </button>
 
                     {product.productDetails?.quantity > 0 ? (
                       <p className="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-0 text-white ms-3">
@@ -601,54 +622,57 @@ const ChiTietSP = () => {
             <br></br>
             <br></br>
             <div className="container-fluid related-products py-5">
-  <h2 className="text-left mb-4">Sản Phẩm Liên Quan</h2>
-  <Slider {...settings}>
-    {relatedProducts.map((relatedProduct) => (
-      <div
-        className="pro-container"
-        key={relatedProduct.productId}
-        style={{ marginRight: "15px" }} // Khoảng cách giữa các card
-      >
-        <div className="pro">
-          <img
-            src={
-              relatedProduct.details?.img
-                ? require(`../../assets/img/${relatedProduct.details.img}`)
-                : require("../../assets/img/hasaki.png") // hoặc một hình ảnh mặc định
-            }
-            alt={relatedProduct.name}
-            className="card-img-top"
-          />
-          <div className="icon-container">
-            <a className="btn">
-              <i className="fas fa-shopping-cart"></i>
-            </a>
-            <a href={`/product/${relatedProduct.productId}`}>
-              <i className="fas fa-eye"></i>
-            </a>
-          </div>
-          <div className="des">
-            <span>{relatedProduct.category?.name}</span> {/* Hiển thị Category */}
-            <h6>{relatedProduct.name}</h6>
-            <div className="star">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="far fa-star"></i>
+              <h2 className="text-left mb-4">Sản Phẩm Liên Quan</h2>
+              <Slider {...settings}>
+                {relatedProducts.map((relatedProduct) => (
+                  <div
+                    className="pro-container"
+                    key={relatedProduct.productId}
+                    style={{ marginRight: "15px" }} // Khoảng cách giữa các card
+                  >
+                    <div className="pro">
+                      <img
+                        src={
+                          relatedProduct.details?.img
+                            ? require(`../../assets/img/${relatedProduct.details.img}`)
+                            : require("../../assets/img/hasaki.png") // hoặc một hình ảnh mặc định
+                        }
+                        alt={relatedProduct.name}
+                        className="card-img-top"
+                      />
+                      <div className="icon-container">
+                        <a className="btn">
+                          <i className="fas fa-shopping-cart"></i>
+                        </a>
+                        <a href={`/product/${relatedProduct.productId}`}>
+                          <i className="fas fa-eye"></i>
+                        </a>
+                      </div>
+                      <div className="des">
+                        <span>{relatedProduct.category?.name}</span>{" "}
+                        {/* Hiển thị Category */}
+                        <h6>{relatedProduct.name}</h6>
+                        <div className="star">
+                          <i className="fas fa-star"></i>
+                          <i className="fas fa-star"></i>
+                          <i className="fas fa-star"></i>
+                          <i className="fas fa-star"></i>
+                          <i className="far fa-star"></i>
+                        </div>
+                        <div className="price">
+                          <h4 className="sale-price">
+                            {relatedProduct.details?.price?.toLocaleString() ||
+                              "Unknown"}{" "}
+                            đ
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Slider>
             </div>
-            <div className="price">
-              <h4 className="sale-price">
-                {relatedProduct.details?.price?.toLocaleString() || "Unknown"} đ
-              </h4>
-            </div>
           </div>
-        </div>
-      </div>
-    ))}
-  </Slider>
-</div>
-</div>
         </div>
       </div>
     </div>

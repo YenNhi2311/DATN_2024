@@ -20,8 +20,8 @@ const TrangChu = () => {
                 Làn da đẹp, cuộc sống đẹp
               </h1>
               <section className="container-fluid service py-0">
-        <TimKiem />
-      </section>
+                <TimKiem />
+              </section>
             </div>
             <div className="col-md-12 col-lg-6">
               <div
@@ -34,22 +34,16 @@ const TrangChu = () => {
                   <div className="carousel-item active rounded">
                     <img
                       src={require("../assets/img/banerhasaki.jpg")}
-                      className="img-fluid w-100 h-100 bg-secondary rounded"
+                      className="img-fluid w-100"
                       alt="First slide"
                     />
-                    {/* <a href="#" className="btn px-4 py-2 text-white rounded">
-                    Dưỡng ẩm
-                </a> */}
                   </div>
                   <div className="carousel-item rounded">
                     <img
                       src={require("../assets/img/banerhasaki.jpg")}
-                      className="img-fluid w-100 h-100 rounded"
+                      className="img-fluid w-100"
                       alt="Second slide"
                     />
-                    <a href="#" className="btn px-4 py-2 text-white rounded">
-                      Tẩy trang
-                    </a>
                   </div>
                 </div>
                 <button

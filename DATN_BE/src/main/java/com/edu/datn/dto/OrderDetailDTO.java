@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductWithDetailsDTO {
-    private ProductDTO product;
-    private ProductDetailsDTO productDetails;
-    private Integer totalSold;
+public class OrderDetailDTO {
+    private Integer productDetailId;
+    private Double price;
+    private Integer quantity;
 }

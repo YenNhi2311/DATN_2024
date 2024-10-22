@@ -1,8 +1,8 @@
-import axios from 'axios';
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Slider from "react-slick";
 import "../../assets/css/category.css"; // Tạo file CSS để tùy chỉnh giao diện
+import { apiClient } from '../../services/authService'; // Import apiClient
 
 const LoaiSP = () => {
   const navigate = useNavigate(); // Khởi tạo navigate
@@ -15,14 +15,19 @@ const LoaiSP = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/home/categories');
+      const response = await apiClient.get('api/home/categories'); // Sử dụng apiClient
       console.log(response.data); // Kiểm tra dữ liệu trả về từ API
-      setCategories(response.data);
+
+      // Kiểm tra xem dữ liệu trả về có phải là mảng không
+      if (Array.isArray(response.data)) {
+        setCategories(response.data);
+      } else {
+        console.error('Dữ liệu không phải là mảng:', response.data);
+      }
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
   };
-  
 
   // Custom Arrow cho Slider
   const PrevArrow = (props) => {
@@ -46,11 +51,9 @@ const LoaiSP = () => {
   const handleCategorySelection = (categoryId) => {
     navigate(`/shop/category/${categoryId}`); // Sử dụng đúng trường ID
   };
-  
 
   // Cài đặt cho Slider
   const settings = {
-   
     speed: 500,
     slidesToShow: 8,
     slidesToScroll: 1,
@@ -85,14 +88,13 @@ const LoaiSP = () => {
     <div className="container py-0">
       <h1 className="text-blue">Danh Mục</h1>
       <Slider {...settings}>
-      {categories.map((item) => (
-  <div key={item.categoryId} className="category-item" onClick={() => handleCategorySelection(item.categoryId)}>
-    <img src={require(`../../assets/img/${item.img}`)} alt={item.name} />
-    <p>{item.name}</p>
-    <p>{item.description}</p>
-  </div>
-))}
-
+        {categories.map((item) => (
+          <div key={item.categoryId} className="category-item" onClick={() => handleCategorySelection(item.categoryId)}>
+            <img src={require(`../../assets/img/${item.img}`)} alt={item.name} />
+            <p>{item.name}</p>
+            <p>{item.description}</p>
+          </div>
+        ))}
       </Slider>
     </div>
   );

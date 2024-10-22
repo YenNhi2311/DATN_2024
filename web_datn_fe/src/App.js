@@ -15,8 +15,7 @@ import ResetPassword from "./page/account/ChangePasswordPage.js";
 import ForgotPasswordPage from "./page/account/ForgotPasswordPage.js";
 import LoginRegister from "./page/account/LoginRegister";
 import OTPVerification from "./page/account/OTPVerification.js";
-import ProFile from "./page/account/UpdateProfileForm.js";
-import ChangePassword from "./page/account/UpdateProfileForm.js";
+import { default as ChangePassword, default as ProFile } from "./page/account/UpdateProfileForm.js";
 
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";
@@ -96,13 +95,13 @@ const App = () => {
           <Route path="/shop" element={<Shop />} />
           <Route path="/shop/category/:categoryId" element={<ShopLoai />} />
           <Route path="/shop/brand/:brandId" element={<ShopTH />} />
-          <Route path="/product/:id" element={<ChiTietSP />} />
-          <Route path="/productpromotion/product/:productPromotionId/:productId" element={<ChiTietSPKM />} />
+          <Route path="/product" element={<ChiTietSP />} />
+          <Route path="/productpromotion" element={<ChiTietSPKM />} />
           <Route path="/lienhe" element={<LienHe />} />
-          <Route path="/cart/:userId" element={<GioHang />} />
-          <Route path="/thanhtoan/:userId" element={<ThanhToan />} />
+          <Route path="/cart" element={<GioHang />} />
+          <Route path="/thanhtoan" element={<ThanhToan />} />
           <Route path="/danhgia" element={<DanhGia />} />
-          <Route path="/promotions" element={<KhuyenMaiList />} />
+          <Route path="/productpromotionlist" element={<KhuyenMaiList />} />
           {/* Thông Tin Người dùng */}
           <Route path="/profile" element={<ProFile/>} />
           <Route path="/change-password" element={<ChangePassword/>} />
@@ -110,10 +109,7 @@ const App = () => {
 
         <Route path="/admin/*" element={<Admin1Layout />}>
           <Route path="" element={<Dashboard2 />} />
-        </Route>
-        {/* Routes quản trị */}
-       {/* QL Sản phẩm */}
-       <Route path="formproduct" element={<FormProduct />} />
+          <Route path="formproduct" element={<FormProduct />} />
           <Route path="formproduct/:id" element={<FormProduct />} />
           <Route path="tableproduct" element={<TableProduct />} />
 
@@ -157,6 +153,10 @@ const App = () => {
           <Route path="formbenefit" element={<FormBenefit />} />
           <Route path="formbenefit/:id" element={<FormBenefit />} />
           <Route path="tablebenefit" element={<TableBenefit />} />
+        </Route>
+        {/* Routes quản trị */}
+       {/* QL Sản phẩm */}
+     
       </Routes>
     </Router>
   );

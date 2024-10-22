@@ -50,7 +50,7 @@ const KhuyenMailist = () => {
                   </div>
                   <div className="carousel-item rounded">
                     <img
-                      src={require("../assets/img/hero-img-2.jpg")}
+                      src={require("../assets/img/banerhasaki.jpg")}
                       className="img-fluid w-100 h-100 rounded"
                       alt="Second slide"
                     />
