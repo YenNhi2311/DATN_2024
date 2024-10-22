@@ -1,6 +1,6 @@
   import ApexCharts from 'apexcharts';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useEffect } from 'react';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 // Import Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
