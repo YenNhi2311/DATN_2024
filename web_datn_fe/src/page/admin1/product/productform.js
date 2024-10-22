@@ -47,8 +47,8 @@ const ProductForm = ({
         // Thêm mới sản phẩm nếu không có productId
         await apiClient.post("/api/products", productData);
       }
-      onSave(); // Gọi hàm để làm mới dữ liệu sau khi lưu
-      onClose(); // Đóng form
+      // onSave(); // Gọi hàm để làm mới dữ liệu sau khi lưu
+      // onClose(); // Đóng form
     } catch (error) {
       console.error("Lỗi khi lưu sản phẩm:", error);
     }
