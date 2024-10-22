@@ -308,5 +308,20 @@
     color: white; /* Color for the separator */
     font-weight: bold;
   }
+  .brand-sold-container {
+    display: flex; /* Sử dụng Flexbox để căn chỉnh các phần tử con */
+    justify-content: space-between; /* Đặt khoảng cách đều giữa các phần tử */
+    align-items: center; /* Căn giữa theo chiều dọc */
+  }
+  
+ 
+  .sold-quantity-container {
+    display: flex; /* Sử dụng Flexbox cho số lượng bán */
+    align-items: center; /* Căn giữa theo chiều dọc */
+  }
+  
+  .sold-quantity {
+    margin-left: 5px; /* Thêm khoảng cách giữa biểu tượng và số lượng */
+  }
   
 
