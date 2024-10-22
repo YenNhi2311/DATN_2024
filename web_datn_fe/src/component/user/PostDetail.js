@@ -1,9 +1,8 @@
-import "../../assets/css/postdetail.css";
 import CryptoJS from "crypto-js";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import "../../assets/css/postdetail.css";
 import { apiClient } from "../../config/apiClient";
 import PostItem from "../user/PostItem";
-import CommentSection from "../user/CommentSession"; // Import CommentSection
 
 const PostDetail = () => {
   const [posts, setPosts] = useState([]);
@@ -78,7 +77,7 @@ const PostDetail = () => {
         <div>Loading posts...</div>
       ) : (
         posts.map((post) => (
-          <div key={post.postId} className="post-item">
+          <div key={post.postId}>
             <PostItem
               post={post}
               userId={userId}

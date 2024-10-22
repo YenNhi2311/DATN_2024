@@ -1,29 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { Button, Form, Dropdown } from "react-bootstrap";
-import Avatar from "../../assets/img/avatar1.jpg";
-import { apiClient } from "../../config/apiClient";
+import React, { useEffect, useState } from "react";
+import { Button, Dropdown, Form, Spinner } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2"; // Thêm SweetAlert2 cho popup xác nhận
+import { apiClient } from "../../config/apiClient";
+import Cookies from "js-cookie";
+import { getUserData } from "../../services/authService";
 
-const CommentSection = ({ postId, userId, updateComments }) => {
-  const [comments, setComments] = useState([]);
+const CommentSection = ({ postId, userId }) => {
   const [newComment, setNewComment] = useState("");
-  const [visibleComments, setVisibleComments] = useState(5); // Hiển thị 5 bình luận đầu tiên
+  const [loading, setLoading] = useState(false);
+  const [visibleComments, setVisibleComments] = useState(2);
+  const [comments, setComments] = useState([]); // State để quản lý danh sách bình luận
+  const [userData, setUserData] = useState("");
 
   useEffect(() => {
+    const getUser = () => {
+      const token = Cookies.get("access_token");
+      getUserData(userId, token)
+        .then((data) => {
+          setUserData(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    };
+    getUser();
+  }, []);
+  // Fetch bình luận
+  useEffect(() => {
+    const fetchComments = async () => {
+      // setLoading(true); // Bắt đầu tải
+      try {
+        const response = await apiClient.get(`/api/comments/post/${postId}`);
+        setComments(response.data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        // setLoading(false); // Kết thúc tải
+      }
+    };
     fetchComments();
   }, [postId]);
-
-  // Lấy danh sách comment từ API
-  const fetchComments = () => {
-    apiClient
-      .get(`/api/comments/post/${postId}`)
-      .then((response) => {
-        setComments(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching comments:", error);
-      });
-  };
 
   // Xử lý thay đổi nội dung bình luận
   const handleCommentChange = (e) => {
@@ -31,29 +48,28 @@ const CommentSection = ({ postId, userId, updateComments }) => {
   };
 
   // Gửi bình luận mới
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
+  const handleCommentSubmit = async (e) => {
+    // setLoading(false);
+    if (newComment.trim() === "") return;
+
     const comment = {
-      post: { postId }, // Đảm bảo rằng postId hợp lệ
-      user: { userId }, // Đảm bảo rằng userId hợp lệ
-      content: newComment, // Đảm bảo rằng content không rỗng
+      post: { postId },
+      user: { userId },
+      content: newComment,
     };
 
-    console.log("Sending comment:", comment); // Log dữ liệu gửi lên API
-
-    apiClient
-      .post("/api/comments", comment)
-      .then((response) => {
-        setNewComment(""); // Clear comment input
-        setComments([response.data, ...comments]);
-      })
-      .catch((error) => {
-        console.error("Error adding comment:", error);
-      });
+    try {
+      const response = await apiClient.post("/api/comments", comment);
+      Swal.fire("Bình luận về bài viết thành công!", "success");
+      setComments(async (prevComments) => [response.data, ...prevComments]); // Thêm bình luận mới vào đầu danh sách
+      setNewComment(""); // Reset nội dung bình luận
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
-  // Hàm xử lý khi xóa bình luận với xác nhận
-  const handleDeleteComment = (commentId) => {
+  // Hàm xử lý khi xóa bình luận
+  const handleDeleteComment = async (commentId) => {
     Swal.fire({
       title: "Bạn có chắc muốn xóa bình luận này?",
       icon: "warning",
@@ -62,20 +78,17 @@ const CommentSection = ({ postId, userId, updateComments }) => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        apiClient
-          .delete(`/api/comments/${commentId}`)
-          .then(() => {
-            // Xóa bình luận khỏi state
-            setComments(
-              comments.filter((comment) => comment.commentId !== commentId)
-            );
-            Swal.fire("Xóa thành công!", "", "success");
-          })
-          .catch((error) => {
-            console.error("Error deleting comment:", error);
-          });
+        try {
+          await apiClient.delete(`/api/comments/${commentId}`);
+          setComments((prevComments) =>
+            prevComments.filter((comment) => comment.commentId !== commentId)
+          );
+          Swal.fire("Xóa thành công!", "", "success");
+        } catch (error) {
+          console.error("Error deleting comment:", error);
+        }
       }
     });
   };
@@ -93,23 +106,29 @@ const CommentSection = ({ postId, userId, updateComments }) => {
   return (
     <div>
       <div className="post-comments-list">
+        {loading && (
+          <div className="text-center my-3">
+            <Spinner animation="border" />
+          </div>
+        )}
+
         {comments.slice(0, visibleComments).map((comment) => (
           <div key={comment.commentId} className="post-comment">
-            <img src={Avatar} alt="Avatar" className="comment-avatar" />
+            <img
+              src={`http://localhost:8080/assets/img/${comment.user.img}`}
+              alt="Avatar"
+              className="comment-avatar"
+            />
             <div className="comment-info">
-              <span className="comment-username">{comment.user.username}</span>
+              <span className="comment-username">{comment.user?.fullname}</span>
               <p className="comment-text">{comment.content}</p>
               <div className="comment-meta">
                 <span className="comment-time">
                   {new Date(comment.createAt).toLocaleString()}
                 </span>
-                <span className="comment-likes">
-                  <i className="fa fa-heart"></i> {comment.likes || 0}
-                </span>
               </div>
             </div>
-            {/* Dropdown menu for comment actions */}
-            {comment.user.userId === userId && ( // Chỉ hiển thị nút xóa nếu là người dùng đã tạo comment
+            {comment.user.userId === userId && (
               <Dropdown className="comment-settings">
                 <Dropdown.Toggle variant="link" id="dropdown-custom-components">
                   <i className="fa fa-ellipsis-h"></i>
@@ -126,30 +145,31 @@ const CommentSection = ({ postId, userId, updateComments }) => {
           </div>
         ))}
 
-        {/* Hiển thị nút "Xem thêm" nếu có nhiều hơn số comment đã hiển thị */}
         {comments.length > visibleComments && (
-          <Button
+          <Link
             onClick={handleShowMoreComments}
             className="show-more-btn justify-content-center"
           >
             Xem thêm nhiều bình luận
-          </Button>
+          </Link>
         )}
 
-        {/* Nút "Rút gọn" chỉ hiển thị khi đã xem hết bình luận */}
-        {comments.length <= visibleComments && visibleComments > 5 && (
-          <Button
+        {comments.length <= visibleComments && visibleComments > 2 && (
+          <Link
             onClick={handleShowLessComments}
             className="show-less-btn justify-content-center"
           >
             Rút gọn
-          </Button>
+          </Link>
         )}
       </div>
 
-      {/* Hộp nhập bình luận */}
       <div className="post-comment-box">
-        <img src={Avatar} alt="Avatar" className="comment-avatar" />
+        <img
+          src={`http://localhost:8080/assets/img/${userData.img}`}
+          alt="Avatar"
+          className="comment-avatar"
+        />
         <Form onSubmit={handleCommentSubmit} className="comment-form">
           <Form.Control
             as="textarea"
@@ -157,9 +177,19 @@ const CommentSection = ({ postId, userId, updateComments }) => {
             value={newComment}
             onChange={handleCommentChange}
             placeholder="Viết bình luận của bạn"
+            // disabled={loading}
           />
-          <Button type="submit" variant="link" className="comment-send-btn">
-            <i className="fa fa-paper-plane"></i>
+          <Button
+            type="submit"
+            variant="link"
+            className="comment-send-btn"
+            // disabled={loading}
+          >
+            {loading ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              <i className="fa fa-paper-plane"></i>
+            )}
           </Button>
         </Form>
       </div>

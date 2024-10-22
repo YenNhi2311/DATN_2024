@@ -1,17 +1,12 @@
 // src/components/LeftColumn.js
-import React, { useState, useEffect } from "react";
-import { Image } from "react-bootstrap";
-import "../../assets/css/profilesocial.css"; // Import CSS
-import {
-  FaHeart,
-  FaMailBulk,
-  FaMapMarkedAlt,
-  FaVoicemail,
-} from "react-icons/fa";
 import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
-import { getUserData } from "../../services/authService";
+import React, { useEffect, useState } from "react";
+import { Image } from "react-bootstrap";
+import { FaHeart, FaMailBulk, FaMapMarkedAlt } from "react-icons/fa";
+import "../../assets/css/profilesocial.css"; // Import CSS
 import { apiClient } from "../../config/apiClient";
+import { getUserData } from "../../services/authService";
 
 const ProfileSocial = () => {
   const [profileData, setProfileData] = useState(null);
@@ -63,10 +58,11 @@ const ProfileSocial = () => {
         <hr />
         <div className="profile-info">
           <Image
-            src={profileData?.img} // Sử dụng Logo nếu profileData.img không tồn tại
+            src={`http://localhost:8080/assets/img/${profileData?.img}`} // Sử dụng Logo nếu profileData.img không tồn tại
             roundedCircle
             height="80"
             className="profile-avatar"
+            alt={profileData?.fullname}
           />
           <div className="profile-details">
             <h6>{profileData?.fullname || "Chưa có tên"}</h6>
@@ -99,20 +95,6 @@ const ProfileSocial = () => {
           </div>
         </div>
         <hr />
-        <div className="icon-buttons">
-          <div className="icon-button">
-            <i className="fa fa-user"></i>
-            <span>Hồ sơ</span>
-          </div>
-          <div className="icon-button">
-            <i className="fa fa-user-plus"></i>
-            <span>Kết Bạn</span>
-          </div>
-          <div className="icon-button">
-            <i className="fa fa-comments"></i>
-            <span>Chat</span>
-          </div>
-        </div>
       </div>
       <div className="left-column">
         <h2>Thống kê</h2>
@@ -132,7 +114,7 @@ const ProfileSocial = () => {
         </div>
       </div>
       <div className="left-column">
-        <h2>Về bản thân</h2>
+        <h2>Quy định về đăng bài viết</h2>
         <hr />
         <div className="about-box">
           <p>{profileData?.about || "Chưa có thông tin"}</p>

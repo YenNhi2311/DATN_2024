@@ -1,26 +1,33 @@
-// package com.edu.datn.controller;
+package com.edu.datn.controller;
 
-// import javax.management.Notification;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.messaging.handler.annotation.MessageMapping;
-// import org.springframework.messaging.handler.annotation.SendTo;
-// import org.springframework.messaging.simp.SimpMessagingTemplate;
-// import org.springframework.web.bind.annotation.RestController;
+import com.edu.datn.model.Notification;
+import com.edu.datn.service.NotificationService;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-// @RestController
-// public class NotificationController {
-//   @Autowired
-//   private SimpMessagingTemplate messagingTemplate;
+@RestController
+public class NotificationController {
+  @Autowired
+  private NotificationService notificationService;
 
-//   // Method để gửi thông báo khi like hoặc comment
-//   @MessageMapping("/notify")
-//   @SendTo("/topic/notifications")
-//   public Notification sendNotification(Notification notification) {
-//     return notification;
-//   }
+  // API để lấy danh sách thông báo của người dùng
+  @GetMapping("/api/notifications/receiver/{receiverId}")
+  public List<Notification> getNotifications(@PathVariable Integer receiverId) {
+    return notificationService.getNotificationsByReceiverId(receiverId);
+  }
 
-//   // Gửi thông báo từ API HTTP
-//   public void sendNotificationToClients(String message) {
-//     messagingTemplate.convertAndSend("/topic/notifications", message);
-//   }
-// }
+  // WebSocket để nhận thông báo từ client và gửi lại cho người dùng
+  @MessageMapping("/notifications") // /app/notifications
+  public void receiveNotification(Notification notification) {
+    // Gửi thông báo qua WebSocket và lưu vào MongoDB
+    notificationService.sendNotificationToUser(
+      notification.getReceiverId(),
+      notification
+    );
+  }
+}
