@@ -496,7 +496,7 @@ export default class LoaiSPShopTH extends Component {
                       {brands.map(
                         (brand) =>
                          
-                            <li key={brand.brandId}>
+                            <li    style={{ display: "flex" }} key={brand.brandId}>
                               <input
                                 type="checkbox"
                                 checked={selectedBrandId === brand.brandId}
@@ -522,7 +522,7 @@ export default class LoaiSPShopTH extends Component {
                       {categories.map((category) => (
                          (selectedCategoryId === null ||
                           selectedCategoryId ===category.categoryId) && (
-                        <li key={category.categoryId}>
+                        <li    style={{ display: "flex" }} key={category.categoryId}>
                           <input
                             type="checkbox"
                             checked={selectedCategoryId === category.categoryId}
@@ -549,7 +549,7 @@ export default class LoaiSPShopTH extends Component {
                         (skintype) =>
                           (selectedSkintypeId === null ||
                             selectedSkintypeId === skintype.skintypeId) && (
-                            <li key={skintype.skintypeId}>
+                            <li    style={{ display: "flex" }} key={skintype.skintypeId}>
                               <input
                                 type="checkbox"
                                 checked={
@@ -582,7 +582,7 @@ export default class LoaiSPShopTH extends Component {
                         (place) =>
                           (selectedPlace === null ||
                             selectedPlace === place) && (
-                            <li key={place}>
+                            <li    style={{ display: "flex" }} key={place}>
                               <input
                                 type="checkbox"
                                 checked={selectedPlace === place}

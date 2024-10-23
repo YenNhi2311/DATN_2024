@@ -21,13 +21,13 @@ const KhuyenMailist = () => {
                   type="number"
                   placeholder="Search"
                 />
-                <button
+                {/* <button
                   type="submit"
                   className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"
                   style={{ top: "0", right: "25%" }}
                 >
                   Tìm kiếm
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="col-md-12 col-lg-6">
@@ -50,7 +50,7 @@ const KhuyenMailist = () => {
                   </div>
                   <div className="carousel-item rounded">
                     <img
-                      src={require("../assets/img/hero-img-2.jpg")}
+                      src={require("../assets/img/banerhasaki.jpg")}
                       className="img-fluid w-100 h-100 rounded"
                       alt="Second slide"
                     />

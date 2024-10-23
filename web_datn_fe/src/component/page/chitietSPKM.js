@@ -1,8 +1,10 @@
 import axios from "axios"; // Import axios
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
+import { toast, ToastContainer } from 'react-toastify';
+
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import "../../assets/css/bootstrap.min.css";
@@ -11,9 +13,8 @@ import "../../assets/css/card.css";
 import "../../assets/css/category.css";
 import "../../assets/css/shop.css";
 import "../../assets/css/style.css";
-
+import { useCart } from '../../component/page/CartContext';
 const ChiTietSPKM = () => {
-  const { productPromotionId, productId } = useParams();
   const [quantity, setQuantity] = useState(1); // State for quantity
   const [productpromotion, setProductPromotion] = useState(null); // State for product details
   const [loading, setLoading] = useState(true); // State for loading status
@@ -22,7 +23,9 @@ const ChiTietSPKM = () => {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPromotionActive, setIsPromotionActive] = useState(true);
   const navigate = useNavigate();
-
+  const [productPromotionId, setProductPromotionId] = useState(null);
+  const [productId, setProductId] = useState(null);
+  const { cartItems, fetchCartItems } = useCart()
   let intervalId = null; // To store the interval ID for countdown
   // Handle increase and decrease of quantity
   const handleIncrease = () => {
@@ -104,6 +107,8 @@ const ChiTietSPKM = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true); // Start loading
+      const productId = localStorage.getItem("selectedProductId");
+      const productPromotionId = localStorage.getItem("selectedProductPromotionId");
       try {
         // Fetch the product promotion data by ID
         const productPromotionResponse = await axios.get(
@@ -271,86 +276,71 @@ const ChiTietSPKM = () => {
     productpromotion.productDetails?.price,
     productpromotion.promotionData?.percent || 0
   );
-  const handleAddToCart = async (
-    productDetailId,
-    productPromotionId,
-    quantity
-  ) => {
+  const handleAddToCart = async (productDetailId, quantity) => {
     const userData = localStorage.getItem("userData");
+    const productPromotionId = localStorage.getItem("selectedProductPromotionId");
 
     if (!userData) {
-      alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
-      return;
+        alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
+        return;
     }
 
     try {
-      // Giải mã dữ liệu người dùng đã lưu để lấy user ID
-      const decryptedData = CryptoJS.AES.decrypt(
-        userData,
-        "secret-key"
-      ).toString(CryptoJS.enc.Utf8);
-      const parsedData = JSON.parse(decryptedData);
-      const userId = parsedData.user_id;
+        const decryptedData = CryptoJS.AES.decrypt(userData, "secret-key").toString(CryptoJS.enc.Utf8);
+        const parsedData = JSON.parse(decryptedData);
+        const userId = parsedData.user_id;
 
-      if (!userId) {
-        alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
-        return;
-      }
+        if (!userId) {
+            toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+            return;
+        }
 
-      // Gọi API để lấy cartId
-      const cartResponse = await axios.get(
-        `http://localhost:8080/api/cart/${userId}`
-      );
-      const cartData = cartResponse.data;
+        const cartResponse = await axios.get(`http://localhost:8080/api/cart/${userId}`);
+        const cartData = cartResponse.data;
 
-      if (cartData.length === 0) {
-        console.error("Không tìm thấy cartId");
-        return;
-      }
+        if (cartData.length === 0) {
+            console.error("Không tìm thấy cartId");
+            return;
+        }
 
-      const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
+        const cartId = cartData[0].cartId;
 
-      // Lấy các mục trong giỏ hàng để kiểm tra
-      const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
-      );
-      const cartItems = cartItemsResponse.data;
+        const cartItemsResponse = await axios.get(`http://localhost:8080/api/cart/items/${userId}`);
+        const cartItems = cartItemsResponse.data;
 
-      // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-      const existingCartItem = cartItems.find(
-        (item) =>
-          item.productDetail.productDetailId === productDetailId &&
-          (item.productPromotion
-            ? item.productPromotion.productPromotionId === productPromotionId
-            : productPromotionId === 0)
-      );
-
-      if (existingCartItem) {
-        // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
-        const updatedQuantity = existingCartItem.quantity + quantity;
-
-        // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
-        const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+        const existingCartItem = cartItems.find(
+            (item) =>
+                item.productDetail.productDetailId === productDetailId &&
+                (item.productPromotion ? item.productPromotion.productPromotionId === productPromotionId : productPromotionId === null || productPromotionId === 0)
         );
 
-        if (updateResponse.status === 200) {
-          alert("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
-        }
-      } else {
-        // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
-        const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/${productPromotionId}/${quantity}`
-        );
+        if (existingCartItem) {
+            const updatedQuantity = existingCartItem.quantity + quantity;
 
-        if (addResponse.status === 201) {
-          alert("Sản phẩm đã được thêm vào giỏ hàng!");
+            const updateResponse = await axios.post(
+                `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+            );
+            console.log("Response from update API:", updateResponse.data); // Thêm dòng này
+            if (updateResponse.status === 200) {
+                toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
+                fetchCartItems(userId);
+            }
+        } else {
+            const addResponse = await axios.post(
+                `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/${productPromotionId}/${quantity}`
+            );
+
+            console.log("Response from add API:", addResponse.data); // Thêm dòng này
+            if (addResponse.status === 201) {
+                toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+                fetchCartItems(userId);
+            }
         }
-      }
     } catch (error) {
-      console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
+        console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.response ? error.response.data : error.message);
     }
-  };
+};
+
 
   const handleTabClick = (tab) => {
     setActiveTab(tab); // Set the active tab
@@ -364,8 +354,8 @@ const ChiTietSPKM = () => {
     : "N/A";
   return (
     <div>
-      <div className="container-fluid page-header py-5 text-center"></div>
-
+      <div className="container-fluid page-header3 py-5 text-center"></div>
+      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="container-fluid py-3 mt-3">
         <div className="container py-5">
           <div className="row">
@@ -442,8 +432,8 @@ const ChiTietSPKM = () => {
                   </div>
                   <span className="txt_price" id="product-final_price"></span>
                   <div
-                    className="input-group quantity mb-5 d-flex align-items-center justify-content-between"
-                    style={{ width: "100%", maxWidth: "400px" }} // Adjust width as needed
+                    className="d-flex align-items-center mb-3 "
+                    style={{ width: "100%", maxWidth: "350px" }} // Adjust width as needed
                   >
                     <button
                       className="btn btn-outline-primary"
@@ -503,8 +493,7 @@ const ChiTietSPKM = () => {
                     onClick={() => {
                       handleAddToCart(
                         productpromotion.productDetails.productDetailId,
-                        productpromotion.productPromotionId, // You can set promotion id here or pass 0 if none
-                        quantity
+                        quantity // Sử dụng quantity từ state
                       );
                     }}
                   >
@@ -661,7 +650,7 @@ const ChiTietSPKM = () => {
       <div className="container-fluid testimonial py-5">
         <div className="container py-5">
           <div className="testimonial-header text-left">
-            <h1 className="display-5 mb-5 text-dark">Đánh giá sản phẩm</h1>
+            <h1 className=" text-dark">Đánh Giá Sản Phẩm</h1>
           </div>
           <div className="owl-carousel testimonial-carousel">
             {[1, 2].map((_, index) => (
@@ -715,6 +704,7 @@ const ChiTietSPKM = () => {
           <br></br>
 
           <div className="row g-4">
+          <h1 className="text-dark">Sản Phẩm Liên Quan</h1>
             <Slider {...settings}>
               {relatedProducts.map((relatedProduct) => (
                 <div

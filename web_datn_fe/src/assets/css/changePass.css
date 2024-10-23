@@ -1,0 +1,71 @@
+/* auth.css */
+.change-password-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Chiếm toàn bộ chiều cao viewport */
+    background-color: #f4f4f4; /* Màu nền sáng */
+   
+  }
+  
+  .change-password-box {
+    background-color: #fff; /* Nền trắng */
+    border-radius: 10px; /* Bo góc */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+    padding: 40px; /* Đệm bên trong */
+    width: 500px; /* Chiều rộng cố định */
+    margin-top: 90px;
+  }
+  
+  .change-password-box h2 {
+    text-align: center; /* Canh giữa tiêu đề */
+    color: #333; /* Màu chữ */
+    margin-bottom: 20px; /* Khoảng cách dưới */
+  }
+  
+  .change-password-form-group {
+    margin-bottom: 20px; /* Khoảng cách dưới giữa các input */
+  }
+  
+  .change-password-form-group input {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    padding: 10px; /* Đệm cho input */
+    border: 1px solid #ccc; /* Đường viền nhẹ */
+    border-radius: 5px; /* Bo góc cho input */
+    font-size: 16px; /* Kích thước chữ */
+  }
+  
+  .change-password-form-group input:focus {
+    border-color: #2575fc; 
+    /* Đổi màu đường viền khi focus */
+    outline: none; /* Tắt viền outline mặc định */
+  }
+  
+  .change-password-form-group button {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    padding: 10px; /* Đệm cho button */
+    background-color:#2575fc; /* Màu nền cho button */
+    color: #fff; /* Màu chữ */
+    border: none; /* Không có đường viền */
+    border-radius: 5px; /* Bo góc cho button */
+    font-size: 16px; /* Kích thước chữ */
+    cursor: pointer; /* Thay đổi con trỏ khi hover */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu */
+  }
+  
+  .change-password-form-group button:hover {
+    background-color:#1e90ff; /* Màu nền khi hover */
+  }
+  
+  .back-to-home {
+    display: inline-flex; /* Để canh giữa icon và chữ */
+    align-items: center; /* Căn giữa icon và chữ */
+    color: #007bff; /* Màu chữ cho link */
+    text-decoration: none; /* Tắt gạch chân */
+    margin-top: 20px; /* Khoảng cách trên link */
+  }
+  
+  .back-to-home:hover {
+    text-decoration: underline; /* Gạch chân khi hover */
+  }
+  

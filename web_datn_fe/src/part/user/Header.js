@@ -50,14 +50,12 @@ const Header = () => {
     }, []);
 
     useEffect(() => {
-        if (userData) {
-            console.log("Current user data:", userData);
+        const userId = JSON.parse(CryptoJS.AES.decrypt(localStorage.getItem("userData"), "secret-key").toString(CryptoJS.enc.Utf8)).user_id;
+        if (userId) {
+            fetchCartItems(userId); // Gọi hàm fetchCartItems với userId lấy từ localStorage
         }
-
-        if (cartItems.length > 0) {
-            console.log("Current cart items:", cartItems);
-        }
-    }, [userData, cartItems]);
+    }, []);
+    
 
     const handleLogout = () => {
         Cookies.remove("access_token");
@@ -69,12 +67,14 @@ const Header = () => {
     };
 
     const handleCartClick = () => {
-        if (isLoggedIn && userData && userData.user_id) {
-            navigate(`/cart/${userData.user_id}`);
+        const userId = JSON.parse(CryptoJS.AES.decrypt(localStorage.getItem("userData"), "secret-key").toString(CryptoJS.enc.Utf8)).user_id;
+        if (isLoggedIn && userId) {
+            navigate(`/cart`); // Không cần truyền userId qua URL
         } else {
             navigate("/login");
         }
     };
+    
 
     return (
         <div className="container-fluid fixed-top">

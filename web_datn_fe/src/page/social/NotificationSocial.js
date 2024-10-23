@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../../assets/css/notification.css"; // Import file CSS
 import { formatNotificationTime } from "../../config/formatPostTime";
-import { apiClient } from "../../services/authService";
+
+import { apiClient } from "../../config/apiClient";
+import { Client } from "@stomp/stompjs"; // Import STOMP client
+import SockJS from "sockjs-client"; // Import SockJS
+
 
 const NotificationFullPage = () => {
   const [notifications, setNotifications] = useState([]);
@@ -18,6 +22,7 @@ const NotificationFullPage = () => {
       "secret-key"
     ).toString(CryptoJS.enc.Utf8);
     const userId = JSON.parse(decryptedUserId).user_id;
+
 
     const fetchNotifications = async () => {
       try {
@@ -40,44 +45,49 @@ const NotificationFullPage = () => {
 
     fetchNotifications();
 
-    // Kết nối WebSocket
-    const socket = new WebSocket("ws://localhost:8080/ws");
+    // Kết nối STOMP với SockJS
+    const client = new Client({
+      webSocketFactory: () => {
+        return new SockJS("http://localhost:8080/ws"); // Sử dụng SockJS
+      },
+      onConnect: () => {
+        console.log("Connected to WebSocket");
+        setIsConnected(true);
 
-    socket.onopen = () => {
-      console.log("WebSocket connection established");
-      setIsConnected(true);
-    };
+        // Subscribe to notifications topic
+        client.subscribe(`/queue/notifications`, (message) => {
+          const newNotificationData = JSON.parse(message.body);
+          const newNotification = {
+            id: newNotificationData.id || notifications.length + 1, // Sử dụng ID từ server nếu có
+            user: newNotificationData.user || "", // Thêm thông tin người dùng (nếu cần)
+            message: newNotificationData.message,
+            type: newNotificationData.type, // Thêm thuộc tính type để xác định loại thông báo
+            postId: newNotificationData.postId, // Thêm postId để điều hướng
+            createdAt: new Date(), // Sử dụng thời gian hiện tại
+          };
 
-    socket.onmessage = (event) => {
-      const newNotificationData = JSON.parse(event.data);
-      const newNotification = {
-        id: notifications.length + 1,
-        user: newNotificationData.user,
-        message: newNotificationData.message,
-        type: newNotificationData.type, // Thêm thuộc tính type để xác định loại thông báo
-        postId: newNotificationData.postId, // Thêm postId để điều hướng
-        createdAt: new Date(), // Sử dụng thời gian hiện tại
-      };
 
-      setNotifications((prevNotifications) => [
-        newNotification,
-        ...prevNotifications,
-      ]);
-    };
+          // Cập nhật thông báo mới vào đầu danh sách
+          setNotifications((prevNotifications) => [
+            newNotification,
+            ...prevNotifications,
+          ]);
+        });
+      },
+      onStompError: (frame) => {
+        console.error("Broker reported error: " + frame.headers["message"]);
+        console.error("Additional details: " + frame.body);
+      },
+    });
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+    client.activate(); // Kích hoạt client STOMP
 
-    socket.onclose = () => {
-      console.log("WebSocket connection closed");
-      setIsConnected(false);
-    };
-
+    // Clean up
     return () => {
-      socket.close();
+      client.deactivate(); // Ngắt kết nối khi component unmount
     };
-  }, []);
+  }, [encryptedUserData]); // Chạy lại khi encryptedUserData thay đổi
+
 
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -94,12 +104,12 @@ const NotificationFullPage = () => {
     <div className="notification-fullpage-container">
       <div className="notifications-header">
         <h2>Tất cả Thông Báo</h2>
-        <Link to="#" className="notification-settings">
-          Cài đặt Thông Báo
-        </Link>
       </div>
 
-      {/* <div className="connection-status">
+
+      {/* Trạng thái kết nối WebSocket
+      <div className="connection-status">
+
         {isConnected ? (
           <p className="connected">WebSocket đã kết nối</p>
         ) : (

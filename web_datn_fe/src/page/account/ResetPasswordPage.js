@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'; // Import SweetAlert2
 import "../../assets/css/auth.css";
 import { apiClient } from "../../services/authService"; // Import apiClient
 
-const ChangePasswordPage = () => {
+const ResetPasswordPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate(); // Khởi tạo useNavigate
@@ -118,4 +118,4 @@ const ChangePasswordPage = () => {
   );
 };
 
-export default ChangePasswordPage;
+export default ResetPasswordPage;

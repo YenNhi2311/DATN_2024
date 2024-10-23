@@ -39,6 +39,7 @@ public class ProductService {
         for (Object[] result : results) {
             ProductEntity product = (ProductEntity) result[0];
             ProductDetailsEntity productDetail = (ProductDetailsEntity) result[1];
+            Integer totalSold = ((Long) result[2]).intValue(); // Chuyển từ Long sang Integer
 
             // Tạo ProductDTO
             ProductDTO productDTO = new ProductDTO();
@@ -62,7 +63,7 @@ public class ProductService {
             detailsDTO.setBenefitId(productDetail.getBenefit().getBenefitId());
 
             // Tạo ProductWithDetailsDTO
-            ProductWithDetailsDTO combinedDTO = new ProductWithDetailsDTO(productDTO, detailsDTO);
+            ProductWithDetailsDTO combinedDTO = new ProductWithDetailsDTO(productDTO, detailsDTO, totalSold);
             topProducts.add(combinedDTO);
         }
 

@@ -46,11 +46,16 @@ export const refreshToken = async (token) => {
 };
 
 // Thêm hàm lấy thông tin người dùng theo userId
-export const getUserData = () => {
+export const getUserDataById = () => {
   const encryptedUserData = localStorage.getItem("userData");
   if (encryptedUserData) {
     try {
-      const decryptedData = CryptoJS.AES.decrypt(encryptedUserData, "secret-key").toString(CryptoJS.enc.Utf8);
+
+      const decryptedData = CryptoJS.AES.decrypt(
+        encryptedUserData,
+        "secret-key"
+      ).toString(CryptoJS.enc.Utf8);
+
       const userData = JSON.parse(decryptedData);
       return userData;
     } catch (err) {
@@ -61,11 +66,32 @@ export const getUserData = () => {
   return null;
 };
 
+// Thêm hàm lấy thông tin người dùng theo token
+export const getUserData = async (userId, token) => {
+  try {
+    const response = await apiClient.get(`/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Đính kèm token vào request
+      },
+    });
+
+    return response.data; // Trả về dữ liệu người dùng
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Đã xảy ra lỗi khi lấy thông tin người dùng"
+    );
+  }
+};
+
 
 // Thêm hàm lấy giỏ hàng theo userId
 export const getCartByUserId = async (userId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/cart/${userId}`);
+    const response = await axios.get(
+      `http://localhost:8080/api/cart/${userId}`
+    );
+
     console.log("Response from cart API:", response.data); // Ghi nhật ký phản hồi
     return response.data; // Trả về giỏ hàng nếu tồn tại
   } catch (error) {
@@ -79,7 +105,11 @@ export const getCartByUserId = async (userId) => {
 // Thêm hàm lấy các mục trong giỏ hàng
 export const getCartItems = async (userId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/cart/items/${userId}`); // Giả sử bạn có endpoint này
+
+    const response = await axios.get(
+      `http://localhost:8080/api/cart/items/${userId}`
+    ); // Giả sử bạn có endpoint này
+
     console.log("Response from cart items API:", response.data); // Ghi nhật ký phản hồi
     return response.data; // Giả sử đây là mảng các mục trong giỏ hàng
   } catch (error) {
