@@ -60,6 +60,7 @@ const Header = () => {
     const handleLogout = () => {
         Cookies.remove("access_token");
         localStorage.removeItem("userData");
+        // localStorage.removeItem(userId);
         setIsLoggedIn(false);
         setUserData(null);
         navigate("/login");
@@ -128,28 +129,29 @@ const Header = () => {
                         <div className="nav-item dropdown my-auto me-0">
                             <Link to="#" className="nav-link" data-bs-toggle="dropdown">
                                 {isLoggedIn && userData ? (
-                                    // Hiển thị icon giỏ hàng nếu đã đăng nhập
                                     <div className="user-profile">
                                         <img
-                                            src={userData.img || "link-to-default-avatar.png"} // Thêm ảnh mặc định nếu không có ảnh người dùng
+                                            src={userData.img ? `http://localhost:8080/assets/img/${userData.img}` : "link-to-default-avatar.png"} // Thêm ảnh mặc định nếu không có ảnh người dùng
                                             alt="User Profile"
                                             className="user-avatar"
-                                            style={{ width: '40px',height: '40px',borderRadius:'50%',
-                                                objectFit:'cover',border:'2px solid #ccc'
+                                            style={{
+                                                width: '60px',
+                                                height: '60px',
+                                                borderRadius: '50%',
+                                                objectFit: 'cover',
+                                                border: '2px solid #ccc'
                                             }}
                                         />
                                     </div>
                                 ) : (
-                                    <i className="fas fa-user text-blue fa-2x"></i>// Icon giỏ hàng nếu chưa đăng nhập
+                                    <i className="fas fa-user text-blue fa-2x"></i>
                                 )}
-
-                              
                             </Link>
                             <div className="dropdown-menu m-0 bg-secondary rounded-0">
                                 {isLoggedIn && userData ? (
                                     <>
                                         <Link to="/profile" className="dropdown-item">Quản Lý Thông Tin</Link>
-                                        <Link to="/change-password" className="dropdown-item" >Đổi Mật Khẩu</Link>
+                                        <Link to="/change-password" className="dropdown-item">Đổi Mật Khẩu</Link>
                                         <a className="dropdown-item" onClick={handleLogout}>Đăng Xuất</a>
                                     </>
                                 ) : (
