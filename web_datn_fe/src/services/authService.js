@@ -26,7 +26,8 @@ export const loginUser = async (credentials) => {
     console.log("Login API Response:", response); // Ghi nhật ký toàn bộ phản hồi API
     return response.data; // Trả về response.data để giữ tính nhất quán
   } catch (error) {
-    console.error("Error in loginUser:", error); // Ghi nhật ký lỗi nếu có
+    console.error("Error in loginUser:", error); 
+    // Ghi nhật ký lỗi nếu có
     throw new Error(
       error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập"
     );

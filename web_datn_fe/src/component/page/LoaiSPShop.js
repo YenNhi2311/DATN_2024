@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer và toast
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS
 import { useCart } from "../../component/page/CartContext";
+
+import { apiClient } from "../../config/apiClient";
+
 const LoaiSPShop = () => {
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -38,7 +41,7 @@ const LoaiSPShop = () => {
   
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/products");
+      const response = await apiClient.get("api/products");
       const products = response.data;
 
       const productDetailsPromises = products.map((product) =>

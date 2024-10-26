@@ -1,0 +1,96 @@
+.profile-container-active {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  height: 100vh;
+  margin-top: 150px;
+}
+
+.profile-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 0 0;
+  border-right: 1px solid #ddd;
+  height: 100%;
+}
+
+.profile-left button {
+  position: relative;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  padding: 15px 0;
+  text-align: left;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  overflow: hidden;
+  color: black;
+  transition: color 0.3s, background-color 0.3s;
+  border-radius: 8px;
+}
+
+.profile-left button.active {
+  color: white;
+  background-color: #2575fc;
+}
+
+.profile-left button:hover {
+  color: black;
+}
+
+.profile-left button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  color: black;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(149, 185, 248, 0.3); /* Lighter shade of blue */
+  transition: left 0.4s ease-in-out;
+}
+
+.profile-left button:hover::before {
+  left: 0;
+}
+.profile-left span{
+  font-size: 1.2em;
+}
+
+
+.profile-right {
+  flex: 3;
+  padding-left: 60px;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
+  background-color: #f9f9f9; /* Màu nền cho vùng bên phải */
+  overflow: hidden; /* Ẩn các phần vượt quá */
+}
+
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Không cho phép tương tác với nền */
+  z-index: 1; /* Đặt nền ở dưới cùng */
+}
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.8; /* Độ mờ cho các hình */
+  animation: fall 7s infinite; /* Hiệu ứng rơi */
+}
+
+@keyframes fall {
+  0% {
+      transform: translateY(-100px);
+  }
+  100% {
+      transform: translateY(100vh); /* Di chuyển xuống dưới */
+  }
+}

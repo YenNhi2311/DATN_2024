@@ -1,47 +1,48 @@
+/* Container chung */
 .profile-container {
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     align-items: center;
-    margin-top: 150px;
-    height: 90vh;
-    /* background: linear-gradient(to right, #e2e2e2, #c9d6ff); */
     font-family: "Poppins", system-ui;
+    padding-left: 160px;
 }
 
+/* Form cập nhật hồ sơ */
 .profile-form {
     background-color: #fff;
     padding: 30px;
     border-radius: 10px;
-      background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
     width: 700px;
-    height: fit-content; /* Cập nhật để tự động điều chỉnh chiều cao */
+    height: fit-content;
 }
 
 .profile-form h2 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 24px;
-    color: #34465d; /* Màu chữ cho tiêu đề */
+    color: #34465d;
 }
 
 .form-group {
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
 .form-group input {
-    width: 100%; /* Đặt chiều rộng 100% */
+    width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    transition: border-color 0.3s ease; /* Hiệu ứng khi hover */
+    transition: border-color 0.3s ease;
 }
 
 .form-group input:focus {
-    border-color: #2575fc; /* Thay đổi màu biên khi focus */
-    outline: none; /* Xóa outline mặc định */
+    border-color: #2575fc;
+    outline: none;
 }
 
 .profile-image-section {
@@ -56,12 +57,12 @@
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
-    border: 3px solid #2575fc; /* Thêm viền cho hình ảnh */
-    transition: transform 0.3s ease; /* Hiệu ứng phóng to */
+    border: 3px solid #2575fc;
+    transition: transform 0.3s ease;
 }
 
 .profile-image:hover {
-    transform: scale(1.05); /* Phóng to khi hover */
+    transform: scale(1.05);
 }
 
 .profile-form button {
@@ -77,8 +78,10 @@
 }
 
 .profile-form button:hover {
-    background-color: #2575fc; /* Thay đổi màu nút khi hover */
+    background-color: #2575fc;
 }
+
+
 
 .loading-spinner {
     border: 8px solid #f3f3f3;
