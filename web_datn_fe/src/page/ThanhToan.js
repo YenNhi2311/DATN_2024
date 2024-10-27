@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "../assets/css/address.css";
 import "../assets/css/addressmodal.css";
@@ -11,6 +10,7 @@ import "../assets/css/shop.css";
 import "../assets/css/style.css";
 import Address from "../component/web/Address";
 import AddressModal from "../component/web/AddressModel";
+import { addAddress, fetchAddresses as fetchAddressesFromService } from "../services/authService"; // Nhập các hàm cần thiết từ authService
 
 const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -28,14 +28,14 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
     if (storedItems) {
       setSelectedCartItems(JSON.parse(storedItems));
     }
-    fetchAddresses();
+    fetchAddresses(); // Gọi hàm fetchAddresses để lấy địa chỉ
   }, []);
 
   const fetchAddresses = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/addresses");
-      const address = response.data.find((addr) => addr.status);
-      setAddresses(response.data);
+      const addressData = await fetchAddressesFromService(); // Sử dụng hàm fetchAddresses từ authService
+      const address = addressData.find((addr) => addr.status); // Tìm địa chỉ mặc định
+      setAddresses(addressData);
       setDefaultAddress(address);
       setSelectedAddress(address);
     } catch (error) {
@@ -45,20 +45,15 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
 
   const handleAddressSubmit = async (formData) => {
     try {
-        const response = await axios.post("http://localhost:8080/api/addresses", formData);
-        // Cập nhật địa chỉ mới vào danh sách
-        setAddresses((prevAddresses) => [...prevAddresses, response.data]);
-        // Thiết lập địa chỉ đã chọn là địa chỉ mới
-        setSelectedAddress(response.data);
-        setIsAddressModalOpen(false);
-        // Gọi lại để lấy địa chỉ mới từ server (nếu cần)
-        fetchAddresses(); 
+      const response = await addAddress(formData); // Sử dụng hàm addAddress từ authService
+      setAddresses((prevAddresses) => [...prevAddresses, response]);
+      setSelectedAddress(response);
+      setIsAddressModalOpen(false);
+      fetchAddresses(); 
     } catch (error) {
-        console.error("Lỗi khi thêm địa chỉ:", error);
+      console.error("Lỗi khi thêm địa chỉ:", error);
     }
-};
-
-
+  };
 
   const handleOpenModal = (event) => {
     event.preventDefault();
@@ -124,16 +119,10 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
                                 style={{ width: "80px", height: "80px" }}
                               />
                             </th>
-                            <td className="py-3">
-                              {item.productDetail?.product?.name}
-                            </td>
-                            <td className="py-3">
-                              {item.discountedPrice.toLocaleString()}đ
-                            </td>
+                            <td className="py-3">{item.productDetail?.product?.name}</td>
+                            <td className="py-3">{item.discountedPrice.toLocaleString()}đ</td>
                             <td className="py-3">{item.quantity}</td>
-                            <td className="py-3">
-                              {(item.discountedPrice * item.quantity).toLocaleString()}đ
-                            </td>
+                            <td className="py-3">{(item.discountedPrice * item.quantity).toLocaleString()}đ</td>
                           </tr>
                         ))}
                         <tr>
@@ -243,8 +232,8 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
         </div>
       </div>
 
-      {/* Address Modal */}
-      <Address
+     {/* Address Modal */}
+     <Address
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onAddAddress={handleOpenAddressModal}
@@ -256,6 +245,7 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
         onSubmit={handleAddressSubmit}
       />
     </>
+  
   );
 };
 

@@ -55,12 +55,10 @@ const Header = () => {
             fetchCartItems(userId); // Gọi hàm fetchCartItems với userId lấy từ localStorage
         }
     }, []);
-    
 
     const handleLogout = () => {
         Cookies.remove("access_token");
         localStorage.removeItem("userData");
-        // localStorage.removeItem(userId);
         setIsLoggedIn(false);
         setUserData(null);
         navigate("/login");
@@ -75,7 +73,32 @@ const Header = () => {
             navigate("/login");
         }
     };
-    
+
+    const getUserIdFromHeader = async () => {
+        const response = await fetch("/api/getUserId", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${Cookies.get("access_token")}`,
+            },
+        });
+        if (response.ok) {
+            const userId = response.headers.get("userId"); // Lấy userId từ header
+            return userId;
+        } else {
+            console.error("Failed to fetch user ID from header");
+        }
+    };
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const userId = await getUserIdFromHeader();
+            if (userId) {
+                fetchCartItems(userId); // Gọi hàm fetchCartItems với userId lấy từ header
+            }
+        };
+
+        fetchUserId();
+    }, []);
 
     return (
         <div className="container-fluid fixed-top">

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { getCartItems } from '../../services/authService';
+import { getCartItemsByUserId } from '../../services/authService';
 
 const CartContext = createContext();
 
@@ -12,7 +12,7 @@ export const CartProvider = ({ children }) => {
 
     const fetchCartItems = async (userId) => {
         try {
-            const items = await getCartItems(userId);
+            const items = await getCartItemsByUserId(userId);
             setCartItems(items);
         } catch (error) {
             console.error('Error fetching cart items:', error);

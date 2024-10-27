@@ -5,11 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import "../../assets/css/category.css";
 import { useCart } from '../../component/page/CartContext';
+
 const KhuyenMai = () => {
   const [productPromotions, setProductPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     fetchProductPromotions();
   }, []);
@@ -26,23 +27,23 @@ const KhuyenMai = () => {
             const promotionId = productPromotion.promotionId;
 
             const productResponse = await axios.get(
-              `http://localhost:8080/api/products/${productId}`
+              `http://localhost:8080/api/home/product?id=${productId}`
             );
             const productDetailResponse = await axios.get(
-              `http://localhost:8080/api/productdetails/${productId}`
+              `http://localhost:8080/api/home/productdetail?productId=${productId}`
             );
             const brandResponse = await axios.get(
-              `http://localhost:8080/api/brands/${productResponse.data.brandId}`
+              `http://localhost:8080/api/home/brand?id=${productResponse.data.brandId}`
             );
             const promotionResponse = await axios.get(
-              `http://localhost:8080/api/promotions/${promotionId}`
+              `http://localhost:8080/api/home/promotion?id=${promotionId}`
             );
 
             return {
               brand: brandResponse.data,
               promotion: promotionResponse.data,
               product: productResponse.data,
-              productDetail: productDetailResponse.data,
+              productDetail: productDetailResponse.data[0],
               productPromotionId: productPromotion.productPromotionId,
             };
           })
@@ -80,7 +81,7 @@ const KhuyenMai = () => {
         return;
       }
 
-      const cartResponse = await axios.get(`http://localhost:8080/api/cart/${userId}`);
+      const cartResponse = await axios.get(`http://localhost:8080/api/cart?userId=${userId}`);
       const cartData = cartResponse.data;
 
       if (cartData.length === 0) {
@@ -91,7 +92,7 @@ const KhuyenMai = () => {
       const cartId = cartData[0].cartId;
 
       const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
+        `http://localhost:8080/api/cart/items?userId=${userId}`
       );
       const cartItems = cartItemsResponse.data;
 
@@ -107,7 +108,7 @@ const KhuyenMai = () => {
         const updatedQuantity = existingCartItem.quantity + quantity;
 
         const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+          `http://localhost:8080/api/cart/cartItem/update?cartItemId=${existingCartItem.cartItemId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${updatedQuantity}`
         );
 
         if (updateResponse.status === 200) {
@@ -116,7 +117,7 @@ const KhuyenMai = () => {
         }
       } else {
         const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/${productPromotionId}/${quantity}`
+          `http://localhost:8080/api/cart/cartItem?cartId=${cartId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${quantity}`
         );
 
         if (addResponse.status === 201) {
@@ -133,7 +134,6 @@ const KhuyenMai = () => {
     const { product } = productPromotion;
     localStorage.setItem("selectedProductId", product.productId);
     localStorage.setItem("selectedProductPromotionId", productPromotion.productPromotionId);
-    // Điều hướng tới trang chi tiết sản phẩm
     window.location.href = `/productpromotion`;
   };
 
@@ -175,75 +175,39 @@ const KhuyenMai = () => {
                   {limitedProductPromotions.map((productPromotion, index) => {
                     const productDetail = productPromotion.productDetail || {};
                     const promotionPercent = productPromotion.promotion.percent || 0;
-                    const productImage =
-                      productDetail.img || "path/to/default_image.jpg";
-                    const productPrice =
-                      productDetail.price || "Price unavailable";
-                    const discountAmount =
-                      (productPrice * promotionPercent) / 100;
-
+                    const productImage = productDetail.img || "path/to/default_image.jpg";
+                    const productPrice = productDetail.price || "Price unavailable";
+                    const discountAmount = (productPrice * promotionPercent) / 100;
                     const originalPrice = productPrice - discountAmount;
-                    const productBrand =
-                      productPromotion.brand?.name || "Brand unavailable";
-                    const productName =
-                      productPromotion.product?.name || "Product name unavailable";
+                    const productBrand = productPromotion.brand?.name || "Brand unavailable";
+                    const productName = productPromotion.product?.name || "Product name unavailable";
 
                     return (
-                      <div
-                        key={index}
-                        className="col-md-6 col-lg-4 col-xl-3 col-sm-6 col-6"
-                      >
+                      <div key={index} className="col-md-6 col-lg-4 col-xl-3 col-sm-6 col-6">
                         <div className="pro-container">
                           <div className="pro">
                             <span className="sale">{promotionPercent}%</span>
                             <a onClick={() => handleProductClick(productPromotion)}>
-                              <img
-                                src={require(`../../assets/img/${productImage}`)}
-                                alt={productName}
-                              />
+                              <img src={require(`../../assets/img/${productImage}`)} alt={productName} />
                             </a>
                             <div className="icon-container">
-                              <a
-                                className="btn"
-                                onClick={() => {
-                                  const quantity = 1;
-                                  handleAddToCart(
-                                    productDetail.productDetailId,
-                                    productPromotion.productPromotionId,
-                                    quantity
-                                  );
-                                }}
-                              >
+                              <a className="btn" onClick={() => handleAddToCart(productDetail.productDetailId, productPromotion.productPromotionId, 1)}>
                                 <i className="fas fa-shopping-cart"></i>
                               </a>
-                              <a
-                                onClick={() => handleProductClick(productPromotion)}
-                              >
+                              <a onClick={() => handleProductClick(productPromotion)}>
                                 <i className="fas fa-eye"></i>
                               </a>
                             </div>
                             <div className="des">
                               <div className="price">
-                          
-                                <h4 className="sale-price">
-                                  {originalPrice.toLocaleString()} đ
-                                </h4>
-                                <h4>
-                                  <s>{productPrice.toLocaleString()} đ</s>
-                                </h4>
+                                <h4 className="sale-price">{originalPrice.toLocaleString()} đ</h4>
+                                <h4><s>{productPrice.toLocaleString()} đ</s></h4>
                               </div>
                               <span>{productBrand}</span>
                               <h6>{productName}</h6>
                               <div className="star">
                                 {[...Array(5)].map((_, starIndex) => (
-                                  <i
-                                    key={starIndex}
-                                    className={
-                                      starIndex < productPromotion.rating
-                                        ? "fas fa-star"
-                                        : "far fa-star"
-                                    }
-                                  ></i>
+                                  <i key={starIndex} className={starIndex < productPromotion.rating ? "fas fa-star" : "far fa-star"}></i>
                                 ))}
                               </div>
                             </div>

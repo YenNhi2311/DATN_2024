@@ -776,7 +776,7 @@
             font-size: 44px; /* Adjust title font size */
         }
         .table td {
-            font-size: 12px;
+            font-size: 13px;
             text-align: center;
             vertical-align: middle; 
           
@@ -957,3 +957,12 @@
     object-fit: cover; /* Giữ tỷ lệ khung hình và cắt bớt ảnh nếu cần */
   }
 /** banner end**/  
+.text-left{
+    text-align: left;
+    font-size: 15px;
+
+}
+.text-right {
+    margin: 0 20px; 
+    font-size: 15px;
+}

@@ -1,17 +1,22 @@
-import axios from 'axios';
+import axios from "axios";
 import CryptoJS from "crypto-js";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import "../../assets/css/category.css"; // Tạo file CSS để tùy chỉnh giao diện
+import "../../assets/css/category.css";
 import { useCart } from '../../component/page/CartContext';
-const KhuyenMaiList = () => {
+
+const KhuyenMai = () => {
   const [productPromotions, setProductPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     fetchProductPromotions();
   }, []);
+
   const { cartItems, fetchCartItems } = useCart();
+
   const fetchProductPromotions = () => {
     axios
       .get("http://localhost:8080/api/home/productpromotions")
@@ -22,23 +27,23 @@ const KhuyenMaiList = () => {
             const promotionId = productPromotion.promotionId;
 
             const productResponse = await axios.get(
-              `http://localhost:8080/api/products/${productId}`
+              `http://localhost:8080/api/home/product?id=${productId}`
             );
             const productDetailResponse = await axios.get(
-              `http://localhost:8080/api/productdetails/${productId}`
+              `http://localhost:8080/api/home/productdetail?productId=${productId}`
             );
             const brandResponse = await axios.get(
-              `http://localhost:8080/api/brands/${productResponse.data.brandId}`
+              `http://localhost:8080/api/home/brand?id=${productResponse.data.brandId}`
             );
             const promotionResponse = await axios.get(
-              `http://localhost:8080/api/promotions/${promotionId}`
+              `http://localhost:8080/api/home/promotion?id=${promotionId}`
             );
 
             return {
               brand: brandResponse.data,
               promotion: promotionResponse.data,
               product: productResponse.data,
-              productDetail: productDetailResponse.data,
+              productDetail: productDetailResponse.data[0],
               productPromotionId: productPromotion.productPromotionId,
             };
           })
@@ -76,7 +81,7 @@ const KhuyenMaiList = () => {
         return;
       }
 
-      const cartResponse = await axios.get(`http://localhost:8080/api/cart/${userId}`);
+      const cartResponse = await axios.get(`http://localhost:8080/api/cart?userId=${userId}`);
       const cartData = cartResponse.data;
 
       if (cartData.length === 0) {
@@ -87,7 +92,7 @@ const KhuyenMaiList = () => {
       const cartId = cartData[0].cartId;
 
       const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
+        `http://localhost:8080/api/cart/items?userId=${userId}`
       );
       const cartItems = cartItemsResponse.data;
 
@@ -103,7 +108,7 @@ const KhuyenMaiList = () => {
         const updatedQuantity = existingCartItem.quantity + quantity;
 
         const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+          `http://localhost:8080/api/cart/cartItem/update?cartItemId=${existingCartItem.cartItemId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${updatedQuantity}`
         );
 
         if (updateResponse.status === 200) {
@@ -112,7 +117,7 @@ const KhuyenMaiList = () => {
         }
       } else {
         const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/${productPromotionId}/${quantity}`
+          `http://localhost:8080/api/cart/cartItem?cartId=${cartId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${quantity}`
         );
 
         if (addResponse.status === 201) {
@@ -124,11 +129,11 @@ const KhuyenMaiList = () => {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
     }
   };
+
   const handleProductClick = (productPromotion) => {
     const { product } = productPromotion;
     localStorage.setItem("selectedProductId", product.productId);
     localStorage.setItem("selectedProductPromotionId", productPromotion.productPromotionId);
-    // Điều hướng tới trang chi tiết sản phẩm
     window.location.href = `/productpromotion`;
   };
 
@@ -136,16 +141,32 @@ const KhuyenMaiList = () => {
     return <p>Loading promotions...</p>;
   }
 
-  if (productPromotions.length === 0) {
-    return <p>No active promotions available.</p>;
-  }
-
-  const limitedProductPromotions = productPromotions.slice(0, 30);
+  const limitedProductPromotions = productPromotions.slice(0, 20);
 
   return (
     <div className="container py-5">
-       <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="tab-class text-center">
+        <div className="row g-4">
+          <div className="col-lg-5 col-12 text-start">
+            <h1 className="text-blue">Khuyến Mãi</h1>
+          </div>
+          <div className="col-lg-7 col-12 text-end">
+            <ul className="nav nav-pills d-inline-flex text-center mb-5">
+              <li className="nav-item">
+                <a
+                  className="d-flex m-2 py-2 bg-blue rounded-pill active"
+                  data-bs-toggle="pill"
+                  onClick={() => navigate('/productpromotionlist')}
+                >
+                  <span className="text-light" style={{ width: "130px" }}>
+                    Xem Tất Cả
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
         <div className="tab-content">
           <div id="tab-1" className="tab-pane fade show p-0 active">
             <div className="row g-4">
@@ -154,12 +175,12 @@ const KhuyenMaiList = () => {
                   {limitedProductPromotions.map((productPromotion, index) => {
                     const productDetail = productPromotion.productDetail || {};
                     const promotionPercent = productPromotion.promotion.percent || 0;
-                    const productImage = productDetail.img || 'default_image.jpg';
-                    const productPrice = productDetail.price || 0;
+                    const productImage = productDetail.img || "path/to/default_image.jpg";
+                    const productPrice = productDetail.price || "Price unavailable";
                     const discountAmount = (productPrice * promotionPercent) / 100;
-                    const originalPrice = productPrice + discountAmount;
-                    const productBrand = productPromotion.brand?.name || 'Brand unavailable';
-                    const productName = productPromotion.product?.name || 'Product name unavailable';
+                    const originalPrice = productPrice - discountAmount;
+                    const productBrand = productPromotion.brand?.name || "Brand unavailable";
+                    const productName = productPromotion.product?.name || "Product name unavailable";
 
                     return (
                       <div key={index} className="col-md-6 col-lg-4 col-xl-3 col-sm-6 col-6">
@@ -167,35 +188,20 @@ const KhuyenMaiList = () => {
                           <div className="pro">
                             <span className="sale">{promotionPercent}%</span>
                             <a onClick={() => handleProductClick(productPromotion)}>
-                              <img
-                                src={require(`../../assets/img/${productImage}`)}
-                                alt={productName}
-                              />
+                              <img src={require(`../../assets/img/${productImage}`)} alt={productName} />
                             </a>
                             <div className="icon-container">
-                              <a
-                                className="btn"
-                                onClick={() => {
-                                  const quantity = 1;
-                                  handleAddToCart(
-                                    productDetail.productDetailId,
-                                    productPromotion.productPromotionId,
-                                    quantity
-                                  );
-                                }}
-                              >
+                              <a className="btn" onClick={() => handleAddToCart(productDetail.productDetailId, productPromotion.productPromotionId, 1)}>
                                 <i className="fas fa-shopping-cart"></i>
                               </a>
-                              <a
-                                onClick={() => handleProductClick(productPromotion)}
-                              >
+                              <a onClick={() => handleProductClick(productPromotion)}>
                                 <i className="fas fa-eye"></i>
                               </a>
                             </div>
                             <div className="des">
                               <div className="price">
-                                <h4 className="sale-price">{productPrice.toLocaleString()} đ</h4>
-                                <h4><s>{originalPrice.toLocaleString()} đ</s></h4>
+                                <h4 className="sale-price">{originalPrice.toLocaleString()} đ</h4>
+                                <h4><s>{productPrice.toLocaleString()} đ</s></h4>
                               </div>
                               <span>{productBrand}</span>
                               <h6>{productName}</h6>
@@ -221,4 +227,4 @@ const KhuyenMaiList = () => {
   );
 };
 
-export default KhuyenMaiList;
+export default KhuyenMai;

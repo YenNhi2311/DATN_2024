@@ -106,164 +106,179 @@ const ChiTietSPKM = () => {
   // Fetch product details when component mounts or id changes
   useEffect(() => {
     const fetchProduct = async () => {
-      setLoading(true); // Start loading
-      const productId = localStorage.getItem("selectedProductId");
-      const productPromotionId = localStorage.getItem("selectedProductPromotionId");
-      try {
-        // Fetch the product promotion data by ID
-        const productPromotionResponse = await axios.get(
-          `http://localhost:8080/api/home/productpromotions/${productPromotionId}`
-        );
-        const productPromotion = productPromotionResponse.data;
+        setLoading(true); // Bắt đầu tải dữ liệu
+        const productId = localStorage.getItem("selectedProductId");
+        const productPromotionId = localStorage.getItem("selectedProductPromotionId");
 
-        // Extract the product and promotion data
-        const productId = productPromotion.productId;
-        const promotionId = productPromotion.promotionId;
-
-        const productResponse = await axios.get(
-          `http://localhost:8080/api/products/${productId}`
-        );
-        const productData = productResponse.data;
-
-        // Fetch product details by product ID
-        const productDetailsResponse = await axios.get(
-          `http://localhost:8080/api/productdetails/${productId}`
-        );
-        const productDetails = productDetailsResponse.data;
-
-        // Fetch related brand details
-        const brandResponse = await axios.get(
-          `http://localhost:8080/api/brands/${productData.brandId}`
-        );
-        const brandData = brandResponse.data;
-
-        // Fetch related category details
-        const categoryResponse = await axios.get(
-          `http://localhost:8080/api/categories/${productData.categoryId}`
-        );
-        const categoryData = categoryResponse.data;
-
-        // Fetch capacity details if available in the product details
-        const capacityResponse = await axios.get(
-          `http://localhost:8080/api/capacities/${productDetails.capacityId}`
-        );
-        const capacityData = capacityResponse.data;
-
-        // Fetch skin type details
-        const skintypeResponse = await axios.get(
-          `http://localhost:8080/api/skintypes/${productDetails.skintypeId}`
-        );
-        const skinTypeData = skintypeResponse.data;
-
-        // Fetch benefit details
-        const benefitResponse = await axios.get(
-          `http://localhost:8080/api/benefits/${productDetails.benefitId}`
-        );
-        const benefitData = benefitResponse.data;
-
-        // Fetch ingredient details
-        const ingredientResponse = await axios.get(
-          `http://localhost:8080/api/ingredients/${productDetails.ingredientId}`
-        );
-        const ingredientData = ingredientResponse.data;
-
-        const promotionResponse = await axios.get(
-          `http://localhost:8080/api/promotions/${promotionId}`
-        );
-        const promotionData = promotionResponse.data;
-
-        const relatedProductsResponse = await axios.get(
-          `http://localhost:8080/api/products?categoryId=${productData.categoryId}`
-        );
-        const relatedProductsData = relatedProductsResponse.data;
-
-        // Fetch details and brand for each related product concurrently
-        const relatedProductDetails = await Promise.all(
-          relatedProductsData.map(async (relatedProduct) => {
-            const detailResponse = await axios.get(
-              `http://localhost:8080/api/productdetails/${relatedProduct.productId}`
+        try {
+            // Lấy dữ liệu khuyến mãi sản phẩm theo ID
+            const productPromotionResponse = await axios.get(
+                `http://localhost:8080/api/home/productpromotion?id=${productPromotionId}`
             );
+            const productPromotion = productPromotionResponse.data;
+
+            // Trích xuất productId và promotionId
+            const productId = productPromotion.productId;
+            const promotionId = productPromotion.promotionId;
+
+            // Lấy thông tin sản phẩm theo ID
+            const productResponse = await axios.get(
+                `http://localhost:8080/api/home/product?id=${productId}`
+            );
+            const productData = productResponse.data;
+
+            // Lấy chi tiết sản phẩm theo ID
+            const productDetailsResponse = await axios.get(
+                `http://localhost:8080/api/home/productdetail?productId=${productId}`
+            );
+            const productDetails = productDetailsResponse.data[0];
+
+            // Lấy thông tin thương hiệu liên quan
             const brandResponse = await axios.get(
-              `http://localhost:8080/api/brands/${relatedProduct.brandId}`
+                `http://localhost:8080/api/home/brand?id=${productData.brandId}`
+            );
+            const brandData = brandResponse.data;
+
+            // Lấy thông tin danh mục liên quan
+            const categoryResponse = await axios.get(
+                `http://localhost:8080/api/home/category?id=${productData.categoryId}`
+            );
+            const categoryData = categoryResponse.data;
+
+            // Lấy thông tin dung tích nếu có
+            let capacityData = null;
+            if (productDetails.capacityId) {
+                const capacityResponse = await axios.get(
+                    `http://localhost:8080/api/home/capacity?id=${productDetails.capacityId}`
+                );
+                capacityData = capacityResponse.data;
+            }
+
+            // Lấy thông tin loại da
+            let skinTypeData = null;
+            if (productDetails.skintypeId) {
+                const skintypeResponse = await axios.get(
+                    `http://localhost:8080/api/home/skintype?id=${productDetails.skintypeId}`
+                );
+                skinTypeData = skintypeResponse.data;
+            }
+
+            // Lấy thông tin lợi ích
+            let benefitData = null;
+            if (productDetails.benefitId) {
+                const benefitResponse = await axios.get(
+                    `http://localhost:8080/api/home/benefit?id=${productDetails.benefitId}`
+                );
+                benefitData = benefitResponse.data;
+            }
+
+            // Lấy thông tin thành phần
+            let ingredientData = null;
+            if (productDetails.ingredientId) {
+                const ingredientResponse = await axios.get(
+                    `http://localhost:8080/api/home/ingredient?id=${productDetails.ingredientId}`
+                );
+                ingredientData = ingredientResponse.data;
+            }
+
+            // Lấy thông tin khuyến mãi theo ID
+            const promotionResponse = await axios.get(
+                `http://localhost:8080/api/home/promotion?id=${promotionId}`
+            );
+            const promotionData = promotionResponse.data;
+
+            // Lấy các sản phẩm liên quan theo categoryId
+            const relatedProductsResponse = await axios.get(
+                `http://localhost:8080/api/home/products?categoryId=${productData.categoryId}`
+            );
+            const relatedProductsData = relatedProductsResponse.data;
+
+            // Lấy chi tiết các sản phẩm liên quan
+            const relatedProductDetails = await Promise.all(
+                relatedProductsData.map(async (relatedProduct) => {
+                    const detailResponse = await axios.get(
+                        `http://localhost:8080/api/home/productdetail?productId=${relatedProduct.productId}`
+                    );
+                    const relatedBrandResponse = await axios.get(
+                        `http://localhost:8080/api/home/brand?id=${relatedProduct.brandId}`
+                    );
+                    return {
+                        ...relatedProduct,
+                        details: detailResponse.data[0], // Lấy phần tử đầu tiên từ mảng chi tiết sản phẩm
+                        brand: relatedBrandResponse.data,
+                    };
+                })
             );
 
-            return {
-              ...relatedProduct,
-              details: detailResponse.data,
-              brand: brandResponse.data, // Add brand data here
-            };
-          })
-        );
-        const currentDate = new Date();
-        if (new Date(promotionData.endDate) < currentDate) {
-          navigate("/"); // Redirect to homepage if promotion has ended
-          return;
+            // Kiểm tra thời gian khuyến mãi
+            const currentDate = new Date();
+            if (new Date(promotionData.endDate) < currentDate) {
+                navigate("/"); // Điều hướng đến trang chính nếu khuyến mãi đã kết thúc
+                return;
+            }
+
+            // Set sản phẩm liên quan
+            setRelatedProducts(relatedProductDetails);
+
+            // Set trạng thái sản phẩm khuyến mãi
+            setProductPromotion({
+                productData,
+                promotionData,
+                productDetails,
+                brand: brandData,
+                category: categoryData,
+                capacity: capacityData,
+                skintype: skinTypeData,
+                benefit: benefitData,
+                ingredient: ingredientData,
+            });
+
+            // Bắt đầu đếm ngược thời gian
+            startCountdown(promotionData.endDate);
+            setLoading(false); // Dừng tải dữ liệu
+        } catch (error) {
+            console.error("Error fetching product:", error.message);
+            setLoading(false);
         }
-
-        // Set sản phẩm liên quan
-        setRelatedProducts(relatedProductDetails);
-
-        // Set the product state
-        setProductPromotion({
-          productData,
-          promotionData,
-          productDetails,
-          brand: brandData,
-          category: categoryData,
-          capacity: capacityData,
-          skintype: skinTypeData,
-          benefit: benefitData,
-          ingredient: ingredientData,
-        });
-
-        // Start the countdown
-        startCountdown(promotionData.endDate);
-
-        setLoading(false); // Stop loading
-      } catch (error) {
-        console.error("Error fetching product:", error.message);
-        setLoading(false);
-      }
     };
 
     const startCountdown = (endDate) => {
-      const updateTimeLeft = () => {
-        const now = new Date();
-        const promotionEndDate = new Date(endDate);
-        const timeLeft = promotionEndDate - now;
+        const updateTimeLeft = () => {
+            const now = new Date();
+            const promotionEndDate = new Date(endDate);
+            const timeLeft = promotionEndDate - now;
 
-        if (timeLeft < 0) {
-          clearInterval(intervalId); // Clear the interval when the promotion ends
-          setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-          setIsPromotionActive(false); // Set promotion as inactive
-          navigate("/");
-          return;
-        }
+            if (timeLeft < 0) {
+                clearInterval(intervalId); // Dừng đếm ngược khi khuyến mãi kết thúc
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                setIsPromotionActive(false); // Đánh dấu khuyến mãi không còn hiệu lực
+                navigate("/");
+                return;
+            }
 
-        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-        setTimeLeft({
-          days: days < 10 ? `0${days}` : days,
-          hours: hours < 10 ? `0${hours}` : hours,
-          minutes: minutes < 10 ? `0${minutes}` : minutes,
-          seconds: seconds < 10 ? `0${seconds}` : seconds,
-        });
-      };
+            setTimeLeft({
+                days: days < 10 ? `0${days}` : days,
+                hours: hours < 10 ? `0${hours}` : hours,
+                minutes: minutes < 10 ? `0${minutes}` : minutes,
+                seconds: seconds < 10 ? `0${seconds}` : seconds,
+            });
+        };
 
-      updateTimeLeft(); // Initial call to set the time immediately
-      intervalId = setInterval(updateTimeLeft, 1000); // Update the time every second
+        updateTimeLeft(); // Gọi lần đầu để thiết lập thời gian ngay lập tức
+        intervalId = setInterval(updateTimeLeft, 1000); // Cập nhật thời gian mỗi giây
     };
 
     fetchProduct();
 
-    // Clean up the interval when the component unmounts
+    // Dọn dẹp interval khi component unmount
     return () => clearInterval(intervalId);
-  }, [productPromotionId, productId]);
+}, []);
+
 
   if (loading) {
     return <div>Loading...</div>; // Loading state

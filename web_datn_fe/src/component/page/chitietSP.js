@@ -1,21 +1,35 @@
-import axios from "axios"; // Import axios
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ToastContainer } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import Slider from "react-slick";
-import { toast, ToastContainer } from 'react-toastify'; // Import ToastContainer và toast
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
-import "../../assets/css/loaispplq.css";
+import { toast } from "react-toastify";
 import { useCart } from "../../component/page/CartContext";
+import {
+  addToCart,
+  getBenefitById,
+  getBrandById,
+  getCapacityById,
+  getCartByUserId,
+  getCategoryById,
+  getIngredientById,
+  getProductById,
+  getProductDetailById,
+  getRelatedProducts,
+  getSkintypeById,
+  updateCartItem,
+} from "../../services/authService"; // Import các hàm API từ authService
+
 const ChiTietSP = () => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [product, setProduct] = useState(null); // State for product details
-  const [loading, setLoading] = useState(true); // State for loading status
-  const [activeTab, setActiveTab] = useState("about"); // State for active tab
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("about");
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const { cartItems, fetchCartItems } = useCart();
+  const { fetchCartItems } = useCart();
+  const navigate = useNavigate();
+
   // Handle increase and decrease of quantity
   const handleIncrease = () => {
     if (quantity < product.productDetails?.quantity) {
@@ -24,19 +38,19 @@ const ChiTietSP = () => {
       toast.error("Không đủ hàng trong kho");
     }
   };
-  // Hàm xử lý khi người dùng nhập số lượng trực tiếp vào ô input
+
+  const handleViewProduct = (productId) => {
+    localStorage.setItem("selectedProductId", productId);
+    navigate("/product");
+  };
+
   const handleInputChange = (e) => {
     const inputValue = Number(e.target.value);
-
-    // Kiểm tra xem giá trị có phải là số hợp lệ và không lớn hơn số lượng còn trong kho
     if (inputValue > 0 && inputValue <= product.productDetails?.quantity) {
       setQuantity(inputValue);
     } else if (inputValue > product.productDetails?.quantity) {
-      // Nếu số lượng nhập lớn hơn số lượng còn trong kho
-      
-      setQuantity(product.productDetails?.quantity); // Đặt lại giá trị tối đa là số lượng còn trong kho
+      setQuantity(product.productDetails?.quantity);
     } else {
-      // Nếu người dùng nhập số nhỏ hơn hoặc bằng 0, đặt lại về 1
       setQuantity(1);
     }
   };
@@ -63,7 +77,6 @@ const ChiTietSP = () => {
       </div>
     );
   };
-
   const settings = {
     dots: false,
     infinite: false,
@@ -97,217 +110,123 @@ const ChiTietSP = () => {
       },
     ],
   };
-
-  // Fetch product details when component mounts or id changes
   useEffect(() => {
-    // Lấy productId từ localStorage
-    const productId = localStorage.getItem("selectedProductId");
-  
-    if (!productId) {
-      console.error("Product ID not found");
-      return;
-    }
-  
     const fetchProduct = async () => {
-      setLoading(true); // Bắt đầu trạng thái loading
+      setLoading(true);
       try {
-        // Lấy thông tin chi tiết sản phẩm theo productId
-        const response = await axios.get(
-          `http://localhost:8080/api/products/${productId}`
-        );
-        const productData = response.data;
-  
-        // Lấy thông tin chi tiết sản phẩm liên quan
-        const productDetailsResponse = await axios.get(
-          `http://localhost:8080/api/productdetails/${productData.productId}`
-        );
-        const productDetails = productDetailsResponse.data;
-  
-        // Lấy thông tin thương hiệu liên quan
-        const brandResponse = await axios.get(
-          `http://localhost:8080/api/brands/${productData.brandId}`
-        );
-        const brandData = brandResponse.data;
-  
-        // Lấy thông tin danh mục liên quan
-        const categoryResponse = await axios.get(
-          `http://localhost:8080/api/categories/${productData.categoryId}`
-        );
-        const categoryData = categoryResponse.data;
-  
-        // Lấy thông tin về dung tích nếu có trong chi tiết sản phẩm
-        const capacityResponse = await axios.get(
-          `http://localhost:8080/api/capacities/${productDetails.capacityId}`
-        );
-        const capacityData = capacityResponse.data;
-  
-        const skintypeResponse = await axios.get(
-          `http://localhost:8080/api/skintypes/${productDetails.skintypeId}`
-        );
-        const skinTypeData = skintypeResponse.data;
-  
-        const benefitResponse = await axios.get(
-          `http://localhost:8080/api/benefits/${productDetails.benefitId}`
-        );
-        const benefitData = benefitResponse.data;
-  
-        const ingredientResponse = await axios.get(
-          `http://localhost:8080/api/ingredients/${productDetails.ingredientId}`
-        );
-        const ingredientData = ingredientResponse.data;
-  
-       
-      
+        const productData = await getProductById(id);
+        const productDetails = await getProductDetailById(productData.productId);
+        const brandData = await getBrandById(productData.brandId);
+        const categoryData = await getCategoryById(productData.categoryId);
+        const capacityData = productDetails.capacityId ? await getCapacityById(productDetails.capacityId) : null;
+        const skintypeData = productDetails.skintypeId ? await getSkintypeById(productDetails.skintypeId) : null;
+        const benefitData = productDetails.benefitId ? await getBenefitById(productDetails.benefitId) : null;
+        const ingredientData = productDetails.ingredientId ? await getIngredientById(productDetails.ingredientId) : null;
 
-        const relatedProductsResponse = await axios.get(
-          `http://localhost:8080/api/products?categoryId=${productData.categoryId}`
-        );
-        const relatedProductsData = relatedProductsResponse.data;
+        const relatedProductsData = await getRelatedProducts(productData.categoryId);
+        setRelatedProducts(relatedProductsData);
 
-        // Fetch details and brand for each related product concurrently
-        const relatedProductDetails = await Promise.all(
-          relatedProductsData.map(async (relatedProduct) => {
-            const detailResponse = await axios.get(
-              `http://localhost:8080/api/productdetails/${relatedProduct.productId}`
-         
-              );
-  
-              return {
-                ...relatedProduct,
-                details: detailResponse.data,
-                category: categoryResponse.data,
-              };
-            })
-        );
-  
-        // Set sản phẩm liên quan
-        setRelatedProducts(relatedProductDetails);
-  
-        // Set trạng thái chính của sản phẩm
         setProduct({
           ...productData,
           productDetails,
           brand: brandData,
           category: categoryData,
           capacity: capacityData,
-          skintype: skinTypeData,
+          skintype: skintypeData,
           benefit: benefitData,
           ingredient: ingredientData,
         });
-  
-        setLoading(false); // Kết thúc trạng thái loading
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching product:", error.message);
         setLoading(false);
       }
     };
-  
+
     fetchProduct();
-  }, []); // Không cần dependency 'id' nữa
-  
+  }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>; // Loading state
+    return <div>Loading...</div>;
   }
 
   if (!product) {
-    return <div>No product found</div>; // Handle case when product is not found
+    return <div>No product found</div>;
   }
 
-  const handleAddToCart = async (
-    productDetailId,
-    productPromotionId,
-    quantity // Lấy quantity từ input truyền vào
-  ) => {
+  const handleAddToCart = async () => {
     const userData = localStorage.getItem("userData");
 
     if (!userData) {
-      toast.error("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
+      alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
       return;
     }
 
     try {
-      // Giải mã dữ liệu người dùng đã lưu để lấy user ID
-      const decryptedData = CryptoJS.AES.decrypt(
-        userData,
-        "secret-key"
-      ).toString(CryptoJS.enc.Utf8);
+      const decryptedData = CryptoJS.AES.decrypt(userData, "secret-key").toString(CryptoJS.enc.Utf8);
       const parsedData = JSON.parse(decryptedData);
       const userId = parsedData.user_id;
 
       if (!userId) {
-        toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+        alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
         return;
       }
 
-      // Gọi API để lấy cartId
-      const cartResponse = await axios.get(
-        `http://localhost:8080/api/cart/${userId}`
-      );
-      const cartData = cartResponse.data;
+      const cartData = await getCartByUserId(userId);
 
-      if (cartData.length === 0) {
+      if (!cartData.length) {
         console.error("Không tìm thấy cartId");
         return;
       }
 
-      const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
+      const cartId = cartData[0].cartId;
+      const existingCartItems = await fetchCartItems(userId);
 
-      // Lấy các mục trong giỏ hàng để kiểm tra
-      const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
-      );
-      const cartItems = cartItemsResponse.data;
-
-      // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-      const existingCartItem = cartItems.find(
+      const existingCartItem = existingCartItems.find(
         (item) =>
-          item.productDetail.productDetailId === productDetailId &&
-          (item.productPromotion
-            ? item.productPromotion.productPromotionId === productPromotionId
-            : productPromotionId === 0)
+          item.productDetail.productDetailId === product.productDetails.productDetailId
       );
 
       if (existingCartItem) {
-        // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
         const updatedQuantity = existingCartItem.quantity + quantity;
-
-        // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
-        const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
-        );
-
-        if (updateResponse.status === 200) {
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
-          fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
-        }
+        await updateCartItem(existingCartItem.cartItemId, product.productDetails.productDetailId, 0, updatedQuantity);
+        fetchCartItems(userId);
+        toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
       } else {
-        // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
-        const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/0/${quantity}`
-        );
-
-        if (addResponse.status === 201) {
-          toast.success("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo thành công
-          fetchCartItems(userId); // Lấy lại giỏ hàng sau khi thêm sản phẩm
-        }
+        await addToCart(cartId, product.productDetails.productDetailId, 0, quantity);
+        fetchCartItems(userId);
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
       }
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
+      toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
     }
   };
 
   const handleTabClick = (tab) => {
-    setActiveTab(tab); // Set the active tab
+    setActiveTab(tab);
   };
+
   const generateBarcode = (productId) => {
-    const idString = productId.toString(); // Convert product ID to string
-    return idString.padStart(6, "0"); // Pad the ID to 6 digits with leading zeros if needed
+    const idString = productId.toString();
+    return idString.padStart(6, "0");
   };
+
   const barcode = product?.id ? generateBarcode(product.id) : "N/A";
   return (
     <div className="container">
-      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="container-fluid page-header2 py-5 text-center"></div>
       <div className="container-fluid py-3 mt-3">
         <div className="container py-5">
@@ -370,7 +289,9 @@ const ChiTietSP = () => {
                         if (inputValue <= product.productDetails?.quantity) {
                           setQuantity(inputValue); // Cập nhật nếu số lượng hợp lệ
                         } else {
-                          toast.error("Số lượng nhập vượt quá số lượng trong kho");
+                          toast.error(
+                            "Số lượng nhập vượt quá số lượng trong kho"
+                          );
                           setQuantity(product.productDetails?.quantity); // Giới hạn giá trị theo số lượng trong kho
                         }
                       }}
@@ -635,22 +556,25 @@ const ChiTietSP = () => {
                         src={
                           relatedProduct.details?.img
                             ? require(`../../assets/img/${relatedProduct.details.img}`)
-                            : require("../../assets/img/hasaki.png") // hoặc một hình ảnh mặc định
+                            : require("../../assets/img/hasaki.png") // Hình ảnh mặc định
                         }
+                        
                         alt={relatedProduct.name}
                         className="card-img-top"
+                        
                       />
+                      
                       <div className="icon-container">
                         <a className="btn">
                           <i className="fas fa-shopping-cart"></i>
                         </a>
-                        <a href={`/product/${relatedProduct.productId}`}>
+                        <a  onClick={() => handleViewProduct(product.productId)}>
                           <i className="fas fa-eye"></i>
                         </a>
                       </div>
                       <div className="des">
-                        <span>{relatedProduct.category?.name}</span>{" "}
-                        {/* Hiển thị Category */}
+                  
+                        <span>{relatedProduct.brand?.name}</span>
                         <h6>{relatedProduct.name}</h6>
                         <div className="star">
                           <i className="fas fa-star"></i>

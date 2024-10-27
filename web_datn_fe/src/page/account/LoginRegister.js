@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'; // Import SweetAlert2
 import "../../assets/css/customToast.css";
 import "../../assets/css/login.css";
-import { loginUser, registerUser } from "../../services/authService";
+import { createCartForUser, loginUser, registerUser } from "../../services/authService";
 
 const LoginRegister = () => {
   const [isActive, setIsActive] = useState(false);
@@ -70,56 +70,61 @@ const LoginRegister = () => {
     }
   };
 
-  const handleLoginClick = async (event) => {
-    event.preventDefault();
+  // Sử dụng hàm như trong ví dụ trước
+const handleLoginClick = async (event) => {
+  event.preventDefault();
 
-    if (!formData.username || !formData.password) {
+  if (!formData.username || !formData.password) {
       Swal.fire({
-        icon: 'error',
-        title: 'Vui lòng điền đầy đủ tên đăng nhập và mật khẩu.',
+          icon: 'error',
+          title: 'Vui lòng điền đầy đủ tên đăng nhập và mật khẩu.',
       });
       return;
-    }
+  }
 
-    try {
+  try {
       const response = await loginUser({
-        username: formData.username,
-        password: formData.password,
+          username: formData.username,
+          password: formData.password,
       });
 
       if (response && response.access_token && response.role) {
-        const { access_token, role, user_id } = response;
+          const { access_token, role, user_id } = response;
 
-        // Mã hóa thông tin người dùng
-        const encryptedUserData = CryptoJS.AES.encrypt(
-          JSON.stringify({ user_id, role, access_token }),
-          "secret-key"
-        ).toString();
-        // Lưu vào localStorage
-        localStorage.setItem("userData", encryptedUserData);
-        Cookies.set("access_token", access_token, { expires: 7 });
-        Swal.fire({
-          icon: 'success',
-          title: 'Đăng nhập thành công',
-        }); // Thông báo thành công
-        navigate(role === "admin" ? "/admin" : "/");
+          // Mã hóa thông tin người dùng
+          const encryptedUserData = CryptoJS.AES.encrypt(
+              JSON.stringify({ user_id, role, access_token }),
+              "secret-key"
+          ).toString();
+          // Lưu vào localStorage
+          localStorage.setItem("userData", encryptedUserData);
+          Cookies.set("access_token", access_token, { expires: 7 });
+
+          // Tạo giỏ hàng cho người dùng (nếu chưa có)
+          await createCartForUser(user_id);
+
+          Swal.fire({
+              icon: 'success',
+              title: 'Đăng nhập thành công',
+          });
+          navigate(role === "admin" ? "/admin" : "/");
       } else {
-        Swal.fire({
+          Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Dữ liệu không đầy đủ từ server.',
+          });
+      }
+  } catch (err) {
+      const errorMessage =
+          err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng";
+      Swal.fire({
           icon: 'error',
           title: 'Lỗi',
-          text: 'Dữ liệu không đầy đủ từ server.',
-        });
-      }
-    } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng";
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: errorMessage,
+          text: errorMessage,
       });
-    }
-  };
+  }
+};
 
   return (
     <div className={`login-container ${isActive ? "active" : ""}`} id="container " style={{ marginLeft: '400px', marginTop: '60px' }}>
