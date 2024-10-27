@@ -2,426 +2,459 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer và toast
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS
+import { toast, ToastContainer } from "react-toastify"; // Import ToastContainer và toast
+import "react-toastify/dist/ReactToastify.css"; // Import CSS
 import { useCart } from "../../component/page/CartContext";
 
-import { apiClient } from "../../config/apiClient";
+  const LoaiSPShop = () => {
+    const [brands, setBrands] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [skintypes, setSkintypes] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [selectedBrandId, setSelectedBrandId] = useState(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [selectedSkintypeId, setSelectedSkintypeId] = useState(null);
+    const [selectedPlace, setSelectedPlace] = useState(null);
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(Infinity);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [productsPerPage, setProductsPerPage] = useState(12);
+    const [sortOption, setSortOption] = useState("Nổi bật");
+    const { cartItems, fetchCartItems } = useCart();
+    const [selectedBrandIds, setSelectedBrandIds] = useState([]);
+    const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+    const [selectedSkintypeIds, setSelectedSkintypeIds] = useState([]); // Khởi tạo mảng rỗng
+    const [selectedPlaces, setSelectedPlaces] = useState([]); // Khởi tạo mảng rỗng
 
-const LoaiSPShop = () => {
-  const [brands, setBrands] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [skintypes, setSkintypes] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [selectedBrandId, setSelectedBrandId] = useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  const [selectedSkintypeId, setSelectedSkintypeId] = useState(null);
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(Infinity);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(12);
-  const [sortOption, setSortOption] = useState("Nổi bật");
-  const { cartItems, fetchCartItems } = useCart();
-  const navigate = useNavigate();
-  useEffect(() => {
-    fetchBrands();
-    fetchCategories();
-    fetchSkins();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      fetchBrands();
+      fetchCategories();
+      fetchSkins();
+
     fetchProducts();
-  }, []);
-  const handleViewProduct = (productId) => {
-    localStorage.setItem("selectedProductId", productId); // Lưu productId vào localStorage
-    navigate("/product"); // Điều hướng mà không cần truyền id
-  };
+    }, []);
+
+    useEffect(() => {
+      setFilteredProducts(products); // Đảm bảo hiển thị tất cả sản phẩm ngay từ đầu
+    }, [products]);
+
+    const fetchProducts = async () => {
+      try {
+          const response = await axios.get("http://localhost:8080/api/home/products");
+          const products = await Promise.all(
+              response.data.map(async (product) => {
+                  const [detail, brand, category] = await Promise.all([
+                      axios.get(`http://localhost:8080/api/home/productdetail?productId=${product.productId}`),
+                      axios.get(`http://localhost:8080/api/home/brand?id=${product.brandId}`),
+                      axios.get(`http://localhost:8080/api/home/category?id=${product.categoryId}`),
+                  ]);
   
+                  const skintypesResponse = await axios.get("http://localhost:8080/api/home/skintypes");
+                  const skintypes = Array.isArray(skintypesResponse.data) ? skintypesResponse.data : [];
   
-  const fetchProducts = async () => {
-    try {
-      const response = await apiClient.get("api/products");
-      const products = response.data;
 
-      const productDetailsPromises = products.map((product) =>
-        axios.get(
-          `http://localhost:8080/api/productdetails/${product.productId}`
-        )
-      );
-
-      const productBrandsPromises = products.map((product) =>
-        axios.get(`http://localhost:8080/api/brands/${product.brandId}`)
-      );
-
-      const productCategoriesPromises = products.map((product) =>
-        axios.get(`http://localhost:8080/api/categories/${product.categoryId}`)
-      );
-
-      const skintypesResponse = await axios.get(
-        "http://localhost:8080/api/skintypes"
-      );
-      const skintypes = skintypesResponse.data;
-
-      const [
-        productDetailsResponses,
-        productBrandsResponses,
-        productCategoriesResponses,
-      ] = await Promise.all([
-        Promise.all(productDetailsPromises),
-        Promise.all(productBrandsPromises),
-        Promise.all(productCategoriesPromises),
-      ]);
-
-      const productDetails = productDetailsResponses.map((res) => res.data);
-      const productBrands = productBrandsResponses.map((res) => res.data);
-      const productCategories = productCategoriesResponses.map(
-        (res) => res.data
-      );
-
-      const productsWithDetails = products.map((product, index) => {
-        const productDetail = productDetails[index];
-        const skinTypeId = productDetail.skintypeId;
-
-        return {
-          ...product,
-          productDetails: productDetail,
-          brand: productBrands[index],
-          category: productCategories[index],
-          skintype:
-            skintypes.find((type) => type.skintypeId === skinTypeId) || null,
-        };
-      });
-
-      const totalPages = Math.ceil(
-        productsWithDetails.length / productsPerPage
-      );
-      setProducts(productsWithDetails);
-      setFilteredProducts(productsWithDetails);
-      setTotalPages(totalPages);
-    } catch (error) {
-      console.error("Error fetching products:", error.message);
-    }
-  };
-
-  const removeAccents = (str) => {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  };
-
-  const handleSearch = (event) => {
-    const query = removeAccents(event.target.value.toLowerCase().trim());
-    setSearchQuery(query);
-
-    if (query) {
-      const filtered = products.filter((product) => {
-        const productName = removeAccents(product.name.toLowerCase());
-        return productName.includes(query);
-      });
-      setFilteredProducts(filtered);
-      setCurrentPage(1);
-    } else {
-      setFilteredProducts(products);
-    }
-  };
-
-  const handleSortChange = (event) => {
-    const sortOption = event.target.value;
-    setSortOption(sortOption);
-    sortProducts(sortOption);
-  };
-
-  const sortProducts = (option) => {
-    let sortedProducts = [...filteredProducts];
-
-    sortedProducts.sort((a, b) => {
-      const priceA = a.productDetails.price || 0;
-      const priceB = b.productDetails.price || 0;
-
-      switch (option) {
-        case "Nổi bật":
-          return 0;
-
-        case "Thấp đến cao":
-          return priceA - priceB;
-
-        case "Cao đến thấp":
-          return priceB - priceA;
-
-        default:
-          return 0;
+                  // Log chi tiết để kiểm tra
+                  console.log("Detail:", detail.data); // Kiểm tra dữ liệu chi tiết
+                  console.log("Skintypes:", skintypes);
+  
+                  const skintype = skintypes.find((type) => type.skintypeId === detail.data.skintypeId) || null;
+  
+                  return {
+                      ...product,
+                      productDetails: detail.data[0] || {},
+                      brand: brand.data || {},
+                      category: category.data || {},
+                      skintype: skintype,
+                  };
+              })
+          );
+          setProducts(products);
+      } catch (error) {
+          console.error("Error fetching products:", error.message);
       }
-    });
 
-    setFilteredProducts(sortedProducts);
-    setCurrentPage(1);
+  };
+  
+
+
+  const handleViewProduct = (productId) => {
+      localStorage.setItem("selectedProductId", productId); 
+      navigate("/product"); 
   };
 
-  const fetchBrands = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/api/brands");
-      setBrands(response.data);
-    } catch (error) {
-      console.error("Error fetching brands:", error.message);
-    }
-  };
+  const handleAddToCart = async (
+      productDetailId,
+      productPromotionId,
+      quantity = 1 // Lấy quantity từ input truyền vào
+    ) => {
+      const userData = localStorage.getItem("userData");
 
-  const fetchSkins = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/api/skintypes");
-      setSkintypes(response.data);
-    } catch (error) {
-      console.error("Error fetching skin types:", error.message);
-    }
-  };
+      if (!userData) {
+        alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
+        return;
+      }
 
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/api/categories");
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error.message);
-    }
-  };
+      try {
+        // Giải mã dữ liệu người dùng đã lưu để lấy user ID
+        const decryptedData = CryptoJS.AES.decrypt(
+          userData,
+          "secret-key"
+        ).toString(CryptoJS.enc.Utf8);
+        const parsedData = JSON.parse(decryptedData);
+        const userId = parsedData.user_id;
 
-  const filterProductsByBrandId = (brandId) => {
-    if (brandId) {
-      const filtered = products.filter(
-        (product) => product.brand.brandId === brandId
-      );
-      setFilteredProducts(filtered);
+        if (!userId) {
+          alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+          return;
+        }
+
+        // Gọi API để lấy cartId
+        const cartResponse = await axios.get(
+          `http://localhost:8080/api/cart?userId=${userId}` // Sử dụng query params
+        );
+        const cartData = cartResponse.data;
+
+        if (cartData.length === 0) {
+          console.error("Không tìm thấy cartId");
+          return;
+        }
+
+        const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
+
+        // Lấy các mục trong giỏ hàng để kiểm tra
+        const cartItemsResponse = await axios.get(
+          `http://localhost:8080/api/cart/items?userId=${userId}` // Sử dụng query params
+        );
+        const cartItems = cartItemsResponse.data;
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        const existingCartItem = cartItems.find(
+          (item) =>
+            item.productDetail.productDetailId === productDetailId &&
+            (item.productPromotion
+              ? item.productPromotion.productPromotionId === productPromotionId
+              : productPromotionId === 0)
+        );
+
+        if (existingCartItem) {
+          // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
+          const updatedQuantity = existingCartItem.quantity + quantity;
+
+          // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
+          const updateResponse = await axios.post(
+            `http://localhost:8080/api/cart/cartItem/update?cartItemId=${existingCartItem.cartItemId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${updatedQuantity}` // Sử dụng query params
+          );
+
+          if (updateResponse.status === 200) {
+            fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
+            toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!"); // Thông báo thành công
+          }
+        } else {
+          // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
+          const addResponse = await axios.post(
+            `http://localhost:8080/api/cart/cartItem?cartId=${cartId}&productDetailId=${productDetailId}&productPromotionId=0&quantity=${quantity}` // Sử dụng query params
+          );
+
+          if (addResponse.status === 201) {
+            fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
+            toast.success("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo thành công
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
+        toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!"); // Thông báo lỗi
+      }
+    };
+
+    const removeAccents = (str) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const handleSearch = (event) => {
+      const query = removeAccents(event.target.value.toLowerCase().trim());
+      setSearchQuery(query);
+
+      if (query) {
+        const filtered = products.filter((product) => {
+          const productName = removeAccents(product.name.toLowerCase());
+          return productName.includes(query);
+        });
+        setFilteredProducts(filtered);
+        setCurrentPage(1);
+      } else {
+        setFilteredProducts(products);
+      }
+    };
+
+    const handleSortChange = (event) => {
+      const sortOption = event.target.value;
+      setSortOption(sortOption);
+      sortProducts(sortOption);
+    };
+
+    const sortProducts = (option) => {
+      let sortedProducts = [...filteredProducts];
+
+      sortedProducts.sort((a, b) => {
+        const priceA = a.productDetails.price || 0;
+        const priceB = b.productDetails.price || 0;
+
+        switch (option) {
+          case "Nổi bật":
+            return 0;
+
+          case "Thấp đến cao":
+            return priceA - priceB;
+
+          case "Cao đến thấp":
+            return priceB - priceA;
+
+          default:
+            return 0;
+        }
+      });
+
+      setFilteredProducts(sortedProducts);
       setCurrentPage(1);
-    } else {
-      setFilteredProducts(products);
-      setCurrentPage(1);
-    }
-  };
+    };
 
-  const handleBrandSelection = (brandId) => {
-    const newSelectedBrandId = selectedBrandId === brandId ? null : brandId;
-    setSelectedBrandId(newSelectedBrandId);
-    filterProductsByAll(
-      newSelectedBrandId,
-      selectedCategoryId,
-      selectedSkintypeId,
-      selectedPlace
-    );
-  };
+    const fetchBrands = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/home/brands");
+        setBrands(response.data);
+      } catch (error) {
+        console.error("Error fetching brands:", error.message);
+      }
+    };
 
-  const filterProductsByPlace = (place) => {
-    if (place) {
-      const filtered = products.filter(
-        (product) => product.brand.place === place
-      );
-      setFilteredProducts(filtered);
-      setCurrentPage(1);
-    } else {
-      setFilteredProducts(products);
-      setCurrentPage(1);
-    }
+    const fetchSkins = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/home/skintypes"
+        );
+        setSkintypes(response.data);
+      } catch (error) {
+        console.error("Error fetching skin types:", error.message);
+      }
+    };
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/home/categories"
+        );
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error.message);
+      }
+    };
+
+    const filterProductsByBrandIds = (brandIds) => {
+      if (brandIds.length > 0) {
+        const filtered = products.filter((product) =>
+          brandIds.includes(product.brand.brandId)
+        );
+        setFilteredProducts(filtered);
+        setCurrentPage(1);
+      } else {
+        setFilteredProducts(products);
+        setCurrentPage(1);
+      }
+    };
+
+
+    const filterProductsByPlace = (place) => {
+      if (place) {
+        const filtered = products.filter(
+          (product) => product.brand.place === place
+        );
+        setFilteredProducts(filtered);
+        setCurrentPage(1);
+      } else {
+        setFilteredProducts(products);
+        setCurrentPage(1);
+      }
+    };
+    const filterProductsByPlaces = (places) => {
+      if (places.length > 0) {
+        const filtered = products.filter(
+          (product) => places.includes(product.place) // Kiểm tra xem product.place có nằm trong mảng places hay không
+        );
+        setFilteredProducts(filtered);
+        setCurrentPage(1);
+      } else {
+        setFilteredProducts(products);
+        setCurrentPage(1);
+      }
+    };
+
+
+
+    const filterProductsByCategoryIds = (categoryIds) => {
+      if (categoryIds.length > 0) {
+        const filtered = products.filter((product) =>
+          categoryIds.includes(product.category.categoryId)
+        );
+        setFilteredProducts(filtered);
+        setCurrentPage(1);
+      } else {
+        setFilteredProducts(products);
+        setCurrentPage(1);
+      }
+    };
+
+    
+  
+
+    const handleBrandSelection = (brandId) => {
+      const newSelectedBrandIds = selectedBrandIds.includes(brandId)
+        ? selectedBrandIds.filter((id) => id !== brandId)
+        : [...selectedBrandIds, brandId];
+
+      setSelectedBrandIds(newSelectedBrandIds);
+      filterProductsByAll(newSelectedBrandIds, selectedCategoryIds, selectedSkintypeIds, selectedPlaces);
   };
 
   const handlePlaceSelection = (place) => {
-    const newSelectedPlace = selectedPlace === place ? null : place;
-    setSelectedPlace(newSelectedPlace);
-    filterProductsByAll(
-      selectedBrandId,
-      selectedCategoryId,
-      selectedSkintypeId,
-      newSelectedPlace
-    );
+      const newSelectedPlaces = selectedPlaces.includes(place)
+        ? selectedPlaces.filter((p) => p !== place)
+        : [...selectedPlaces, place];
+
+      setSelectedPlaces(newSelectedPlaces);
+      filterProductsByAll(selectedBrandIds, selectedCategoryIds, selectedSkintypeIds, newSelectedPlaces);
   };
 
-  const filterProductsByCategory = (categoryId) => {
-    if (categoryId) {
-      const filtered = products.filter(
-        (product) => product.category.categoryId === categoryId
-      );
+  // Tương tự cho các hàm lọc khác
+
+    
+    const handleCategorySelection = (categoryId) => {
+      const newSelectedCategoryIds = selectedCategoryIds.includes(categoryId)
+        ? selectedCategoryIds.filter((id) => id !== categoryId) // Bỏ chọn nếu đã chọn
+        : [...selectedCategoryIds, categoryId]; // Thêm nếu chưa chọn
+    
+      setSelectedCategoryIds(newSelectedCategoryIds); // Cập nhật trạng thái mới
+      filterProductsByAll(selectedBrandIds, newSelectedCategoryIds, selectedSkintypeIds, selectedPlaces); // Gọi hàm lọc với danh sách mới
+    };
+    const filterProductsBySkintypeIds = (skintypeIds) => {
+      if (skintypeIds.length > 0) {
+        const filtered = products.filter((product) =>
+          product.skintype && skintypeIds.includes(product.skintype.skintypeId) // Kiểm tra sự tồn tại của skintype
+        );
+        setFilteredProducts(filtered);
+        setCurrentPage(1);
+      } else {
+        setFilteredProducts(products);
+        setCurrentPage(1);
+      }
+    };
+    
+    const handleSkintypeSelection = (skintypeId) => {
+      const newSelectedSkintypeIds = selectedSkintypeIds.includes(skintypeId)
+        ? selectedSkintypeIds.filter((id) => id !== skintypeId) // Bỏ chọn nếu đã chọn
+        : [...selectedSkintypeIds, skintypeId]; // Thêm nếu chưa chọn
+    
+      setSelectedSkintypeIds(newSelectedSkintypeIds); // Cập nhật trạng thái mới
+    
+      // Gọi filterProductsByAll sau khi trạng thái mới đã được cập nhật
+      filterProductsByAll(selectedBrandIds, selectedCategoryIds, newSelectedSkintypeIds, selectedPlaces);
+    };
+    
+    
+    const filterProductsByAll = (selectedBrandIds, selectedCategoryIds, selectedSkintypeIds, selectedPlaces) => {
+      let filtered = products;
+    
+      // Lọc theo thương hiệu
+      if (selectedBrandIds.length > 0) {
+        filtered = filtered.filter((product) =>
+          selectedBrandIds.includes(product.brand.brandId)
+        );
+      }
+    
+      // Lọc theo loại sản phẩm
+      if (selectedCategoryIds.length > 0) {
+        filtered = filtered.filter((product) =>
+          selectedCategoryIds.includes(product.category.categoryId)
+        );
+      }
+    
+      // Lọc theo loại da
+      if (selectedSkintypeIds.length > 0) {
+        filtered = filtered.filter((product) =>
+          product.skintype && selectedSkintypeIds.includes(product.skintype.skintypeId) // Kiểm tra sự tồn tại của skintype
+        );
+      }
+    
+      // Lọc theo nơi bán
+      if (selectedPlaces.length > 0) {
+        filtered = filtered.filter((product) =>
+          selectedPlaces.includes(product.brand.place)
+        );
+      }
+    
+      // Lọc theo khoảng giá
+      filtered = filtered.filter((product) => {
+        const price = product.productDetails.price || 0;
+        return price >= minPrice && price <= maxPrice;
+      });
+    
       setFilteredProducts(filtered);
       setCurrentPage(1);
-    } else {
-      setFilteredProducts(products);
-      setCurrentPage(1);
-    }
-  };
+    };
+    
 
-  const handleCategorySelection = (categoryId) => {
-    const newSelectedCategoryId =
-      selectedCategoryId === categoryId ? null : categoryId;
-    setSelectedCategoryId(newSelectedCategoryId);
-    filterProductsByAll(
-      selectedBrandId,
-      newSelectedCategoryId,
-      selectedSkintypeId,
-      selectedPlace
-    );
-  };
+    const handleMinPriceChange = (event) => {
+      const value = parseInt(event.target.value);
+      setMinPrice(value >= 0 ? value : 0);
+    };
 
-  const handleSkintypeSelection = (skintypeId) => {
-    const newSelectedSkintypeId =
-      selectedSkintypeId === skintypeId ? null : skintypeId;
-    setSelectedSkintypeId(newSelectedSkintypeId);
-    filterProductsByAll(
-      selectedBrandId,
-      selectedCategoryId,
-      newSelectedSkintypeId
-    );
-  };
+    const handleMaxPriceChange = (event) => {
+      const value = parseInt(event.target.value);
+      setMaxPrice(value >= minPrice ? value : minPrice);
+    };
 
-  const filterProductsByAll = (brandId, categoryId, skintypeId, place) => {
-    let filtered = products;
-
-    if (brandId) {
-      filtered = filtered.filter(
-        (product) => product.brand.brandId === brandId
-      );
-    }
-
-    if (categoryId) {
-      filtered = filtered.filter(
-        (product) => product.category.categoryId === categoryId
-      );
-    }
-
-    if (skintypeId) {
-      filtered = filtered.filter(
-        (product) => product.skintype.skintypeId === skintypeId
-      );
-    }
-
-    if (place) {
-      filtered = filtered.filter((product) => product.brand.place === place);
-    }
-
-    // Filter by price range
-    filtered = filtered.filter((product) => {
-      const price = product.productDetails.price || 0;
-      return price >= minPrice && price <= maxPrice;
-    });
-
-    setFilteredProducts(filtered);
-    setCurrentPage(1);
-  };
-
-  const handleMinPriceChange = (event) => {
-    const value = parseInt(event.target.value);
-    setMinPrice(value >= 0 ? value : 0);
-  };
-
-  const handleMaxPriceChange = (event) => {
-    const value = parseInt(event.target.value);
-    setMaxPrice(value >= minPrice ? value : minPrice);
-  };
-
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-  const applyPriceFilter = () => {
-    const filteredProducts = products.filter((product) => {
-      const price = product.productDetails.price; // Lấy giá của sản phẩm
-      return (
-        price >= minPrice && price <= (maxPrice === Infinity ? price : maxPrice)
-      );
-    });
-
-    setFilteredProducts(filteredProducts); // Cập nhật trạng thái filteredProducts
-    setCurrentPage(1); // Đặt lại currentPage về 1
-  };
-  const handleAddToCart = async (
-    productDetailId,
-    productPromotionId,
-    quantity = 1 // Lấy quantity từ input truyền vào
-  ) => {
-    const userData = localStorage.getItem("userData");
-
-    if (!userData) {
-      toast.error("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
-      return;
-    }
-
-    try {
-      // Giải mã dữ liệu người dùng đã lưu để lấy user ID
-      const decryptedData = CryptoJS.AES.decrypt(
-        userData,
-        "secret-key"
-      ).toString(CryptoJS.enc.Utf8);
-      const parsedData = JSON.parse(decryptedData);
-      const userId = parsedData.user_id;
-
-      if (!userId) {
-        toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
-        navigate("/login");
-        return;
-      }
-
-      // Gọi API để lấy cartId
-      const cartResponse = await axios.get(
-        `http://localhost:8080/api/cart/${userId}`
-      );
-      const cartData = cartResponse.data;
-
-      if (cartData.length === 0) {
-        console.error("Không tìm thấy cartId");
-        return;
-      }
-
-      const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
-
-      // Lấy các mục trong giỏ hàng để kiểm tra
-      const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
-      );
-      const cartItems = cartItemsResponse.data;
-
-      // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-      const existingCartItem = cartItems.find(
-        (item) =>
-          item.productDetail.productDetailId === productDetailId &&
-          (item.productPromotion
-            ? item.productPromotion.productPromotionId === productPromotionId
-            : productPromotionId === 0)
-      );
-
-      if (existingCartItem) {
-        // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
-        const updatedQuantity = existingCartItem.quantity + quantity;
-
-        // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
-        const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+    const paginate = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+  
+    const applyPriceFilter = () => {
+      const filteredProducts = products.filter((product) => {
+        const price = product.productDetails.price; // Lấy giá của sản phẩm
+        return (
+          price >= minPrice && price <= (maxPrice === Infinity ? price : maxPrice)
         );
+      });
 
-        if (updateResponse.status === 200) {
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
-          fetchCartItems(userId);
-        }
-      } else {
-        // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
-        const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/0/${quantity}`
-          
-        );
-
-        if (addResponse.status === 201) {
-          fetchCartItems(userId);
-          toast.success("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo thành công
-        }
-      }
-    } catch (error) {
-      console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
-    }
-  };
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
+      setFilteredProducts(filteredProducts); // Cập nhật trạng thái filteredProducts
+      filterProductsByAll(selectedBrandIds, selectedCategoryIds, selectedSkintypeIds, selectedPlaces);
+    };
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+    
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filteredProducts.slice(
+      indexOfFirstProduct,
+      indexOfLastProduct
+    );
   return (
     <div className="container py-5">
-        <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="row g-4">
         {/* Sidebar Filters */}
         <div className="col-lg-2">
@@ -434,22 +467,16 @@ const LoaiSPShop = () => {
                   <ul className="brand-list">
                     {brands
                       .sort((a, b) => a.name.localeCompare(b.name)) // Sắp xếp theo thứ tự ABC
-                      .map(
-                        (brand) =>
-                          (selectedBrandId === null ||
-                            selectedBrandId === brand.brandId) && (
-                            <li style={{ display: "flex" }} key={brand.brandId}>
-                              <input
-                                type="checkbox"
-                                checked={selectedBrandId === brand.brandId}
-                                onChange={() =>
-                                  handleBrandSelection(brand.brandId)
-                                }
-                              />{" "}
-                              {brand.name}
-                            </li>
-                          )
-                      )}
+                      .map((brand) => (
+                        <li style={{ display: "flex" }} key={brand.brandId}>
+                          <input
+                            type="checkbox"
+                            checked={selectedBrandIds.includes(brand.brandId)} // Sử dụng mảng để kiểm tra
+                            onChange={() => handleBrandSelection(brand.brandId)}
+                          />{" "}
+                          {brand.name}
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
@@ -463,27 +490,23 @@ const LoaiSPShop = () => {
                   <ul className="brand-list">
                     {categories
                       .sort((a, b) => a.name.localeCompare(b.name)) // Sắp xếp theo thứ tự ABC
-                      .map(
-                        (category) =>
-                          (selectedCategoryId === null ||
-                            selectedCategoryId === category.categoryId) && (
-                            <li
-                              style={{ display: "flex" }}
-                              key={category.categoryId}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  selectedCategoryId === category.categoryId
-                                }
-                                onChange={() =>
-                                  handleCategorySelection(category.categoryId)
-                                }
-                              />
-                              {category.name}
-                            </li>
-                          )
-                      )}
+                      .map((category) => (
+                        <li
+                          style={{ display: "flex" }}
+                          key={category.categoryId}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCategoryIds.includes(
+                              category.categoryId
+                            )} // Kiểm tra nếu categoryId có trong danh sách đã chọn
+                            onChange={() =>
+                              handleCategorySelection(category.categoryId)
+                            }
+                          />
+                          {category.name}
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
@@ -497,33 +520,28 @@ const LoaiSPShop = () => {
                   <ul>
                     {skintypes
                       .sort((a, b) => a.name.localeCompare(b.name)) // Sắp xếp theo thứ tự ABC
-                      .map(
-                        (skintype) =>
-                          (selectedSkintypeId === null ||
-                            selectedSkintypeId === skintype.skintypeId) && (
-                            <li
-                              style={{ display: "flex" }}
-                              key={skintype.skintypeId}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  selectedSkintypeId === skintype.skintypeId
-                                }
-                                onChange={() =>
-                                  handleSkintypeSelection(skintype.skintypeId)
-                                }
-                              />{" "}
-                              {skintype.name}
-                            </li>
-                          )
-                      )}
+                      .map((skintype) => (
+                        <li
+                          style={{ display: "flex" }}
+                          key={skintype.skintypeId}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedSkintypeIds.includes(
+                              skintype.skintypeId
+                            )} // Kiểm tra nếu skintypeId có trong danh sách đã chọn
+                            onChange={() =>
+                              handleSkintypeSelection(skintype.skintypeId)
+                            }
+                          />{" "}
+                          {skintype.name}
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* Xuất Xứ Thương Hiệu */}
             <div className="col-lg-12">
               <div className="mb-3">
                 <h6>Xuất Xứ Thương Hiệu</h6>
@@ -535,7 +553,7 @@ const LoaiSPShop = () => {
                         <li style={{ display: "flex" }} key={place}>
                           <input
                             type="checkbox"
-                            checked={selectedPlace === place}
+                            checked={selectedPlaces.includes(place)} // Kiểm tra nếu place có trong danh sách đã chọn
                             onChange={() => handlePlaceSelection(place)}
                           />
                           {place}
@@ -600,87 +618,86 @@ const LoaiSPShop = () => {
               </div>
             </div>
           </div>
-
           <div className="row g-4">
-      {filteredProducts.length > 0 ? (
-        filteredProducts.map((product) => (
-          <div
-            key={product.productId}
-            className="col-md-9 col-lg-4 col-xl-3 col-sm-6 col-6"
-          >
-            <div className="pro-container">
-              <div className="pro">
-              <a
-                   
-                    onClick={() => handleViewProduct(product.productId)}
-                    >
+  {filteredProducts.length > 0 ? (
+    filteredProducts.map((product) => {
+      console.log(product); // Kiểm tra thông tin sản phẩm
+      return (
+        <div key={product.productId} className="col-md-9 col-lg-4 col-xl-3 col-sm-6 col-6">
+          <div className="pro-container">
+            <div className="pro">
+              <a onClick={() => handleViewProduct(product.productId)}>
                 <img
-                  src={require(`../../assets/img/${
-                    product.productDetails?.img || "default.jpg"
-                  }`)}
+                  src={require(`../../assets/img/${product.productDetails?.img}`)} // Thêm dấu hỏi để tránh lỗi
                   alt={product.name}
                 />
-                 
-                   
-                   </a>
-                <div className="icon-container">
-                  <a
-                    className="btn"
-                    onClick={() => {
-                      const quantity = 1;
-                      handleAddToCart(
-                        product.productDetails.productDetailId,
-                        product.productDetails.productPromotionId || 0,
-                        quantity
-                      );
-                    }}
-                  >
-                    <i className="fas fa-shopping-cart"></i>
-                  </a>
-                  <a
-                    className="btn"
-                    onClick={() => handleViewProduct(product.productId)}
-                  >
-                    <i className="fas fa-eye"></i>
-                  </a>
+              </a>
+              <div className="icon-container">
+                <a
+                  className="btn"
+                  onClick={() => {
+                    const quantity = 1;
+                    handleAddToCart(
+                      product.productDetails?.productDetailId,
+                      product.productDetails?.productPromotionId || 0,
+                      quantity
+                    );
+                  }}
+                >
+                  <i className="fas fa-shopping-cart"></i>
+                </a>
+                <a className="btn" onClick={() => handleViewProduct(product.productId)}>
+                  <i className="fas fa-eye"></i>
+                </a>
+              </div>
+              <div className="des">
+                <div className="price">
+                  <h4 className="sale-price">
+                    {product.productDetails?.price.toLocaleString()} đ
+                  </h4>
                 </div>
-                <div className="des">
-                  <div className="price">
-                    <h4 className="sale-price">
-                      {product.productDetails.price.toLocaleString()} đ
-                    </h4>
-                  </div>
-                  <span>{product?.brand?.name}</span>
-                  <h6>{product?.name}</h6>
+                <span>{product?.brand?.name || "Chưa có thương hiệu"}</span>
+                <h6>{product?.name}</h6>
+                <div className="star">
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="far fa-star"></i>
                 </div>
               </div>
             </div>
           </div>
-        ))
-      ) : (
-        <div className="no-results" style={{ textAlign: "center" }}>
-          Không tìm thấy sản phẩm nào.
         </div>
-      )}
+      );
+    })
+  ) : (
+    <div className="no-results" style={{ textAlign: "center" }}>
+      Không tìm thấy sản phẩm nào.
     </div>
+  )}
+</div>
+
+            <div className="pagination">
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                        key={index + 1}
+                        className={`page-item ${index + 1 === currentPage ? "active" : ""}`}
+                        // onClick={() => onPageChange(index + 1)}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
+        </div>
+
+
+            </div>
 
           {/* Pagination */}
-          <div className="pagination">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index + 1}
-                className={`page-item ${
-                  index + 1 === currentPage ? "active" : ""
-                }`}
-                onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+          
+     </div>
+
   );
 };
 

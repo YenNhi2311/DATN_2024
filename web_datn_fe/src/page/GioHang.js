@@ -1,48 +1,44 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import { ToastContainer, toast } from "react-toastify";
+import Swal from "sweetalert2";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/brand.css";
 import "../assets/css/category.css";
 import "../assets/css/shop.css";
 import "../assets/css/style.css";
 import { useCart } from "../component/page/CartContext";
+import { deleteCartItem, getCartItemsByUserId, updateCartItem } from "../services/authService"; // Giả sử bạn đã định nghĩa các hàm này trong cartService
 
 const GioHang = () => {
-  const { cartItems, setCartItems } = useCart(); // Lấy cartItems và setCartItems từ CartContext
+  const { cartItems, setCartItems } = useCart();
   const [selectedItems, setSelectedItems] = useState(new Set());
-  
-  // Lấy userId từ localStorage
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem("userId");
 
   const handleCheckout = () => {
-    const selectedCartItems = cartItems.filter(item => selectedItems.has(item.cartItemId));
-    
-    // Lưu danh sách sản phẩm đã chọn vào localStorage
-    localStorage.setItem('selectedCartItems', JSON.stringify(selectedCartItems));
-    
-    // Chuyển hướng đến trang thanh toán
+    const selectedCartItems = cartItems.filter((item) =>
+      selectedItems.has(item.cartItemId)
+    );
+    localStorage.setItem("selectedCartItems", JSON.stringify(selectedCartItems));
     window.location.href = "/ThanhToan";
   };
-  
 
   const handleRemove = async (cartItemId) => {
     Swal.fire({
-      title: 'Bạn có chắc chắn xóa sản phẩm này?',
-      icon: 'warning',
+      title: "Bạn có chắc chắn xóa sản phẩm này?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Có',
-      cancelButtonText: 'Không'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Có",
+      cancelButtonText: "Không",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:8080/api/cart/cartItem/${cartItemId}`);
+          await deleteCartItem(cartItemId); // Sử dụng apiClient để xóa sản phẩm
           toast.success("Xóa sản phẩm thành công");
-          // Cập nhật giỏ hàng trong CartContext
-          setCartItems(prevItems => prevItems.filter(item => item.cartItemId !== cartItemId));
+          setCartItems((prevItems) =>
+            prevItems.filter((item) => item.cartItemId !== cartItemId)
+          );
         } catch (error) {
           console.error("Error removing item from cart:", error);
         }
@@ -51,68 +47,66 @@ const GioHang = () => {
   };
 
   const fetchCartItems = async () => {
-    const userId = localStorage.getItem('userId');
+
     if (!userId) {
       console.error("User ID is null. Cannot fetch cart items.");
       return;
     }
-  
     try {
-      const response = await axios.get(`http://localhost:8080/api/cart/items/${userId}`);
+      const response = await getCartItemsByUserId(userId); // Sử dụng apiClient để lấy giỏ hàng
       setCartItems(response.data);
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
   };
-  
-
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
     if (userId) {
-      fetchCartItems(userId);
+      fetchCartItems();
     } else {
       console.error("User ID is null. Cannot fetch cart items.");
     }
-  }, []);
+  }, [userId]);
 
   const updateCart = async (cartItemId, productDetailId, productPromotionId, newQuantity) => {
     if (newQuantity <= 0) return;
 
-    console.log('Updating cart item:', { cartItemId, productDetailId, newQuantity, productPromotionId }); // Log kiểm tra dữ liệu
-
-    // Cập nhật giỏ hàng trên giao diện trước khi gọi API
     const updatedItems = cartItems.map((item) =>
-        item.cartItemId === cartItemId ? { ...item, quantity: newQuantity } : item
+      item.cartItemId === cartItemId ? { ...item, quantity: newQuantity } : item
     );
     setCartItems(updatedItems);
 
     try {
-        // Kiểm tra productPromotionId và thay thế bằng null nếu nó không tồn tại
-        const promotionId = productPromotionId !== undefined ? productPromotionId : null;
-
-        // Gọi API để cập nhật giỏ hàng
-        await axios.post(`http://localhost:8080/api/cart/cartItem/update/${cartItemId}/${productDetailId}/${promotionId}/${newQuantity}`);
-        fetchCartItems(); // Lấy lại dữ liệu giỏ hàng mới
+      const promotionId = productPromotionId !== undefined ? productPromotionId : null;
+      await updateCartItem(cartItemId, productDetailId, promotionId, newQuantity); // Sử dụng apiClient để cập nhật số lượng
+      fetchCartItems();
     } catch (error) {
-        console.error("Error updating quantity:", error);
-        fetchCartItems(); // Nếu có lỗi, lấy lại dữ liệu giỏ hàng
+      console.error("Error updating quantity:", error);
+      fetchCartItems();
     }
-};
+  };
 
-  
   const handleIncrement = (item) => {
     const newQuantity = item.quantity + 1;
-    updateCart(item.cartItemId, item.productDetail.productDetailId, item.productPromotion.productPromotionId, newQuantity);
+    updateCart(
+      item.cartItemId,
+      item.productDetail.productDetailId,
+      item.productPromotion?.productPromotionId,
+      newQuantity
+    );
   };
-  
+
   const handleDecrement = (item) => {
     if (item.quantity > 1) {
       const newQuantity = item.quantity - 1;
-      updateCart(item.cartItemId, item.productDetail.productDetailId, item.productPromotion.productPromotionId, newQuantity);
+      updateCart(
+        item.cartItemId,
+        item.productDetail.productDetailId,
+        item.productPromotion?.productPromotionId,
+        newQuantity
+      );
     }
   };
-  
 
   const handleSelectItem = (cartItemId) => {
     setSelectedItems((prev) => {
@@ -128,14 +122,27 @@ const GioHang = () => {
 
   const totalPrice = cartItems.reduce((total, item) => {
     if (selectedItems.has(item.cartItemId)) {
-      return total + (item.discountedPrice || item.productDetail?.price || 0) * item.quantity;
+      return (
+        total +
+        (item.discountedPrice || item.productDetail?.price || 0) * item.quantity
+      );
     }
     return total;
   }, 0);
 
   return (
     <div className="container">
-      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="container-fluid page-header py-5"></div>
 
       <div className="col-lg-12">
@@ -158,10 +165,10 @@ const GioHang = () => {
                 {cartItems.map((item) => (
                   <tr key={item.cartItemId} className="cart-item-row">
                     <td className="align-middle">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedItems.has(item.cartItemId)} 
-                        onChange={() => handleSelectItem(item.cartItemId)} 
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.has(item.cartItemId)}
+                        onChange={() => handleSelectItem(item.cartItemId)}
                       />
                     </td>
                     <td className="align-middle">
@@ -171,20 +178,33 @@ const GioHang = () => {
                         alt={item.productDetail?.name || "Product Image"}
                         style={{ width: "80px", height: "80px" }}
                       />
-                    </td> 
-                    <td className="align-middle">
+                    </td>
+                    <div>  <td className="align-middle">
                       <p className="font-weight-bold">
                         {item.productDetail?.product?.name || "N/A"}
-                        <span className="text-danger" style={{ fontWeight: "bold", marginLeft: "5px" }}>
+                        <span
+                          className="text-danger"
+                          style={{ fontWeight: "bold", marginLeft: "5px" }}
+                        >
                           {item.productPromotion?.promotion?.percent
                             ? `(${item.productPromotion.promotion.percent.toFixed(0)}%)`
                             : ""}
+                          
                         </span>
+                       
                       </p>
                     </td>
+                    <span className="text-left">{item.productDetail.capacity.value}ml</span>
+                    
+                    <span className="text-right">{item.productDetail.color.name}</span></div>
                     <td className="align-middle">
                       <p>
-                        {item.discountedPrice?.toLocaleString() || item.productDetail?.price?.toLocaleString() || "0"}₫
+                        {item.discountedPrice && item.discountedPrice > 0
+                          ? item.discountedPrice.toLocaleString()
+                          : item.productDetail?.price
+                          ? item.productDetail.price.toLocaleString()
+                          : "0"}
+                        ₫
                       </p>
                     </td>
                     <td className="align-middle">
@@ -197,17 +217,22 @@ const GioHang = () => {
                           -
                         </button>
                         <input
-      type="number"
-      value={item.quantity}
-      className="form-control text-center mx-2"
-      style={{ width: "60px" }}
-      onChange={(e) => {
-        const newQuantity = parseInt(e.target.value);
-        if (!isNaN(newQuantity) && newQuantity > 0) {
-          updateCart(item.cartItemId, item.productDetail.productDetailId, item.productPromotion.productPromotionId, newQuantity);
-        }
-      }}
-    />
+                          type="number"
+                          value={item.quantity}
+                          className="form-control text-center mx-2"
+                          style={{ width: "60px" }}
+                          onChange={(e) => {
+                            const newQuantity = parseInt(e.target.value);
+                            if (!isNaN(newQuantity) && newQuantity > 0) {
+                              updateCart(
+                                item.cartItemId,
+                                item.productDetail.productDetailId,
+                                item.productPromotion?.productPromotionId,
+                                newQuantity
+                              );
+                            }
+                          }}
+                        />
                         <button
                           className="btn btn-outline-primary"
                           onClick={() => handleIncrement(item)}
@@ -218,7 +243,11 @@ const GioHang = () => {
                     </td>
                     <td className="align-middle">
                       <p>
-                        {((item.discountedPrice || item.productDetail?.price) * item.quantity).toLocaleString()}₫
+                        {(
+                          (item.discountedPrice || item.productDetail?.price) *
+                          item.quantity
+                        ).toLocaleString()}
+                        ₫
                       </p>
                     </td>
                     <td className="align-middle">
@@ -253,12 +282,11 @@ const GioHang = () => {
                 <h6>{totalPrice.toLocaleString()}₫</h6>
               </div>
               <a
-  onClick={handleCheckout}
-  className="btn btn-outline-primary w-100"
->
-  Tiến hành đặt hàng
-</a>
-
+                onClick={handleCheckout}
+                className="btn btn-outline-primary w-100"
+              >
+                Tiến hành đặt hàng
+              </a>
             </div>
           </div>
         </div>

@@ -11,13 +11,13 @@ import PhotosPage from "./component/user/PhotosPage";
 import Timeline from "./component/user/Timeline";
 import MainLayout from "./MainLayout";
 
-import ResetPassword from "./page/account/ResetPasswordPage.js";
+import ChangePassword from "./page/account/ChangePassword.js";
 import ForgotPasswordPage from "./page/account/ForgotPasswordPage.js";
 import LoginRegister from "./page/account/LoginRegister";
 import OTPVerification from "./page/account/OTPVerification.js";
+import ResetPassword from "./page/account/ResetPasswordPage.js";
 import ProFile from "./page/account/UpdateProfileForm.js";
-import ChangePassword from "./page/account/ChangePassword.js";
-import ProfileContainer from "./page/account/ProfileContainer.js";
+
 
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";
@@ -101,10 +101,10 @@ const App = () => {
           <Route path="/product" element={<ChiTietSP />} />
           <Route path="/productpromotion" element={<ChiTietSPKM />} />
           <Route path="/lienhe" element={<LienHe />} />
-          <Route path="/cart/" element={<GioHang />} />
+          <Route path="/cart" element={<GioHang />} />
           <Route path="/thanhtoan" element={<ThanhToan />} />
           <Route path="/danhgia" element={<DanhGia />} />
-          <Route path="/promotions" element={<KhuyenMaiList />} />
+          <Route path="productpromotionlist" element={<KhuyenMaiList />} />
           {/* Thông Tin Người dùng */}
           <Route path="/profile" element={<ProFile/>} />
           <Route path="/change-password" element={<ChangePassword/>} />

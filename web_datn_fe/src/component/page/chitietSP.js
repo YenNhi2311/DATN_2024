@@ -1,27 +1,37 @@
-import axios from "axios"; // Import axios
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ToastContainer } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import Slider from "react-slick";
-import { toast, ToastContainer } from 'react-toastify'; // Import ToastContainer và toast
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
-import "../../assets/css/loaispplq.css";
+import { toast } from "react-toastify";
 import { useCart } from "../../component/page/CartContext";
+import {
+  addToCart,
+  getBenefitById,
+  getBrandById,
+  getCapacityById,
+  getCartByUserId,
+  getCategoryById,
+  getIngredientById,
+  getProductById,
+  getProductDetailById,
+  getRelatedProducts,
+  getSkintypeById,
+  updateCartItem,
+} from "../../services/authService"; // Import các hàm API từ authService
+
 const ChiTietSP = () => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [product, setProduct] = useState(null); // State for product details
-  const [loading, setLoading] = useState(true); // State for loading status
-  const [activeTab, setActiveTab] = useState("about"); // State for active tab
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("about");
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const { cartItems, fetchCartItems } = useCart();
-  const [colors, setColors] = useState([]);
-  const [skinTypes, setSkinTypes] = useState([]);
-  const [capacities, setCapacities] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
-  const [benefits, setBenefits] = useState([]);
-  const [variants, setVariants] = useState([]); // State to hold product variants
+
+  const { fetchCartItems } = useCart();
+  const navigate = useNavigate();
+
+
   // Handle increase and decrease of quantity
   const handleIncrease = () => {
     if (quantity < product.productDetails?.quantity) {
@@ -30,19 +40,21 @@ const ChiTietSP = () => {
       toast.error("Không đủ hàng trong kho");
     }
   };
-  // Hàm xử lý khi người dùng nhập số lượng trực tiếp vào ô input
+
+  const handleViewProduct = (productId) => {
+    localStorage.setItem("selectedProductId", productId);
+    navigate("/product");
+  };
+
   const handleInputChange = (e) => {
     const inputValue = Number(e.target.value);
-
-    // Kiểm tra xem giá trị có phải là số hợp lệ và không lớn hơn số lượng còn trong kho
     if (inputValue > 0 && inputValue <= product.productDetails?.quantity) {
       setQuantity(inputValue);
     } else if (inputValue > product.productDetails?.quantity) {
-      // Nếu số lượng nhập lớn hơn số lượng còn trong kho
 
-      setQuantity(product.productDetails?.quantity); // Đặt lại giá trị tối đa là số lượng còn trong kho
+      setQuantity(product.productDetails?.quantity);
+
     } else {
-      // Nếu người dùng nhập số nhỏ hơn hoặc bằng 0, đặt lại về 1
       setQuantity(1);
     }
   };
@@ -69,7 +81,6 @@ const ChiTietSP = () => {
       </div>
     );
   };
-
   const settings = {
     dots: false,
     infinite: false,
@@ -103,72 +114,36 @@ const ChiTietSP = () => {
       },
     ],
   };
-
-  // Fetch product details when component mounts or id changes
   useEffect(() => {
-    const productId = localStorage.getItem("selectedProductId");
-
-    if (!productId) {
-      console.error("Product ID not found");
-      return;
-    }
 
     const fetchProduct = async () => {
-      setLoading(true); // Start loading state
+      setLoading(true);
       try {
-        // Fetch main product details
-        const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
-        const productData = response.data;
+        const productData = await getProductById(id);
+        const productDetails = await getProductDetailById(productData.productId);
+        const brandData = await getBrandById(productData.brandId);
+        const categoryData = await getCategoryById(productData.categoryId);
+        const capacityData = productDetails.capacityId ? await getCapacityById(productDetails.capacityId) : null;
+        const skintypeData = productDetails.skintypeId ? await getSkintypeById(productDetails.skintypeId) : null;
+        const benefitData = productDetails.benefitId ? await getBenefitById(productDetails.benefitId) : null;
+        const ingredientData = productDetails.ingredientId ? await getIngredientById(productDetails.ingredientId) : null;
 
-        // Fetch related product details
-        const productDetailsResponse = await axios.get(`http://localhost:8080/api/productdetails/${productData.productId}`);
-        const productDetails = productDetailsResponse.data;
+        const relatedProductsData = await getRelatedProducts(productData.categoryId);
+        setRelatedProducts(relatedProductsData);
 
-        // Fetch brand, category, capacity, skin type, benefits, and ingredients
-        const [brandData, categoryData, capacityData, skinTypeData, benefitData, ingredientData] = await Promise.all([
-          axios.get(`http://localhost:8080/api/brands/${productData.brandId}`),
-          axios.get(`http://localhost:8080/api/categories/${productData.categoryId}`),
-          productDetails.capacityId ? axios.get(`http://localhost:8080/api/capacities/${productDetails.capacityId}`) : null,
-          productDetails.skintypeId ? axios.get(`http://localhost:8080/api/skintypes/${productDetails.skintypeId}`) : null,
-          productDetails.benefitId ? axios.get(`http://localhost:8080/api/benefits/${productDetails.benefitId}`) : null,
-          productDetails.ingredientId ? axios.get(`http://localhost:8080/api/ingredients/${productDetails.ingredientId}`) : null,
-        ]);
-
-        // Fetch related products
-        const relatedProductsResponse = await axios.get(`http://localhost:8080/api/products?categoryId=${productData.categoryId}`);
-        const relatedProductsData = relatedProductsResponse.data;
-
-        // Fetch details for each related product
-        const relatedProductDetails = await Promise.all(
-          relatedProductsData.map(async (relatedProduct) => {
-            const detailResponse = await axios.get(`http://localhost:8080/api/productdetails/${relatedProduct.productId}`);
-            return {
-              ...relatedProduct,
-              details: detailResponse.data,
-            };
-          })
-        );
-
-        setRelatedProducts(relatedProductDetails);
-
-        // Set product state
         setProduct({
           ...productData,
           productDetails,
-          brand: brandData.data,
-          category: categoryData.data,
-          capacity: capacityData ? capacityData.data : null,
-          skintype: skinTypeData ? skinTypeData.data : null,
-          benefit: benefitData ? benefitData.data : null,
-          ingredient: ingredientData ? ingredientData.data : null,
+          brand: brandData,
+          category: categoryData,
+          capacity: capacityData,
+          skintype: skintypeData,
+          benefit: benefitData,
+          ingredient: ingredientData,
         });
 
-        // Fetch product variants if available
-        if (productDetails.variants) {
-          setVariants(productDetails.variants); // Assuming variants is an array in productDetails
-        }
+        setLoading(false);
 
-        setLoading(false); // End loading state
       } catch (error) {
         console.error("Error fetching product:", error.message);
         setLoading(false);
@@ -176,21 +151,25 @@ const ChiTietSP = () => {
     };
 
     fetchProduct();
-  }, []); // No need for 'id' dependency anymore
+
+  }, [id]);
+
 
   if (loading) {
-    return <div>Loading...</div>; // Loading state
+    return <div>Loading...</div>;
   }
 
   if (!product) {
-    return <div>No product found</div>; // Handle case when product is not found
+    return <div>No product found</div>;
   }
 
-  const handleAddToCart = async (productDetailId, productPromotionId, quantity) => {
+
+  const handleAddToCart = async () => {
+
     const userData = localStorage.getItem("userData");
 
     if (!userData) {
-      toast.error("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
+      alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
       return;
     }
 
@@ -200,47 +179,44 @@ const ChiTietSP = () => {
       const userId = parsedData.user_id;
 
       if (!userId) {
-        toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+        alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
         return;
       }
 
-      const cartResponse = await axios.get(`http://localhost:8080/api/cart/${userId}`);
-      const cartData = cartResponse.data;
 
-      if (cartData.length === 0) {
+      const cartData = await getCartByUserId(userId);
+
+
+      if (!cartData.length) {
         console.error("Không tìm thấy cartId");
         return;
       }
 
       const cartId = cartData[0].cartId;
 
-      const cartItemsResponse = await axios.get(`http://localhost:8080/api/cart/items/${userId}`);
-      const cartItems = cartItemsResponse.data;
+      const existingCartItems = await fetchCartItems(userId);
 
-      const existingCartItem = cartItems.find(
+      const existingCartItem = existingCartItems.find(
         (item) =>
-          item.productDetail.productDetailId === productDetailId &&
-          (item.productPromotion ? item.productPromotion.productPromotionId === productPromotionId : productPromotionId === 0)
+          item.productDetail.productDetailId === product.productDetails.productDetailId
+
       );
 
       if (existingCartItem) {
         const updatedQuantity = existingCartItem.quantity + quantity;
-        const updateResponse = await axios.post(`http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`);
 
-        if (updateResponse.status === 200) {
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
-          fetchCartItems(userId);
-        }
+        await updateCartItem(existingCartItem.cartItemId, product.productDetails.productDetailId, 0, updatedQuantity);
+        fetchCartItems(userId);
+        toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
       } else {
-        const addResponse = await axios.post(`http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/0/${quantity}`);
+        await addToCart(cartId, product.productDetails.productDetailId, 0, quantity);
+        fetchCartItems(userId);
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
 
-        if (addResponse.status === 201) {
-          toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
-          fetchCartItems(userId);
-        }
       }
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
+      toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
     }
   };
 
@@ -256,7 +232,17 @@ const ChiTietSP = () => {
   const barcode = product?.id ? generateBarcode(product.id) : "N/A";
   return (
     <div className="container">
-      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="container-fluid page-header2 py-5 text-center"></div>
       <div className="container-fluid py-3 mt-3">
         <div className="container py-5">
@@ -308,8 +294,12 @@ const ChiTietSP = () => {
                         if (inputValue <= product.productDetails?.quantity) {
                           setQuantity(inputValue);
                         } else {
-                          toast.error("Số lượng nhập vượt quá số lượng trong kho");
-                          setQuantity(product.productDetails?.quantity);
+
+                          toast.error(
+                            "Số lượng nhập vượt quá số lượng trong kho"
+                          );
+                          setQuantity(product.productDetails?.quantity); // Giới hạn giá trị theo số lượng trong kho
+
                         }
                       }}
                       min="1"
@@ -545,22 +535,25 @@ const ChiTietSP = () => {
                         src={
                           relatedProduct.details?.img
                             ? require(`../../assets/img/${relatedProduct.details.img}`)
-                            : require("../../assets/img/hasaki.png") // hoặc một hình ảnh mặc định
+                            : require("../../assets/img/hasaki.png") // Hình ảnh mặc định
                         }
+                        
                         alt={relatedProduct.name}
                         className="card-img-top"
+                        
                       />
+                      
                       <div className="icon-container">
                         <a className="btn">
                           <i className="fas fa-shopping-cart"></i>
                         </a>
-                        <a href={`/product/${relatedProduct.productId}`}>
+                        <a  onClick={() => handleViewProduct(product.productId)}>
                           <i className="fas fa-eye"></i>
                         </a>
                       </div>
                       <div className="des">
-                        <span>{relatedProduct.category?.name}</span>{" "}
-                        {/* Hiển thị Category */}
+                  
+                        <span>{relatedProduct.brand?.name}</span>
                         <h6>{relatedProduct.name}</h6>
                         <div className="star">
                           <i className="fas fa-star"></i>

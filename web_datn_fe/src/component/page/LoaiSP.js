@@ -1,35 +1,30 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import Slider from "react-slick";
-import "../../assets/css/category.css"; // Tạo file CSS để tùy chỉnh giao diện
-import { apiClient } from '../../services/authService'; // Import apiClient
+import "../../assets/css/category.css";
+import { fetchCategories } from '../../services/authService';
 
 const LoaiSP = () => {
-  const navigate = useNavigate(); // Khởi tạo navigate
-  const [categories, setCategories] = React.useState([]); // Khởi tạo state cho danh mục
+  const navigate = useNavigate();
+  const [categories, setCategories] = React.useState([]);
 
   // Gọi API lấy danh mục khi component mount
   React.useEffect(() => {
-    fetchCategories();
+    const getCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error loading categories:", error);
+      }
+    };
+    getCategories();
   }, []);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await apiClient.get('api/home/categories'); // Sử dụng apiClient
-      console.log(response.data); // Kiểm tra dữ liệu trả về từ API
-
-      // Kiểm tra xem dữ liệu trả về có phải là mảng không
-      if (Array.isArray(response.data)) {
-        setCategories(response.data);
-      } else {
-        console.error('Dữ liệu không phải là mảng:', response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
+  const handleCategorySelection = (categoryId) => {
+    navigate(`/shop/category?id=${categoryId}`);
   };
 
-  // Custom Arrow cho Slider
   const PrevArrow = (props) => {
     const { onClick } = props;
     return (
@@ -48,11 +43,6 @@ const LoaiSP = () => {
     );
   };
 
-  const handleCategorySelection = (categoryId) => {
-    navigate(`/shop/category/${categoryId}`); // Sử dụng đúng trường ID
-  };
-
-  // Cài đặt cho Slider
   const settings = {
     speed: 500,
     slidesToShow: 8,
