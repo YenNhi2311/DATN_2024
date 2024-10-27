@@ -27,8 +27,10 @@ const ChiTietSP = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("about");
   const [relatedProducts, setRelatedProducts] = useState([]);
+
   const { fetchCartItems } = useCart();
   const navigate = useNavigate();
+
 
   // Handle increase and decrease of quantity
   const handleIncrease = () => {
@@ -49,7 +51,9 @@ const ChiTietSP = () => {
     if (inputValue > 0 && inputValue <= product.productDetails?.quantity) {
       setQuantity(inputValue);
     } else if (inputValue > product.productDetails?.quantity) {
+
       setQuantity(product.productDetails?.quantity);
+
     } else {
       setQuantity(1);
     }
@@ -111,6 +115,7 @@ const ChiTietSP = () => {
     ],
   };
   useEffect(() => {
+
     const fetchProduct = async () => {
       setLoading(true);
       try {
@@ -138,6 +143,7 @@ const ChiTietSP = () => {
         });
 
         setLoading(false);
+
       } catch (error) {
         console.error("Error fetching product:", error.message);
         setLoading(false);
@@ -145,7 +151,9 @@ const ChiTietSP = () => {
     };
 
     fetchProduct();
+
   }, [id]);
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -155,7 +163,9 @@ const ChiTietSP = () => {
     return <div>No product found</div>;
   }
 
+
   const handleAddToCart = async () => {
+
     const userData = localStorage.getItem("userData");
 
     if (!userData) {
@@ -173,7 +183,9 @@ const ChiTietSP = () => {
         return;
       }
 
+
       const cartData = await getCartByUserId(userId);
+
 
       if (!cartData.length) {
         console.error("Không tìm thấy cartId");
@@ -181,15 +193,18 @@ const ChiTietSP = () => {
       }
 
       const cartId = cartData[0].cartId;
+
       const existingCartItems = await fetchCartItems(userId);
 
       const existingCartItem = existingCartItems.find(
         (item) =>
           item.productDetail.productDetailId === product.productDetails.productDetailId
+
       );
 
       if (existingCartItem) {
         const updatedQuantity = existingCartItem.quantity + quantity;
+
         await updateCartItem(existingCartItem.cartItemId, product.productDetails.productDetailId, 0, updatedQuantity);
         fetchCartItems(userId);
         toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
@@ -197,6 +212,7 @@ const ChiTietSP = () => {
         await addToCart(cartId, product.productDetails.productDetailId, 0, quantity);
         fetchCartItems(userId);
         toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+
       }
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
@@ -237,8 +253,9 @@ const ChiTietSP = () => {
                   <div className="border-rounded">
                     <a href="#">
                       <img
-                        src={require(`../../assets/img/${product.productDetails?.img}`)} // Using a default image if not available
+                        src={`http://localhost:8080/assets/img/${product.productDetails?.img || 'default-image.jpg'}`} // Using a default image if not available
                         alt={product.name}
+                        className="img-fluid"
                       />
                     </a>
                   </div>
@@ -249,7 +266,7 @@ const ChiTietSP = () => {
                 <div className="col-lg-6">
                   <h4 className="fw-bold mb-3">{product.name}</h4>
                   <p className="mb-3">
-                    Loại sản phẩm: {product.category?.name || "Unknown"}
+                    Loại sản phẩm: {product.category?.name || "Chưa xác định"}
                   </p>
 
                   <div className="d-flex mb-4">
@@ -260,85 +277,86 @@ const ChiTietSP = () => {
                     <i className="fa fa-star"></i>
                   </div>
                   <span className="txt_price" id="product-final_price">
-                    {product.productDetails?.price?.toLocaleString() ||
-                      "Unknown"}{" "}
-                    đ
+                    {product.productDetails?.price?.toLocaleString() || "Chưa có giá"} đ
                   </span>
                   <p className="vat-included">(Đã bao gồm VAT)</p>
 
-                  <div
-                    className="d-flex align-items-center mb-3 "
-                    style={{ width: "100%", maxWidth: "350px" }} // Adjust width as needed
-                  >
-                    <button
-                      className="btn btn-outline-primary"
-                      onClick={handleDecrease}
-                      disabled={quantity <= 1} // Disable the button if quantity is 1
-                    >
+                  <div className="d-flex align-items-center mb-3" style={{ width: "100%", maxWidth: "350px" }}>
+                    <button className="btn btn-outline-primary" onClick={handleDecrease} disabled={quantity <= 1}>
                       <i className="fa fa-minus"></i>
                     </button>
                     <input
                       type="text"
-                      className="form-control mx-2" // Thêm margin cho khoảng cách giữa các phần tử
+                      className="form-control mx-2"
                       value={quantity}
                       onChange={(e) => {
-                        const inputValue = Math.max(
-                          1,
-                          parseInt(e.target.value) || 1
-                        ); // Giá trị tối thiểu là 1
+                        const inputValue = Math.max(1, parseInt(e.target.value) || 1);
                         if (inputValue <= product.productDetails?.quantity) {
-                          setQuantity(inputValue); // Cập nhật nếu số lượng hợp lệ
+                          setQuantity(inputValue);
                         } else {
+
                           toast.error(
                             "Số lượng nhập vượt quá số lượng trong kho"
                           );
                           setQuantity(product.productDetails?.quantity); // Giới hạn giá trị theo số lượng trong kho
+
                         }
                       }}
                       min="1"
-                      style={{
-                        width: "50px", // Điều chỉnh chiều rộng để dễ nhập hơn
-                        textAlign: "center", // Canh giữa text
-                      }}
+                      style={{ width: "50px", textAlign: "center" }}
                     />
-
-                    <button
-                      className="btn btn-outline-primary"
-                      onClick={handleIncrease}
-                    >
+                    <button className="btn btn-outline-primary" onClick={handleIncrease}>
                       <i className="fa fa-plus"></i>
                     </button>
 
                     {product.productDetails?.quantity > 0 ? (
                       <p className="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-0 text-white ms-3">
-                        Còn {product.productDetails?.quantity} sản phẩm
+                        Còn {product.productDetails.quantity} sản phẩm
                       </p>
                     ) : (
                       <p className="text-danger">Hết hàng</p>
                     )}
                   </div>
 
-                  <div className="capacity-selection">
-                    <h6>
-                      Dung Tích:{" "}
-                      <span style={{ marginLeft: "10px" }}>
-                        {product.capacity.value || "N/A"} mL
-                      </span>
-                    </h6>
-                    <div className="capacity-options">
-                      {product.productDetails?.capacities?.map((cap, index) => (
-                        <button className="capacity-btn" key={index}>
-                          {cap.value} mL
-                        </button>
-                      )) || "N/A"}
+                  <div className="product-variations">
+                    <h5>Biến Thể Sản Phẩm</h5>
+                    <div className="capacity-selection">
+                      <h6>
+                        Dung Tích: <span style={{ marginLeft: "10px" }}>{product.productDetails?.capacity?.value || "Chưa có dung tích"} mL</span>
+                      </h6>
+                    </div>
+                    <div className="color-selection">
+                      <h6>Màu Sắc:</h6>
+                      <div className="color-options">
+                        <span>{product.productDetails.color?.name || "Chưa có màu"}</span>
+                      </div>
+                    </div>
+                    <div className="skintype-selection">
+                      <h6>Loại Da:</h6>
+                      <div className="skintype-options">
+                        <span>{product.productDetails.skintype?.name || "Chưa có loại da"}</span>
+                      </div>
+                    </div>
+                    <div className="ingredient-selection">
+                      <h6>Thành Phần:</h6>
+                      <div className="ingredient-options">
+                        <span>{product.productDetails.ingredient?.name || "Chưa có thành phần"}</span>
+                      </div>
+                    </div>
+                    <div className="benefit-selection">
+                      <h6>Công dụng:</h6>
+                      <div className="benefit-options">
+                        <span>{product.productDetails.benefit?.name || "Chưa có lợi ích"}</span>
+                      </div>
                     </div>
                   </div>
+
                   <a
                     className="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-4 text-white"
                     onClick={() => {
                       handleAddToCart(
                         product.productDetails.productDetailId,
-                        product.productDetails.productPromotionId || 0, // You can set promotion id here or pass 0 if none
+                        product.productDetails.productPromotionId || 0,
                         quantity
                       );
                     }}
@@ -347,10 +365,7 @@ const ChiTietSP = () => {
                     Thêm Giỏ Hàng
                   </a>
 
-                  <a
-                    href="#"
-                    className="btn btn-danger border border-secondary rounded-pill px-4 py-2 mb-4 text-white"
-                  >
+                  <a href="#" className="btn btn-danger border border-secondary rounded-pill px-4 py-2 mb-4 text-white">
                     <i className="fa fa-shopping-bag me-2 text-white"></i>
                     Mua Ngay
                   </a>
@@ -360,41 +375,29 @@ const ChiTietSP = () => {
               <nav>
                 <div className="nav nav-tabs mb-3">
                   <button
-                    className={`nav-link ${
-                      activeTab === "about" ? "active" : ""
-                    } border-white border-bottom-0`}
+                    className={`nav-link ${activeTab === "about" ? "active" : ""} border-white border-bottom-0`}
                     type="button"
-                    role="tab"
                     onClick={() => handleTabClick("about")}
                   >
                     Thông Tin
                   </button>
                   <button
-                    className={`nav-link ${
-                      activeTab === "benefits" ? "active" : ""
-                    } border-white border-bottom-0`}
+                    className={`nav-link ${activeTab === "benefits" ? "active" : ""} border-white border-bottom-0`}
                     type="button"
-                    role="tab"
                     onClick={() => handleTabClick("benefits")}
                   >
                     Thông Số
                   </button>
                   <button
-                    className={`nav-link ${
-                      activeTab === "skinType" ? "active" : ""
-                    } border-white border-bottom-0`}
+                    className={`nav-link ${activeTab === "skinType" ? "active" : ""} border-white border-bottom-0`}
                     type="button"
-                    role="tab"
                     onClick={() => handleTabClick("skinType")}
                   >
                     Cách Dùng
                   </button>
                   <button
-                    className={`nav-link ${
-                      activeTab === "ingredients" ? "active" : ""
-                    } border-white border-bottom-0`}
+                    className={`nav-link ${activeTab === "ingredients" ? "active" : ""} border-white border-bottom-0`}
                     type="button"
-                    role="tab"
                     onClick={() => handleTabClick("ingredients")}
                   >
                     Thành phần
@@ -406,41 +409,37 @@ const ChiTietSP = () => {
                 {activeTab === "about" && (
                   <div>
                     <h2>Thông Tin sản phẩm</h2>
-                    <p>{product.description || "No description available."}</p>
+                    <p>{product.description || "Không có mô tả nào."}</p>
                   </div>
                 )}
                 {activeTab === "benefits" && (
-                  <div class="container">
+                  <div className="container">
                     <h2>Thông số sản phẩm</h2>
-                    <table class="table">
+                    <table className="table">
                       <tbody>
                         <tr>
                           <th>Thông tin</th>
                           <th>Giá trị</th>
                         </tr>
                         <tr>
-                          <td class="info-cell">Barcode</td>
+                          <td className="info-cell">Barcode</td>
                           <td>{generateBarcode(product.productId)}</td>
                         </tr>
                         <tr>
-                          <td class="info-cell">Thương Hiệu</td>
-                          <td>{product.brand.name}</td>
+                          <td className="info-cell">Thương Hiệu</td>
+                          <td>{product.brand?.name || "Chưa có thương hiệu"}</td>
                         </tr>
                         <tr>
-                          <td class="info-cell">Xuất xứ thương hiệu</td>
-                          <td>{product.brand.place}</td>
+                          <td className="info-cell">Xuất xứ thương hiệu</td>
+                          <td>{product.brand?.place || "Chưa có thông tin"}</td>
                         </tr>
                         <tr>
-                          <td class="info-cell">Nơi sản xuất</td>
-                          <td>{product.brand.place}</td>
+                          <td className="info-cell">Nơi sản xuất</td>
+                          <td>{product.brand?.place || "Chưa có thông tin"}</td>
                         </tr>
                         <tr>
-                          <td class="info-cell">Loại da</td>
-                          <td>
-                            {product.skintype
-                              ? product.skintype.name
-                              : "No skin type available"}
-                          </td>
+                          <td className="info-cell">Loại da</td>
+                          <td>{product.skintype?.name || "Không có thông tin"}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -451,37 +450,17 @@ const ChiTietSP = () => {
                     <h2>Hướng Dẫn Sử dụng</h2>
                     <ul>
                       {product.benefit?.name ? (
-                        <li
-                          dangerouslySetInnerHTML={{
-                            __html: product.benefit.name.replace(
-                              /\n/g,
-                              "<br />"
-                            ),
-                          }}
-                        />
+                        <li dangerouslySetInnerHTML={{ __html: product.benefit.name }} />
                       ) : (
-                        <li>No ingredient listed.</li>
+                        <li>Không có hướng dẫn sử dụng.</li>
                       )}
                     </ul>
                   </div>
                 )}
                 {activeTab === "ingredients" && (
                   <div>
-                    <h2>thành phần sản phẩm</h2>
-                    <ul>
-                      {product.ingredient?.name ? (
-                        <li
-                          dangerouslySetInnerHTML={{
-                            __html: product.ingredient.name.replace(
-                              /\n/g,
-                              "<br />"
-                            ),
-                          }}
-                        />
-                      ) : (
-                        <li>No ingredient listed.</li>
-                      )}
-                    </ul>
+                    <h2>Thành phần</h2>
+                    <p>{product.ingredient?.name || "Không có thông tin thành phần."}</p>
                   </div>
                 )}
               </div>
@@ -489,6 +468,7 @@ const ChiTietSP = () => {
           </div>
         </div>
       </div>
+
       <div className="container-fluid testimonial py-5">
         <div className="container py-5">
           <div className="testimonial-header text-left">
@@ -528,9 +508,8 @@ const ChiTietSP = () => {
                         {[...Array(5)].map((_, i) => (
                           <i
                             key={i}
-                            className={`fas fa-star ${
-                              i < 5 ? "text-warning" : ""
-                            }`}
+                            className={`fas fa-star ${i < 5 ? "text-warning" : ""
+                              }`}
                           ></i>
                         ))}
                       </div>

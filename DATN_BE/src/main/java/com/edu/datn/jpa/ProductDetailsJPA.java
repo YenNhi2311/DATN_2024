@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductDetailsJPA
     extends JpaRepository<ProductDetailsEntity, Integer> {
+      
   @Query("SELECT pd FROM ProductDetailsEntity pd JOIN pd.product p WHERE pd.product.productId = :productId")
   List<ProductDetailsEntity> findByProductId(
       @Param("productId") Integer productId);

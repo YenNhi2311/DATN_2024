@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"; // Import ToastContainer và toast
 import "react-toastify/dist/ReactToastify.css"; // Import CSS
 import { useCart } from "../../component/page/CartContext";
+
   const LoaiSPShop = () => {
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -34,6 +35,7 @@ import { useCart } from "../../component/page/CartContext";
       fetchBrands();
       fetchCategories();
       fetchSkins();
+
     fetchProducts();
     }, []);
 
@@ -55,6 +57,7 @@ import { useCart } from "../../component/page/CartContext";
                   const skintypesResponse = await axios.get("http://localhost:8080/api/home/skintypes");
                   const skintypes = Array.isArray(skintypesResponse.data) ? skintypesResponse.data : [];
   
+
                   // Log chi tiết để kiểm tra
                   console.log("Detail:", detail.data); // Kiểm tra dữ liệu chi tiết
                   console.log("Skintypes:", skintypes);
@@ -74,6 +77,7 @@ import { useCart } from "../../component/page/CartContext";
       } catch (error) {
           console.error("Error fetching products:", error.message);
       }
+
   };
   
 

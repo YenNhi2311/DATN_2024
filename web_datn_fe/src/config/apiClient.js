@@ -16,7 +16,8 @@ apiClient.interceptors.request.use(
     const encryptedUserData = localStorage.getItem("userData");
     if (encryptedUserData) {
       try {
-        const token = Cookies.get("access_token"); // Lấy access_token từ dữ liệu đã giải mã
+        const token = Cookies.get("access_token"); 
+        // Lấy access_token từ dữ liệu đã giải mã
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }

@@ -56,6 +56,8 @@ const Header = () => {
         }
     }, []);
 
+
+
     const handleLogout = () => {
         Cookies.remove("access_token");
         localStorage.removeItem("userData");
@@ -73,6 +75,7 @@ const Header = () => {
             navigate("/login");
         }
     };
+
 
     const getUserIdFromHeader = async () => {
         const response = await fetch("/api/getUserId", {
@@ -99,6 +102,7 @@ const Header = () => {
 
         fetchUserId();
     }, []);
+
 
     return (
         <div className="container-fluid fixed-top">
@@ -130,12 +134,63 @@ const Header = () => {
                     </button>
                     <div className="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div className="navbar-nav mx-auto">
-                            <Link to="/" className="nav-item nav-link">Trang chủ</Link>
-                            <Link to="/shop" className="nav-item nav-link">Cửa hàng</Link>
-                            <Link to="/social" className="nav-item nav-link">Mạng Xã Hội</Link>
-                            <Link to="/DanhGia" className="nav-item nav-link">Đánh Giá</Link>
-                            <Link to="/LienHe" className="nav-item nav-link">Liên Hệ</Link>
+                            <Link
+                                to="/"
+                                className={`nav-item nav-link ${location.pathname === "/" ? "active" : ""}`}
+                                style={{
+                                    color: location.pathname === "/" ? "#2575fc" : "#000",
+                                    fontWeight: location.pathname === "/" ? "bold" : "normal",
+                                    borderBottom: location.pathname === "/" ? "2px solid #2575fc" : "none",
+                                }}
+                            >
+                                Trang chủ
+                            </Link>
+                            <Link
+                                to="/shop"
+                                className={`nav-item nav-link ${location.pathname === "/shop" ? "active" : ""}`}
+                                style={{
+                                    color: location.pathname === "/shop" ? "#2575fc" : "#000",
+                                    fontWeight: location.pathname === "/shop" ? "bold" : "normal",
+                                    borderBottom: location.pathname === "/shop" ? "2px solid #2575fc" : "none",
+                                }}
+                            >
+                                Cửa hàng
+                            </Link>
+                            <Link
+                                to="/social"
+                                className={`nav-item nav-link ${location.pathname === "/social" ? "active" : ""}`}
+                                style={{
+                                    color: location.pathname === "/social" ? "#2575fc" : "#000",
+                                    fontWeight: location.pathname === "/social" ? "bold" : "normal",
+                                    borderBottom: location.pathname === "/social" ? "2px solid #2575fc" : "none",
+                                }}
+                            >
+                                Mạng Xã Hội
+                            </Link>
+                            <Link
+                                to="/DanhGia"
+                                className={`nav-item nav-link ${location.pathname === "/DanhGia" ? "active" : ""}`}
+                                style={{
+                                    color: location.pathname === "/DanhGia" ? "#2575fc" : "#000",
+                                    fontWeight: location.pathname === "/DanhGia" ? "bold" : "normal",
+                                    borderBottom: location.pathname === "/DanhGia" ? "2px solid #2575fc" : "none",
+                                }}
+                            >
+                                Đánh Giá
+                            </Link>
+                            <Link
+                                to="/LienHe"
+                                className={`nav-item nav-link ${location.pathname === "/LienHe" ? "active" : ""}`}
+                                style={{
+                                    color: location.pathname === "/LienHe" ? "#2575fc" : "#000",
+                                    fontWeight: location.pathname === "/LienHe" ? "bold" : "normal",
+                                    borderBottom: location.pathname === "/LienHe" ? "2px solid #2575fc" : "none",
+                                }}
+                            >
+                                Liên Hệ
+                            </Link>
                         </div>
+
 
                         <div className="d-flex m-3 me-0">
                             <div className="position-relative me-4 text-blue my-auto" onClick={handleCartClick} style={{ cursor: "pointer" }}>
@@ -173,8 +228,8 @@ const Header = () => {
                             <div className="dropdown-menu m-0 bg-secondary rounded-0">
                                 {isLoggedIn && userData ? (
                                     <>
-                                        <Link to="/profile" className="dropdown-item">Quản Lý Thông Tin</Link>
-                                        <Link to="/change-password" className="dropdown-item">Đổi Mật Khẩu</Link>
+                                        <Link to="/profile-user" className="dropdown-item">Quản Lý Thông Tin</Link>
+                                        <Link to="/profile-user" className="dropdown-item">Cài Đặt</Link>
                                         <a className="dropdown-item" onClick={handleLogout}>Đăng Xuất</a>
                                     </>
                                 ) : (

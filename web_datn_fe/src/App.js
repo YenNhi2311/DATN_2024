@@ -18,6 +18,7 @@ import OTPVerification from "./page/account/OTPVerification.js";
 import ResetPassword from "./page/account/ResetPasswordPage.js";
 import ProFile from "./page/account/UpdateProfileForm.js";
 
+
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";
 import GioHang from "./page/GioHang";
@@ -107,6 +108,7 @@ const App = () => {
           {/* Thông Tin Người dùng */}
           <Route path="/profile" element={<ProFile/>} />
           <Route path="/change-password" element={<ChangePassword/>} />
+          <Route path="/profile-user" element={<ProfileContainer/>} />
         </Route>
 
         <Route path="/admin/*" element={<Admin1Layout />}>
