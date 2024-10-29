@@ -20,24 +20,22 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDetailsEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderDetail_id")
-    private Integer orderDetailId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "orderDetail_id")
+  private Integer orderDetailId;
 
-    @Column(name = "price", nullable = false)
-    private Double price;
+  @Column(name = "price", nullable = false)
+  private Double price;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+  @Column(name = "quantity", nullable = false)
+  private Integer quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity order;
+  @ManyToOne
+  @JoinColumn(name = "order_id", nullable = false)
+  private OrderEntity order;
 
-    @ManyToOne
-    @JoinColumn(name = "productDetail_id", nullable = false)
-    private ProductDetailsEntity productDetail;
-
-    
+  @ManyToOne
+  @JoinColumn(name = "product_detail_id", nullable = false)
+  private ProductDetailsEntity productDetail;
 }

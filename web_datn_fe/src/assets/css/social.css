@@ -1,79 +1,64 @@
-/* social.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
 
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  /* Đảm bảo không có margin mặc định */
+}
+
+/* Tổng quan cho social-container */
 .social-container {
   display: flex;
   background-color: rgb(237, 242, 246);
   height: auto;
-  /* Chiều cao toàn màn hình */
-  /* Nếu bạn có header cố định */
-  font-family: 'Roboto', sans-serif;
-  overflow-y: scroll;
-  /* Cho phép cuộn dọc */
-  scrollbar-width: none;
-  /* Ngăn chặn cuộn nội dung không mong muốn */
-
+  margin-top: 40px;
+  overflow: hidden;
+  /* Ẩn thanh cuộn cho toàn bộ container */
 }
 
+/* Sidebar */
 .sidebar-left, .friend-sidebar {
   position: fixed;
   top: 65px;
   /* Đảm bảo không bị che bởi header */
   height: calc(100vh - 65px);
-  /* Đảm bảo chiều cao đủ để chứa nội dung */
-}
-
-/* Xóa thanh cuộn khỏi các phần tử có thể có trong trang */
-.social-container {
-  overflow-y: scroll;
-  /* Cho phép cuộn dọc */
-  scrollbar-width: none;
-  /* Đảm bảo toàn bộ container không có thanh cuộn */
-}
-
-/* Loại bỏ giới hạn chiều cao cho các phần tử bên trong trang */
-.social-content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: scroll;
-  /* Cho phép cuộn dọc */
-  scrollbar-width: none;
-  margin-top: 20px;
-  /* Đảm bảo không có thanh cuộn trong phần này */
+  background-color: #fff;
+  color: #000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-left {
   left: 0;
   width: 80px;
   /* Chiều rộng của sidebar trái */
-  background-color: #fff;
-  color: #000;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .friend-sidebar {
   right: 0;
   width: 80px;
   /* Chiều rộng của sidebar phải */
-  background-color: #fff;
-  color: #000;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Nội dung chính */
 .social-content {
-  margin-right: 80px;
-  /* Đẩy nội dung chính ra khỏi sidebar phải */
-  margin-top: 80px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
   flex: 1;
+  padding: 20px;
+  margin-top: 80px;
+  /* Đẩy nội dung chính xuống dưới sidebar */
+  height: calc(100vh - 80px);
+  /* Đảm bảo chiều cao tối ưu */
   overflow-y: scroll;
   /* Cho phép cuộn dọc */
   scrollbar-width: none;
-  /* Để chiếm không gian còn lại */
+  /* Ẩn thanh cuộn trên Firefox */
 }
 
+.social-content::-webkit-scrollbar {
+  display: none;
+  /* Ẩn thanh cuộn trên Webkit */
+}
+
+/* Lưới nội dung */
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
@@ -81,9 +66,9 @@
   gap: 20px;
   /* Khoảng cách giữa các cột */
   width: 100%;
-  /* Đảm bảo chiều rộng lưới là 100% */
 }
 
+/* Bài viết */
 .post {
   background: #fff;
   padding: 15px;
@@ -91,30 +76,31 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.post-item {
-  margin-bottom: 30px;
+/* Responsive */
+@media (max-width: 992px) {
+  .right-column {
+    display: none;
+    /* Ẩn cột bên phải trên màn hình nhỏ */
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    /* Hiển thị một cột */
+  }
 }
 
-.timeline-container {
+/* Các quy tắc CSS khác cho timeline, right column, v.v. */
+.timeline-container, .timeline-grid {
   display: flex;
   justify-content: center;
   padding: 20px;
   width: 100%;
 }
 
-.timeline-grid {
-  display: flex;
-  width: 100%;
-  max-width: 1200px;
-  /* Giới hạn chiều rộng của nội dung */
-}
-
 .timeline-left-column {
   flex: 1;
   max-width: 300px;
-  /* Đặt chiều rộng tối đa cho cột bên trái */
   margin-right: 20px;
-  /* Tạo khoảng cách giữa hai cột */
 }
 
 .timeline-right-column {
@@ -125,20 +111,17 @@
   /* Khoảng cách giữa các bài viết */
 }
 
-/* src/assets/css/rightColumn.css */
+/* Cột bên phải */
 .right-column {
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: fit-content;
   overflow-y: scroll;
   /* Cho phép cuộn dọc */
   scrollbar-width: none;
   /* Ẩn thanh cuộn trên Firefox */
-  /* Cho phép cuộn dọc */
-  width: 300px;
-  /* Chiều rộng của cột */
   border-radius: 8px;
   height: 500px;
+  /* Chiều cao của cột */
 }
 
 .right-column h2 {
@@ -146,29 +129,4 @@
   margin-bottom: 10px;
   border-left: 5px solid #34465d;
   padding-left: 10px;
-  margin-left: -20px;
-}
-
-.right-column hr {
-  margin: 10px -20px;
-}
-
-.right-column .notifications-header {
-  display: none;
-}
-
-@media (max-width:992px) {
-  .right-column {
-    display: none;
-  }
-
-  .content-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    /* Tạo ba cột với tỷ lệ 3:6:3 */
-    gap: 20px;
-    /* Khoảng cách giữa các cột */
-    width: 100%;
-    /* Đảm bảo chiều rộng lưới là 100% */
-  }
 }

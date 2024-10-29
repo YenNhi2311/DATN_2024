@@ -1,47 +1,61 @@
-import axios from "axios";
+// src/component/LoaiSPBanChay.js
+
 import CryptoJS from "crypto-js";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../../assets/css/category.css";
-import { useCart } from '../../component/page/CartContext';
+import { useCart } from "../../component/page/CartContext";
+import {
+  addToCart,
+  fetchBestSellingProducts,
+  getBrandById,
+  getCartByUserId,
+  getCartItemsByUserId,
+  updateCartItem,
+} from "../../services/authService";
+
 const LoaiSPBanChay = () => {
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
-  const { cartItems, fetchCartItems } = useCart();
+  const { fetchCartItems } = useCart();
+  const navigate = useNavigate();
+
+  // Chuyển hướng đến trang chi tiết sản phẩm
+  const handleViewProduct = (productId) => {
+    localStorage.setItem("selectedProductId", productId);
+    navigate("/product");
+  };
+
+  // Lấy danh sách sản phẩm bán chạy và thông tin thương hiệu
   useEffect(() => {
-    fetchBestSellingProducts();
+    fetchProductsWithBrands();
   }, []);
 
-  const fetchBestSellingProducts = async () => {
+  const fetchProductsWithBrands = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/home/products/best-selling"
-      );
-      const products = response.data;
-      console.log(products); // Kiểm tra cấu trúc dữ liệu
-
-      // Tạo một mảng Promise để lấy thông tin thương hiệu cho từng sản phẩm
-      const productBrandsPromises = products.map((product) =>
-        axios.get(`http://localhost:8080/api/brands/${product.product.brandId}`)
-      );
-
-      const brandsResponses = await Promise.all(productBrandsPromises);
-      const brands = brandsResponses.map((res) => res.data);
-
-      // Kết hợp thông tin sản phẩm với thương hiệu tương ứng
+      const products = await fetchBestSellingProducts();
+      const productBrandsPromises = products.map(async (product) => {
+        return product.product.brandId
+          ? await getBrandById(product.product.brandId)
+          : {};
+      });
+      const brands = await Promise.all(productBrandsPromises);
       const productsWithBrands = products.map((product, index) => ({
         ...product,
-        brand: brands[index] || {}, // Nếu không có thương hiệu, sử dụng object rỗng
+        brand: brands[index] || {},
       }));
-
       setBestSellingProducts(productsWithBrands);
     } catch (error) {
       console.error("Có lỗi xảy ra khi lấy sản phẩm bán chạy:", error);
     }
   };
 
+  // Xử lý thêm sản phẩm vào giỏ hàng
   const handleAddToCart = async (
     productDetailId,
     productPromotionId,
-    quantity = 1 // Lấy quantity từ input truyền vào
+    quantity = 1
   ) => {
     const userData = localStorage.getItem("userData");
 
@@ -51,7 +65,7 @@ const LoaiSPBanChay = () => {
     }
 
     try {
-      // Giải mã dữ liệu người dùng đã lưu để lấy user ID
+      // Giải mã và lấy userId từ dữ liệu mã hóa trong localStorage
       const decryptedData = CryptoJS.AES.decrypt(
         userData,
         "secret-key"
@@ -64,26 +78,15 @@ const LoaiSPBanChay = () => {
         return;
       }
 
-      // Gọi API để lấy cartId
-      const cartResponse = await axios.get(
-        `http://localhost:8080/api/cart/${userId}`
-      );
-      const cartData = cartResponse.data;
-
+      const cartData = await getCartByUserId(userId);
       if (cartData.length === 0) {
         console.error("Không tìm thấy cartId");
         return;
       }
 
-      const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
+      const cartId = cartData[0].cartId;
+      const cartItems = await getCartItemsByUserId(userId);
 
-      // Lấy các mục trong giỏ hàng để kiểm tra
-      const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
-      );
-      const cartItems = cartItemsResponse.data;
-
-      // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
       const existingCartItem = cartItems.find(
         (item) =>
           item.productDetail.productDetailId === productDetailId &&
@@ -93,35 +96,33 @@ const LoaiSPBanChay = () => {
       );
 
       if (existingCartItem) {
-        // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
         const updatedQuantity = existingCartItem.quantity + quantity;
-
-        // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
-        const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+        await updateCartItem(
+          existingCartItem.cartItemId,
+          productDetailId,
+          productPromotionId,
+          updatedQuantity
         );
-
-        if (updateResponse.status === 200) {
-          fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
-          alert("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
-        }
+        fetchCartItems(userId);
+        toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
       } else {
-        // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
-        const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/0/${quantity}`
-        );
-
-        if (addResponse.status === 201) {
-          fetchCartItems(userId); // Cập nhật lại danh sách giỏ hàng sau khi thay đổi
-        }
+        await addToCart(cartId, productDetailId, productPromotionId, quantity);
+        fetchCartItems(userId);
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
       }
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
+      toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
     }
   };
 
   return (
     <div className="container py-5">
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+      />
       <div className="tab-class text-center">
         <div className="row g-4">
           <div className="col-lg-5 col-12 text-start">
@@ -138,45 +139,57 @@ const LoaiSPBanChay = () => {
                 >
                   <div className="pro-container">
                     <div className="pro">
-                      <a href={`/product/${item.product.productId}`}>
+                      <a
+                        onClick={() =>
+                          handleViewProduct(item.product.productId)
+                        }
+                      >
                         <img
-                          src={require(`../../assets/img/${item.productDetails?.img || "default.jpg"}`)}
-                          alt={item.name}
+                          src={require(`../../assets/img/${
+                            item.productDetails?.img || "default.jpg"
+                          }`)}
+                          alt={item.product.name}
                         />
                       </a>
                       <div className="icon-container">
                         <a
                           className="btn"
-                          onClick={() => {
-                            const quantity = 1;
-                            const productPromotionID = 0; // Set the quantity you want to add
+                          onClick={() =>
                             handleAddToCart(
                               item.productDetails.productDetailId,
                               item.productDetails.productPromotionId || 0,
-                              quantity
-                            );
-                          }}
+                              1
+                            )
+                          }
                         >
                           <i className="fas fa-shopping-cart"></i>
                         </a>
-                        <a href={`/product/${item.product.productId}`}>
+                        <a
+                          className="btn"
+                          onClick={() =>
+                            handleViewProduct(item.product.productId)
+                          }
+                        >
                           <i className="fas fa-eye"></i>
                         </a>
                       </div>
                       <div className="des">
+                        <h6>{item.product.name}</h6>
                         <div className="price">
                           <h4 className="sale-price">
                             {item.productDetails.price.toLocaleString()} đ
                           </h4>
                         </div>
-                        <span>{item.brand?.name || "Unnamed Product"}</span>
-                        <h6>{item.product.name}</h6>
-                        <div className="star">
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="far fa-star"></i>
+                        <div className="brand-sold-container">
+                          <span className="brand-name">
+                            {item.brand?.name || "Thương Hiệu"}
+                          </span>
+                          <div className="sold-quantity-container">
+                            <span className="fas fa-shopping-cart"></span>
+                            <span className="sold-quantity">
+                              {item.totalSold || 0} đã bán
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -185,7 +198,7 @@ const LoaiSPBanChay = () => {
               ))}
             </div>
           ) : (
-            <p>Không có sản phẩm bán chạy nào.</p>
+            <p>Không có sản phẩm nào</p>
           )}
         </div>
       </div>

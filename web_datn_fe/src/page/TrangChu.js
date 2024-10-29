@@ -3,7 +3,6 @@ import KhuyenMai from "../component/page/KhuyenMai";
 import LoaiSP from "../component/page/LoaiSP";
 import LoaiSPBanChay from "../component/page/LoaiSPBanChay";
 import ThuongHieu from "../component/page/ThuongHieu";
-import TimKiem from "../component/page/timkiem";
 const TrangChu = () => {
   return (
     <div>
@@ -19,9 +18,9 @@ const TrangChu = () => {
               <h1 className="mb-5 display-3 text-blue">
                 Làn da đẹp, cuộc sống đẹp
               </h1>
-              <section className="container-fluid service py-0">
-        <TimKiem />
-      </section>
+              {/* <section className="container-fluid service py-0">
+                <TimKiem />
+              </section> */}
             </div>
             <div className="col-md-12 col-lg-6">
               <div
@@ -34,22 +33,16 @@ const TrangChu = () => {
                   <div className="carousel-item active rounded">
                     <img
                       src={require("../assets/img/banerhasaki.jpg")}
-                      className="img-fluid w-100 h-100 bg-secondary rounded"
+                      className="img-fluid w-100"
                       alt="First slide"
                     />
-                    {/* <a href="#" className="btn px-4 py-2 text-white rounded">
-                    Dưỡng ẩm
-                </a> */}
                   </div>
                   <div className="carousel-item rounded">
                     <img
                       src={require("../assets/img/banerhasaki.jpg")}
-                      className="img-fluid w-100 h-100 rounded"
+                      className="img-fluid w-100"
                       alt="Second slide"
                     />
-                    <a href="#" className="btn px-4 py-2 text-white rounded">
-                      Tẩy trang
-                    </a>
                   </div>
                 </div>
                 <button

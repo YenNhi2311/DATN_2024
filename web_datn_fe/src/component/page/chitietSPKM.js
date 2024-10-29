@@ -1,8 +1,10 @@
 import axios from "axios"; // Import axios
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
+import { toast, ToastContainer } from "react-toastify";
+
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import "../../assets/css/bootstrap.min.css";
@@ -11,9 +13,8 @@ import "../../assets/css/card.css";
 import "../../assets/css/category.css";
 import "../../assets/css/shop.css";
 import "../../assets/css/style.css";
-
+import { useCart } from "../../component/page/CartContext";
 const ChiTietSPKM = () => {
-  const { productPromotionId, productId } = useParams();
   const [quantity, setQuantity] = useState(1); // State for quantity
   const [productpromotion, setProductPromotion] = useState(null); // State for product details
   const [loading, setLoading] = useState(true); // State for loading status
@@ -22,7 +23,9 @@ const ChiTietSPKM = () => {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPromotionActive, setIsPromotionActive] = useState(true);
   const navigate = useNavigate();
-
+  const [productPromotionId, setProductPromotionId] = useState(null);
+  const [productId, setProductId] = useState(null);
+  const { cartItems, fetchCartItems } = useCart();
   let intervalId = null; // To store the interval ID for countdown
   // Handle increase and decrease of quantity
   const handleIncrease = () => {
@@ -103,102 +106,123 @@ const ChiTietSPKM = () => {
   // Fetch product details when component mounts or id changes
   useEffect(() => {
     const fetchProduct = async () => {
-      setLoading(true); // Start loading
+      setLoading(true); // Bắt đầu tải dữ liệu
+      const productId = localStorage.getItem("selectedProductId");
+      const productPromotionId = localStorage.getItem(
+        "selectedProductPromotionId"
+      );
+
       try {
-        // Fetch the product promotion data by ID
+        // Lấy dữ liệu khuyến mãi sản phẩm theo ID
         const productPromotionResponse = await axios.get(
-          `http://localhost:8080/api/home/productpromotions/${productPromotionId}`
+          `http://localhost:8080/api/home/productpromotion?id=${productPromotionId}`
         );
         const productPromotion = productPromotionResponse.data;
 
-        // Extract the product and promotion data
+        // Trích xuất productId và promotionId
         const productId = productPromotion.productId;
         const promotionId = productPromotion.promotionId;
 
+        // Lấy thông tin sản phẩm theo ID
         const productResponse = await axios.get(
-          `http://localhost:8080/api/products/${productId}`
+          `http://localhost:8080/api/home/product?id=${productId}`
         );
         const productData = productResponse.data;
 
-        // Fetch product details by product ID
+        // Lấy chi tiết sản phẩm theo ID
         const productDetailsResponse = await axios.get(
-          `http://localhost:8080/api/productdetails/${productId}`
+          `http://localhost:8080/api/home/productdetail?productId=${productId}`
         );
-        const productDetails = productDetailsResponse.data;
+        const productDetails = productDetailsResponse.data[0];
 
-        // Fetch related brand details
+        // Lấy thông tin thương hiệu liên quan
         const brandResponse = await axios.get(
-          `http://localhost:8080/api/brands/${productData.brandId}`
+          `http://localhost:8080/api/home/brand?id=${productData.brandId}`
         );
         const brandData = brandResponse.data;
 
-        // Fetch related category details
+        // Lấy thông tin danh mục liên quan
         const categoryResponse = await axios.get(
-          `http://localhost:8080/api/categories/${productData.categoryId}`
+          `http://localhost:8080/api/home/category?id=${productData.categoryId}`
         );
         const categoryData = categoryResponse.data;
 
-        // Fetch capacity details if available in the product details
-        const capacityResponse = await axios.get(
-          `http://localhost:8080/api/capacities/${productDetails.capacityId}`
-        );
-        const capacityData = capacityResponse.data;
+        // Lấy thông tin dung tích nếu có
+        let capacityData = null;
+        if (productDetails.capacityId) {
+          const capacityResponse = await axios.get(
+            `http://localhost:8080/api/home/capacity?id=${productDetails.capacityId}`
+          );
+          capacityData = capacityResponse.data;
+        }
 
-        // Fetch skin type details
-        const skintypeResponse = await axios.get(
-          `http://localhost:8080/api/skintypes/${productDetails.skintypeId}`
-        );
-        const skinTypeData = skintypeResponse.data;
+        // Lấy thông tin loại da
+        let skinTypeData = null;
+        if (productDetails.skintypeId) {
+          const skintypeResponse = await axios.get(
+            `http://localhost:8080/api/home/skintype?id=${productDetails.skintypeId}`
+          );
+          skinTypeData = skintypeResponse.data;
+        }
 
-        // Fetch benefit details
-        const benefitResponse = await axios.get(
-          `http://localhost:8080/api/benefits/${productDetails.benefitId}`
-        );
-        const benefitData = benefitResponse.data;
+        // Lấy thông tin lợi ích
+        let benefitData = null;
+        if (productDetails.benefitId) {
+          const benefitResponse = await axios.get(
+            `http://localhost:8080/api/home/benefit?id=${productDetails.benefitId}`
+          );
+          benefitData = benefitResponse.data;
+        }
 
-        // Fetch ingredient details
-        const ingredientResponse = await axios.get(
-          `http://localhost:8080/api/ingredients/${productDetails.ingredientId}`
-        );
-        const ingredientData = ingredientResponse.data;
+        // Lấy thông tin thành phần
+        let ingredientData = null;
+        if (productDetails.ingredientId) {
+          const ingredientResponse = await axios.get(
+            `http://localhost:8080/api/home/ingredient?id=${productDetails.ingredientId}`
+          );
+          ingredientData = ingredientResponse.data;
+        }
 
+        // Lấy thông tin khuyến mãi theo ID
         const promotionResponse = await axios.get(
-          `http://localhost:8080/api/promotions/${promotionId}`
+          `http://localhost:8080/api/home/promotion?id=${promotionId}`
         );
         const promotionData = promotionResponse.data;
 
+        // Lấy các sản phẩm liên quan theo categoryId
         const relatedProductsResponse = await axios.get(
-          `http://localhost:8080/api/products?categoryId=${productData.categoryId}`
+          `http://localhost:8080/api/home/products?categoryId=${productData.categoryId}`
         );
         const relatedProductsData = relatedProductsResponse.data;
 
-        // Fetch details and brand for each related product concurrently
+        // Lấy chi tiết các sản phẩm liên quan
         const relatedProductDetails = await Promise.all(
           relatedProductsData.map(async (relatedProduct) => {
             const detailResponse = await axios.get(
-              `http://localhost:8080/api/productdetails/${relatedProduct.productId}`
+              `http://localhost:8080/api/home/productdetail?productId=${relatedProduct.productId}`
             );
-            const brandResponse = await axios.get(
-              `http://localhost:8080/api/brands/${relatedProduct.brandId}`
+            const relatedBrandResponse = await axios.get(
+              `http://localhost:8080/api/home/brand?id=${relatedProduct.brandId}`
             );
-
             return {
               ...relatedProduct,
-              details: detailResponse.data,
-              brand: brandResponse.data, // Add brand data here
+              details: detailResponse.data[0], // Lấy phần tử đầu tiên từ mảng chi tiết sản phẩm
+              brand: relatedBrandResponse.data,
             };
           })
         );
+
+        // Kiểm tra thời gian khuyến mãi
         const currentDate = new Date();
         if (new Date(promotionData.endDate) < currentDate) {
-          navigate("/"); // Redirect to homepage if promotion has ended
+          navigate("/"); // Điều hướng đến trang chính nếu khuyến mãi đã kết thúc
           return;
         }
 
         // Set sản phẩm liên quan
         setRelatedProducts(relatedProductDetails);
 
-        // Set the product state
+        // Set trạng thái sản phẩm khuyến mãi
         setProductPromotion({
           productData,
           promotionData,
@@ -211,10 +235,9 @@ const ChiTietSPKM = () => {
           ingredient: ingredientData,
         });
 
-        // Start the countdown
+        // Bắt đầu đếm ngược thời gian
         startCountdown(promotionData.endDate);
-
-        setLoading(false); // Stop loading
+        setLoading(false); // Dừng tải dữ liệu
       } catch (error) {
         console.error("Error fetching product:", error.message);
         setLoading(false);
@@ -228,9 +251,9 @@ const ChiTietSPKM = () => {
         const timeLeft = promotionEndDate - now;
 
         if (timeLeft < 0) {
-          clearInterval(intervalId); // Clear the interval when the promotion ends
+          clearInterval(intervalId); // Dừng đếm ngược khi khuyến mãi kết thúc
           setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-          setIsPromotionActive(false); // Set promotion as inactive
+          setIsPromotionActive(false); // Đánh dấu khuyến mãi không còn hiệu lực
           navigate("/");
           return;
         }
@@ -250,15 +273,15 @@ const ChiTietSPKM = () => {
         });
       };
 
-      updateTimeLeft(); // Initial call to set the time immediately
-      intervalId = setInterval(updateTimeLeft, 1000); // Update the time every second
+      updateTimeLeft(); // Gọi lần đầu để thiết lập thời gian ngay lập tức
+      intervalId = setInterval(updateTimeLeft, 1000); // Cập nhật thời gian mỗi giây
     };
 
     fetchProduct();
 
-    // Clean up the interval when the component unmounts
+    // Dọn dẹp interval khi component unmount
     return () => clearInterval(intervalId);
-  }, [productPromotionId, productId]);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>; // Loading state
@@ -271,12 +294,11 @@ const ChiTietSPKM = () => {
     productpromotion.productDetails?.price,
     productpromotion.promotionData?.percent || 0
   );
-  const handleAddToCart = async (
-    productDetailId,
-    productPromotionId,
-    quantity
-  ) => {
+  const handleAddToCart = async (productDetailId, quantity) => {
     const userData = localStorage.getItem("userData");
+    const productPromotionId = localStorage.getItem(
+      "selectedProductPromotionId"
+    );
 
     if (!userData) {
       alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
@@ -284,7 +306,6 @@ const ChiTietSPKM = () => {
     }
 
     try {
-      // Giải mã dữ liệu người dùng đã lưu để lấy user ID
       const decryptedData = CryptoJS.AES.decrypt(
         userData,
         "secret-key"
@@ -293,11 +314,10 @@ const ChiTietSPKM = () => {
       const userId = parsedData.user_id;
 
       if (!userId) {
-        alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+        toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
         return;
       }
 
-      // Gọi API để lấy cartId
       const cartResponse = await axios.get(
         `http://localhost:8080/api/cart/${userId}`
       );
@@ -308,47 +328,48 @@ const ChiTietSPKM = () => {
         return;
       }
 
-      const cartId = cartData[0].cartId; // Lấy cartId từ phản hồi hợp lệ
+      const cartId = cartData[0].cartId;
 
-      // Lấy các mục trong giỏ hàng để kiểm tra
       const cartItemsResponse = await axios.get(
         `http://localhost:8080/api/cart/items/${userId}`
       );
       const cartItems = cartItemsResponse.data;
 
-      // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
       const existingCartItem = cartItems.find(
         (item) =>
           item.productDetail.productDetailId === productDetailId &&
           (item.productPromotion
             ? item.productPromotion.productPromotionId === productPromotionId
-            : productPromotionId === 0)
+            : productPromotionId === null || productPromotionId === 0)
       );
 
       if (existingCartItem) {
-        // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
         const updatedQuantity = existingCartItem.quantity + quantity;
 
-        // Gửi yêu cầu cập nhật sản phẩm trong giỏ hàng
         const updateResponse = await axios.post(
           `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
         );
-
+        console.log("Response from update API:", updateResponse.data); // Thêm dòng này
         if (updateResponse.status === 200) {
-          alert("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
+          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
+          fetchCartItems(userId);
         }
       } else {
-        // Thêm sản phẩm mới vào giỏ hàng nếu chưa có
         const addResponse = await axios.post(
           `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/${productPromotionId}/${quantity}`
         );
 
+        console.log("Response from add API:", addResponse.data); // Thêm dòng này
         if (addResponse.status === 201) {
-          alert("Sản phẩm đã được thêm vào giỏ hàng!");
+          toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+          fetchCartItems(userId);
         }
       }
     } catch (error) {
-      console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error.message);
+      console.error(
+        "Lỗi khi thêm sản phẩm vào giỏ hàng:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -364,8 +385,18 @@ const ChiTietSPKM = () => {
     : "N/A";
   return (
     <div>
-      <div className="container-fluid page-header py-5 text-center"></div>
-
+      <div className="container-fluid page-header3 py-5 text-center"></div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="container-fluid py-3 mt-3">
         <div className="container py-5">
           <div className="row">
@@ -442,8 +473,8 @@ const ChiTietSPKM = () => {
                   </div>
                   <span className="txt_price" id="product-final_price"></span>
                   <div
-                    className="input-group quantity mb-5 d-flex align-items-center justify-content-between"
-                    style={{ width: "100%", maxWidth: "400px" }} // Adjust width as needed
+                    className="d-flex align-items-center mb-3 "
+                    style={{ width: "100%", maxWidth: "350px" }} // Adjust width as needed
                   >
                     <button
                       className="btn btn-outline-primary"
@@ -503,8 +534,7 @@ const ChiTietSPKM = () => {
                     onClick={() => {
                       handleAddToCart(
                         productpromotion.productDetails.productDetailId,
-                        productpromotion.productPromotionId, // You can set promotion id here or pass 0 if none
-                        quantity
+                        quantity // Sử dụng quantity từ state
                       );
                     }}
                   >
@@ -661,7 +691,7 @@ const ChiTietSPKM = () => {
       <div className="container-fluid testimonial py-5">
         <div className="container py-5">
           <div className="testimonial-header text-left">
-            <h1 className="display-5 mb-5 text-dark">Đánh giá sản phẩm</h1>
+            <h1 className=" text-dark">Đánh Giá Sản Phẩm</h1>
           </div>
           <div className="owl-carousel testimonial-carousel">
             {[1, 2].map((_, index) => (
@@ -715,6 +745,7 @@ const ChiTietSPKM = () => {
           <br></br>
 
           <div className="row g-4">
+            <h1 className="text-dark">Sản Phẩm Liên Quan</h1>
             <Slider {...settings}>
               {relatedProducts.map((relatedProduct) => (
                 <div
@@ -764,7 +795,7 @@ const ChiTietSPKM = () => {
             </Slider>
           </div>
         </div>
-    </div>
+      </div>
     </div>
   );
 };

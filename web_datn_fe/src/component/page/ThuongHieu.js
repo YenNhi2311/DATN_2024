@@ -1,43 +1,40 @@
-import axios from "axios"; // Import axios
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Sử dụng useNavigate để điều hướng
+import { useNavigate } from "react-router-dom";
+import { fetchBrands } from "../../services/authService";
 
 const ThuongHieu = () => {
-  const [brands, setBrands] = useState([]); // Sử dụng useState để quản lý trạng thái
-  const [showName, setShowName] = useState(true); // Sử dụng state để hiển thị tên thương hiệu
-  const navigate = useNavigate(); // useNavigate để điều hướng
+  const [brands, setBrands] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Sử dụng axios để fetch data từ API khi component mount
-    axios
-      .get("http://localhost:8080/api/home/brands")
-      .then((response) => {
-        setBrands(response.data); // Cập nhật trạng thái với dữ liệu từ API
-      })
-      .catch((error) => {
-        console.error("Error fetching brands:", error);
-      });
-  }, []); // Chạy một lần khi component mount
+    const getBrands = async () => {
+      try {
+        const data = await fetchBrands();
+        setBrands(data);
+      } catch (error) {
+        console.error("Error loading brands:", error);
+      }
+    };
+    getBrands();
+  }, []);
 
   const handleBrandSelection = (brandId) => {
-    navigate(`/shop/brand/${brandId}`); // Điều hướng khi chọn thương hiệu
+    navigate(`/shop/brand?brandId=${brandId}`);
   };
 
   return (
     <div className="container-fluid py-5">
       <div className="container py-5">
-        <div
-          className="text-center mx-auto mb-5"
-          style={{ maxWidth: "700px" }}
-        >
+        <div className="text-center mx-auto mb-5" style={{ maxWidth: "700px" }}>
           <h1 className="display-2 text-blue">Thương Hiệu</h1>
           <p>
-            Vẻ đẹp không chỉ là làn da, mà là sự tự tin bạn mang theo mỗi ngày. Chăm sóc bản thân để tỏa sáng từ bên trong
+            Vẻ đẹp không chỉ là làn da, mà là sự tự tin bạn mang theo mỗi ngày.
+            Chăm sóc bản thân để tỏa sáng từ bên trong.
           </p>
         </div>
 
         <div className="brand-sliders-container">
-          {/* Slider for Even IDs */}
+          {/* Slider cho ID chẵn */}
           <div
             className="brand-slider"
             style={{
@@ -48,7 +45,7 @@ const ThuongHieu = () => {
           >
             <div className="list">
               {brands
-                .filter((brand) => brand.brandId % 2 === 0) // Filter even IDs
+                .filter((brand) => brand.brandId % 2 === 0)
                 .map((brand, index) => (
                   <div
                     className="item"
@@ -60,13 +57,12 @@ const ThuongHieu = () => {
                       alt={`Brand ${brand.name}`}
                       onClick={() => handleBrandSelection(brand.brandId)}
                     />
-         
                   </div>
                 ))}
             </div>
           </div>
 
-          {/* Slider for Odd IDs */}
+          {/* Slider cho ID lẻ */}
           <div
             className="brand-slider"
             style={{
@@ -78,7 +74,7 @@ const ThuongHieu = () => {
           >
             <div className="list">
               {brands
-                .filter((brand) => brand.brandId % 2 !== 0) // Filter odd IDs
+                .filter((brand) => brand.brandId % 2 !== 0)
                 .map((brand, index) => (
                   <div
                     className="item"
@@ -90,7 +86,6 @@ const ThuongHieu = () => {
                       alt={`Brand ${brand.name}`}
                       onClick={() => handleBrandSelection(brand.brandId)}
                     />
-            
                   </div>
                 ))}
             </div>

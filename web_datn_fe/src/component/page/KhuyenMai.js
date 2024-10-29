@@ -1,17 +1,22 @@
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import React, { useEffect, useState } from "react";
-import "../../assets/css/category.css"; // Tạo file CSS để tùy chỉnh giao diện
-import { useCart } from '../../component/page/CartContext';
-import { notify } from "../../component/web/CustomToast";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "../../assets/css/category.css";
+import { useCart } from "../../component/page/CartContext";
+
 const KhuyenMai = () => {
   const [productPromotions, setProductPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProductPromotions();
   }, []);
+
   const { cartItems, fetchCartItems } = useCart();
+
   const fetchProductPromotions = () => {
     axios
       .get("http://localhost:8080/api/home/productpromotions")
@@ -22,23 +27,23 @@ const KhuyenMai = () => {
             const promotionId = productPromotion.promotionId;
 
             const productResponse = await axios.get(
-              `http://localhost:8080/api/products/${productId}`
+              `http://localhost:8080/api/home/product?id=${productId}`
             );
             const productDetailResponse = await axios.get(
-              `http://localhost:8080/api/productdetails/${productId}`
+              `http://localhost:8080/api/home/productdetail?productId=${productId}`
             );
             const brandResponse = await axios.get(
-              `http://localhost:8080/api/brands/${productResponse.data.brandId}`
+              `http://localhost:8080/api/home/brand?id=${productResponse.data.brandId}`
             );
             const promotionResponse = await axios.get(
-              `http://localhost:8080/api/promotions/${promotionId}`
+              `http://localhost:8080/api/home/promotion?id=${promotionId}`
             );
 
             return {
               brand: brandResponse.data,
               promotion: promotionResponse.data,
               product: productResponse.data,
-              productDetail: productDetailResponse.data,
+              productDetail: productDetailResponse.data[0],
               productPromotionId: productPromotion.productPromotionId,
             };
           })
@@ -58,7 +63,11 @@ const KhuyenMai = () => {
       });
   };
 
-  const handleAddToCart = async (productDetailId, productPromotionId, quantity = 1) => {
+  const handleAddToCart = async (
+    productDetailId,
+    productPromotionId,
+    quantity = 1
+  ) => {
     const userData = localStorage.getItem("userData");
 
     if (!userData) {
@@ -67,16 +76,21 @@ const KhuyenMai = () => {
     }
 
     try {
-      const decryptedData = CryptoJS.AES.decrypt(userData, "secret-key").toString(CryptoJS.enc.Utf8);
+      const decryptedData = CryptoJS.AES.decrypt(
+        userData,
+        "secret-key"
+      ).toString(CryptoJS.enc.Utf8);
       const parsedData = JSON.parse(decryptedData);
       const userId = parsedData.user_id;
 
       if (!userId) {
-        alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+        toast.error("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
         return;
       }
 
-      const cartResponse = await axios.get(`http://localhost:8080/api/cart/${userId}`);
+      const cartResponse = await axios.get(
+        `http://localhost:8080/api/cart?userId=${userId}`
+      );
       const cartData = cartResponse.data;
 
       if (cartData.length === 0) {
@@ -87,7 +101,7 @@ const KhuyenMai = () => {
       const cartId = cartData[0].cartId;
 
       const cartItemsResponse = await axios.get(
-        `http://localhost:8080/api/cart/items/${userId}`
+        `http://localhost:8080/api/cart/items?userId=${userId}`
       );
       const cartItems = cartItemsResponse.data;
 
@@ -103,20 +117,20 @@ const KhuyenMai = () => {
         const updatedQuantity = existingCartItem.quantity + quantity;
 
         const updateResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/update/${existingCartItem.cartItemId}/${productDetailId}/${productPromotionId}/${updatedQuantity}`
+          `http://localhost:8080/api/cart/cartItem/update?cartItemId=${existingCartItem.cartItemId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${updatedQuantity}`
         );
 
         if (updateResponse.status === 200) {
-          notify("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
-          fetchCartItems(userId); 
+          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng!");
+          fetchCartItems(userId);
         }
       } else {
         const addResponse = await axios.post(
-          `http://localhost:8080/api/cart/cartItem/${cartId}/${productDetailId}/${productPromotionId}/${quantity}`
+          `http://localhost:8080/api/cart/cartItem?cartId=${cartId}&productDetailId=${productDetailId}&productPromotionId=${productPromotionId}&quantity=${quantity}`
         );
 
         if (addResponse.status === 201) {
-          notify("Sản phẩm đã được thêm vào giỏ hàng!");
+          toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
           fetchCartItems(userId);
         }
       }
@@ -125,18 +139,35 @@ const KhuyenMai = () => {
     }
   };
 
+  const handleProductClick = (productPromotion) => {
+    const { product } = productPromotion;
+    localStorage.setItem("selectedProductId", product.productId);
+    localStorage.setItem(
+      "selectedProductPromotionId",
+      productPromotion.productPromotionId
+    );
+    window.location.href = `/productpromotion`;
+  };
+
   if (loading) {
     return <p>Loading promotions...</p>;
-  }
-
-  if (productPromotions.length === 0) {
-    return <p>No active promotions available.</p>;
   }
 
   const limitedProductPromotions = productPromotions.slice(0, 4);
 
   return (
     <div className="container py-5">
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="tab-class text-center">
         <div className="row g-4">
           <div className="col-lg-5 col-12 text-start">
@@ -148,7 +179,7 @@ const KhuyenMai = () => {
                 <a
                   className="d-flex m-2 py-2 bg-blue rounded-pill active"
                   data-bs-toggle="pill"
-                  href="/promotions"
+                  onClick={() => navigate("/productpromotionlist")}
                 >
                   <span className="text-light" style={{ width: "130px" }}>
                     Xem Tất Cả
@@ -165,19 +196,20 @@ const KhuyenMai = () => {
                 <div className="product-list row g-4">
                   {limitedProductPromotions.map((productPromotion, index) => {
                     const productDetail = productPromotion.productDetail || {};
-                    const promotionPercent = productPromotion.promotion.percent || 0;
+                    const promotionPercent =
+                      productPromotion.promotion.percent || 0;
                     const productImage =
                       productDetail.img || "path/to/default_image.jpg";
                     const productPrice =
                       productDetail.price || "Price unavailable";
                     const discountAmount =
                       (productPrice * promotionPercent) / 100;
-
                     const originalPrice = productPrice - discountAmount;
                     const productBrand =
                       productPromotion.brand?.name || "Brand unavailable";
                     const productName =
-                      productPromotion.product?.name || "Product name unavailable";
+                      productPromotion.product?.name ||
+                      "Product name unavailable";
 
                     return (
                       <div
@@ -187,7 +219,11 @@ const KhuyenMai = () => {
                         <div className="pro-container">
                           <div className="pro">
                             <span className="sale">{promotionPercent}%</span>
-                            <a href={`/productpromotion/product/${productPromotion.productPromotionId}/${productPromotion.product?.productId}`}>
+                            <a
+                              onClick={() =>
+                                handleProductClick(productPromotion)
+                              }
+                            >
                               <img
                                 src={require(`../../assets/img/${productImage}`)}
                                 alt={productName}
@@ -196,19 +232,20 @@ const KhuyenMai = () => {
                             <div className="icon-container">
                               <a
                                 className="btn"
-                                onClick={() => {
-                                  const quantity = 1;
+                                onClick={() =>
                                   handleAddToCart(
                                     productDetail.productDetailId,
                                     productPromotion.productPromotionId,
-                                    quantity
-                                  );
-                                }}
+                                    1
+                                  )
+                                }
                               >
                                 <i className="fas fa-shopping-cart"></i>
                               </a>
                               <a
-                                href={`/productpromotion/product/${productPromotion.productPromotionId}/${productPromotion.product?.productId}`}
+                                onClick={() =>
+                                  handleProductClick(productPromotion)
+                                }
                               >
                                 <i className="fas fa-eye"></i>
                               </a>

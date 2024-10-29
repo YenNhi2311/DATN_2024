@@ -1,6 +1,6 @@
 package com.edu.datn.service;
 
-import com.edu.datn.dto.FriendDTO;
+
 import com.edu.datn.entities.FriendEntity;
 import com.edu.datn.entities.UserEntity;
 import com.edu.datn.jpa.FriendJPA;

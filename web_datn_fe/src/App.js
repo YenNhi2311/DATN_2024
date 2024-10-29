@@ -36,6 +36,7 @@ import Social from "./SocialLayout";
 
 //  {/* sản phẩm */}
 import FormProduct from "../src/page/admin1/product/form.js";
+import BigFormProduct from "../src/page/admin1/product/productform.js";
 import TableProduct from "../src/page/admin1/product/table.js";
 
 //  {/* Thương hiệu*/}
@@ -96,11 +97,11 @@ const App = () => {
           <Route path="/shop" element={<Shop />} />
           <Route path="/shop/category/:categoryId" element={<ShopLoai />} />
           <Route path="/shop/brand/:brandId" element={<ShopTH />} />
-          <Route path="/product/:id" element={<ChiTietSP />} />
-          <Route path="/productpromotion/product/:productPromotionId/:productId" element={<ChiTietSPKM />} />
+          <Route path="/product" element={<ChiTietSP />} />
+          <Route path="/productpromotion" element={<ChiTietSPKM />} />
           <Route path="/lienhe" element={<LienHe />} />
-          <Route path="/cart/:userId" element={<GioHang />} />
-          <Route path="/thanhtoan/:userId" element={<ThanhToan />} />
+          <Route path="/cart/" element={<GioHang />} />
+          <Route path="/thanhtoan" element={<ThanhToan />} />
           <Route path="/danhgia" element={<DanhGia />} />
           <Route path="/promotions" element={<KhuyenMaiList />} />
           {/* Thông Tin Người dùng */}
@@ -110,53 +111,56 @@ const App = () => {
 
         <Route path="/admin/*" element={<Admin1Layout />}>
           <Route path="" element={<Dashboard2 />} />
-        </Route>
-        {/* Routes quản trị */}
-       {/* QL Sản phẩm */}
-       <Route path="formproduct" element={<FormProduct />} />
+
+          <Route path="formproduct" element={<FormProduct />} />
           <Route path="formproduct/:id" element={<FormProduct />} />
-          <Route path="tableproduct" element={<TableProduct />} />
+          <Route path="bigformproduct/:id" element={<BigFormProduct/>}/>
+          <Route path="product" element={<TableProduct />} />
 
           {/* QL Thương hiệu */}
           <Route path="formbrand" element={<FormBrand />} />
           <Route path="formbrand/:id" element={<FormBrand />} />
-          <Route path="tablebrand" element={<TableBrand />} />
+          <Route path="brand" element={<TableBrand />} />
 
           {/* QL Sản phẩm chi tiết */}
           <Route path="formproductdetail" element={<FormProductDetail />} />
           <Route path="formproductdetail/:id" element={<FormProductDetail />} />
-          <Route path="tableproductdetail" element={<TableProductDetail />} />
+          <Route path="productdetail" element={<TableProductDetail />} />
 
           {/* QL loại */}
           <Route path="formcategory" element={<FormCategory />} />
           <Route path="formcategory/:id" element={<FormCategory />} />
-          <Route path="tablecategory" element={<TableCategory />} />
+          <Route path="category" element={<TableCategory />} />
 
           {/* QL màu */}
           <Route path="formcolor" element={<FormColor />} />
           <Route path="formcolor/:id" element={<FormColor />} />
-          <Route path="tablecolor" element={<TableColor />} />
+          <Route path="color" element={<TableColor />} />
 
           {/* QL loại da */}
           <Route path="form-skin-type" element={<FormSkinType />} />
           <Route path="form-skin-type/:id" element={<FormSkinType />} />
-          <Route path="table-skin-type" element={<TableSkinType />} />
+          <Route path="skintype" element={<TableSkinType />} />
 
           {/* QL dung tích */}
           <Route path="formcapacity" element={<FormCapacity />} />
           <Route path="formcapacity/:id" element={<FormCapacity />} />
-          <Route path="tablecapacity" element={<TableSCapacity />} />
+          <Route path="capacity" element={<TableSCapacity />} />
 
 
           {/* QL thành phần */}
           <Route path="formingredient" element={<FormIngredient />} />
           <Route path="formingredient/:id" element={<FormIngredient />} />
-          <Route path="tableingredient" element={<TableIngredient />} />
+          <Route path="ingredient" element={<TableIngredient />} />
 
           {/* QL công dụng */}
           <Route path="formbenefit" element={<FormBenefit />} />
           <Route path="formbenefit/:id" element={<FormBenefit />} />
-          <Route path="tablebenefit" element={<TableBenefit />} />
+          <Route path="benefit" element={<TableBenefit />} />
+        </Route>
+        {/* Routes quản trị */}
+       {/* QL Sản phẩm */}
+       
       </Routes>
     </Router>
   );

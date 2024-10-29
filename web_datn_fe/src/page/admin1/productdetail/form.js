@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from "react";
+   import React, { useEffect, useState } from "react";
   import {
     Dialog,
     DialogActions,
@@ -56,7 +56,13 @@
           ]);
 
           setColors(responses[0].data);
-          setSkinTypes(responses[1].data);
+          setSkinTypes(responses[1].data);const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormValues((prev) => ({
+        ...prev,
+        [name]: name === "price" || name === "quantity" ? parseFloat(value) : value,
+      }));
+    };
           setCapacities(responses[2].data);
           setIngredients(responses[3].data);
           setBenefits(responses[4].data);

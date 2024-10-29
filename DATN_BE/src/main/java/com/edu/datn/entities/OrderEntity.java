@@ -39,7 +39,7 @@ public class OrderEntity {
   private LocalDateTime payDate;
 
   @Column(name = "status", nullable = false)
-  private Byte status;
+  private String status;
 
   @Column(name = "shipping_fee", nullable = false)
   private Double shippingFee;

@@ -1,6 +1,6 @@
 package com.edu.datn.controller;
 
-import com.edu.datn.dto.FriendDTO;
+
 import com.edu.datn.entities.FriendEntity;
 import com.edu.datn.entities.PostEntity;
 import com.edu.datn.entities.UserEntity;

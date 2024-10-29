@@ -15,7 +15,7 @@ export default class ShopLoai extends Component {
       <div>
      
 
-<div className="container-fluid page-header py-5">
+<div className="container-fluid page-header4 py-5">
           <LoaiSPShoploai />
         </div>
       </div>

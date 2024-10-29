@@ -6,6 +6,7 @@ const Sidebar = () => {
     <aside id="sidebar" className="sidebar">
       <ul className="sidebar-nav" id="sidebar-nav">
 
+        {/* Trang Chủ */}
         <li className="nav-item">
           <Link className="nav-link" to="/admin/">
             <i className="bi bi-grid"></i>
@@ -13,284 +14,147 @@ const Sidebar = () => {
           </Link>
         </li>
 
-        
-
+        {/* Quản Lý Người Dùng */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#user-management-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/user-list">
             <i className="bi bi-file-person"></i>
             <span>Quản Lý Người Dùng</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="user-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/user-list">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
+        {/* Quản Lý Thương Hiệu */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#brand-management-nav" data-bs-toggle="collapse" href="#">
-            <i className="bi bi-file-brand"></i>
+          <Link className="nav-link" to="/admin/brand">
+            <i className="bi bi-file-plus"></i>
             <span>Quản Lý Thương Hiệu</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="brand-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tablebrand">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
         {/* Quản Lý Sản Phẩm */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#product-management-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/product">
             <i className="bi bi-file-plus"></i>
             <span>Quản Lý Sản Phẩm</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="product-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tableproduct">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
         {/* Quản Lý Sản Phẩm Chi Tiết */}
-        <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#detailed-product-management-nav" data-bs-toggle="collapse" href="#">
+        {/* <li className="nav-item">
+          <Link className="nav-link" to="/admin/productdetail">
             <i className="bi bi-file-text"></i>
             <span>Quản Lý Sản Phẩm Chi Tiết</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="detailed-product-management-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tableproductdetail">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
+          </Link>
+        </li> */}
 
-          </ul>
-        </li>
-
-        {/* Quản Lý Loại */}
+        {/* Quản Lý Loại Sản Phẩm */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#categories-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/category">
             <i className="bi bi-file-richtext"></i>
-            <span>Quản Lý Loại Sản Phầm</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="categories-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tablecategory">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+            <span>Quản Lý Loại Sản Phẩm</span>
+          </Link>
         </li>
 
-
-        {/* Quản Lý Loại da */}
+        {/* Quản Lý Loại Da */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#skinTypes-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/skintype">
             <i className="bi bi-file-earmark-ruled"></i>
             <span>Quản Lý Loại Da</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="skinTypes-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/table-skin-type">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
-        {/* Quản Lý màu */}
+
+        {/* Quản Lý Màu */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#colors-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/color">
             <i className="bi bi-brightness-high"></i>
             <span>Quản Lý Màu</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="colors-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tablecolor">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
-        {/* Quản Lý Dung tích */}
+
+        {/* Quản Lý Dung Tích */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#capacitys-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/capacity">
             <i className="bi bi-menu-button-wide"></i>
             <span>Quản Lý Dung Tích</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="capacitys-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tablecapacity">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-            
-          </ul>
+          </Link>
         </li>
-        {/* Quản Lý thành Phần */}
+
+        {/* Quản Lý Thành Phần */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#ingredients-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/ingredient">
             <i className="bi bi-layout-text-window-reverse"></i>
             <span>Quản Lý Thành Phần</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="ingredients-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tableingredient">
-                <i className="bi bi-circle"></i><span>Danh Sách</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
-        {/* Quản Lý Công dụng */}
+        {/* Quản Lý Công Dụng */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#benefits-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/admin/benefit">
             <i className="bi bi-layout-text-window-reverse"></i>
             <span>Quản Lý Công Dụng</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="benefits-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/admin/tablebenefit">
-                <i className="bi bi-circle"></i><span>Danh Sách Công Dụng</span>
-              </Link>
-            </li>
-
-          </ul>
+          </Link>
         </li>
 
-        {/* Quản Lý hóa đơn */}
+        {/* Quản Lý Hóa Đơn */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#order-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/detailed-product-list">
             <i className="bi bi-layout-text-window-reverse"></i>
             <span>Quản Lý Hóa Đơn</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="order-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/detailed-product-list">
-                <i className="bi bi-circle"></i><span>Danh Sách Hóa Đơn</span>
-              </Link>
-            </li>
-            {/* <li>
-              <Link to="/detailed-product-data">
-                <i className="bi bi-circle"></i><span></span>
-              </Link>
-            </li> */}
-          </ul>
+          </Link>
         </li>
 
-        {/* Quản Lý khuyến mãi */}
+        {/* Quản Lý Khuyến Mãi */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#promotion-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/detailed-product-list">
             <i className="bi bi-layout-text-window-reverse"></i>
             <span>Quản Lý Khuyến Mãi</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="promotion-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/detailed-product-list">
-                <i className="bi bi-circle"></i><span>Danh Sách </span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/detailed-product-data">
-                <i className="bi bi-circle"></i><span>Dữ Liệu</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
+        {/* Charts */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/charts-chartjs">
             <i className="bi bi-bar-chart"></i>
             <span>Charts</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="charts-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/charts-chartjs">
-                <i className="bi bi-circle"></i><span>Chart.js</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/charts-apexcharts">
-                <i className="bi bi-circle"></i><span>ApexCharts</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/charts-echarts">
-                <i className="bi bi-circle"></i><span>ECharts</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
+        {/* Icons */}
         <li className="nav-item">
-          <a className="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
+          <Link className="nav-link" to="/icons-bootstrap">
             <i className="bi bi-gem"></i>
             <span>Icons</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="icons-nav" className="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li>
-              <Link to="/icons-bootstrap">
-                <i className="bi bi-circle"></i><span>Bootstrap Icons</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/icons-remix">
-                <i className="bi bi-circle"></i><span>Remix Icons</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/icons-boxicons">
-                <i className="bi bi-circle"></i><span>Boxicons</span>
-              </Link>
-            </li>
-          </ul>
+          </Link>
         </li>
 
         <li className="nav-heading">Pages</li>
 
+        {/* Profile */}
         <li className="nav-item">
-          <Link className="nav-link collapsed" to="/profile">
+          <Link className="nav-link" to="/profile">
             <i className="bi bi-person"></i>
             <span>Profile</span>
           </Link>
         </li>
 
+        {/* F.A.Q */}
         <li className="nav-item">
-          <Link className="nav-link collapsed" to="/faq">
+          <Link className="nav-link" to="/faq">
             <i className="bi bi-question-circle"></i>
             <span>F.A.Q</span>
           </Link>
         </li>
 
+        {/* Contact */}
         <li className="nav-item">
-          <Link className="nav-link collapsed" to="/contact">
+          <Link className="nav-link" to="/contact">
             <i className="bi bi-envelope"></i>
             <span>Contact</span>
           </Link>
         </li>
 
+        {/* Blank */}
         <li className="nav-item">
-          <Link className="nav-link collapsed" to="/blank">
+          <Link className="nav-link" to="/blank">
             <i className="bi bi-file-earmark"></i>
             <span>Blank</span>
           </Link>

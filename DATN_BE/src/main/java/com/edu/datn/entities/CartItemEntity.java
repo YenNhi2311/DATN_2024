@@ -20,25 +20,24 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartItemEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartItem_id")
-    private Integer cartItemId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "cartItem_id")
+  private Integer cartItemId;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+  @Column(name = "quantity", nullable = false)
+  private Integer quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id", nullable = false)
-    private CartEntity cart;
+  @ManyToOne
+  @JoinColumn(name = "cart_id", nullable = false)
+  private CartEntity cart;
 
-    @ManyToOne
-    @JoinColumn(name = "productDetail_id", nullable = false)
-    private ProductDetailsEntity productDetail;
+  @ManyToOne
+  @JoinColumn(name = "productDetail_id", nullable = false)
+  private ProductDetailsEntity productDetail;
 
-    // Thêm quan hệ với ProductPromotionEntity
-    @ManyToOne
-    @JoinColumn(name = "productPromotion_id")
-    private ProductPromotionEntity productPromotion;
-
+  // Thêm quan hệ với ProductPromotionEntity
+  @ManyToOne
+  @JoinColumn(name = "productPromotion_id")
+  private ProductPromotionEntity productPromotion;
 }

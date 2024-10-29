@@ -1,10 +1,9 @@
-import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; 
-import Swal from 'sweetalert2'; 
-import { apiClient  } from "../../config/apiClient"; 
-import {getUserData} from "../../services/authService"
-import "../../assets/css/changePass.css"
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
+import "../../assets/css/changePass.css";
+import { apiClient } from "../../config/apiClient";
+import { getUserData } from "../../services/authService";
 
 const ChangePasswordPage = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -91,6 +90,7 @@ const ChangePasswordPage = () => {
       <div className="change-password-box">
         <h2>Thay Đổi Mật Khẩu</h2>
         <form onSubmit={handleSubmit}>
+         
           <div className="change-password-form-group">
             <input
               type="password"
@@ -111,10 +111,11 @@ const ChangePasswordPage = () => {
               required
             />
           </div>
-
+          <div className="change-password-form-group">
           <button type="submit" disabled={loading}>
             {loading ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
           </button>
+          </div>
         </form>
       
       </div>

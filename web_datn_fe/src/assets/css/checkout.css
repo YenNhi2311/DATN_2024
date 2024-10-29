@@ -93,7 +93,7 @@
 .order-btn {
     width: 100%;
     padding: 15px;
-    background-color: #028858;
+    background-color: #1d51cb;
     color: white;
     border: none;
     border-radius: 5px;
@@ -137,7 +137,7 @@
     border-radius: 20px;
     margin-top: 10px;
     border: none;
-    background-color: #6a6fc9;
+    background-color: #1d51cb;
     color: #fff;
 }
 
@@ -172,7 +172,7 @@
 }
 
 .change-btn {
-    background-color: #34465d;
+    background-color: #1d51cb;
     padding: 10px 20px;
     border-radius: 20px;
     color: #fff;
@@ -182,5 +182,5 @@
 }
 
 .change-btn:hover {
-    background-color: #283a4b;
+    background-color: rgb(9, 51, 92);
 }

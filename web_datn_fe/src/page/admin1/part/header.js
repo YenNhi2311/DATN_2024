@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import logo from '../../../assets/img/logo-removebg-preview.png';
+
 
 const Header = () => {
 
@@ -8,9 +9,7 @@ const Header = () => {
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
         <a href="index.html" className="logo d-flex align-items-center">
-        <Link className="navbar-brand">
-                        <img src={require("../../../assets/img/logo-removebg-preview.png")} alt="logo" />
-                    </Link>
+          <img src={logo} alt="Logo" style={{width:'90%',height:'90%'}}/>
           <span className="d-none d-lg-block"></span>
         </a>
 
