@@ -283,7 +283,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
     }
   }, [editData]);
 
-  const handleChange = (productDetailId, name, value, index) => {
+  const handleChange = (index, productDetailId, name, value) => {
     // Kiểm tra xem value có hợp lệ không
     if (value === undefined) {
       console.error("Value is undefined");
@@ -291,29 +291,34 @@ const ProductLists = (initialValues = {}, onSubmit) => {
     }
 
     // Cập nhật trạng thái của rows
-    setRows((prevRows) => {
-      const newRows = [...prevRows];
-      // Cập nhật trường tương ứng
-      newRows[index] = {
-        ...newRows[index],
-        [name]: value
-      };
-      return newRows;
-    });
+    if (index !== undefined) {
+      setRows((prevRows) => {
+        const newRows = [...prevRows];
+        // Cập nhật trường tương ứng
+        newRows[index] = {
+          ...newRows[index],
+          [name]: value
+        };
+        return newRows;
+      });
+    }
 
     // Cập nhật trạng thái của productDetails
-    setProductDetails((prevDetails) => {
-      const updatedDetails = prevDetails[productId].map((detail) =>
-        detail.productDetailId === productDetailId
-          ? { ...detail, [name]: value } // Cập nhật trường tương ứng
-          : detail
-      );
+    if (productDetailId !== undefined) {
+      setProductDetails((prevDetails) => {
+        const updatedDetails = prevDetails[productId].map((detail) =>
+          detail.productDetailId === productDetailId
+            ? { ...detail, [name]: value } // Cập nhật trường tương ứng
+            : detail
+        );
 
-      return {
-        ...prevDetails,
-        [productId]: updatedDetails,
-      };
-    });
+        return {
+          ...prevDetails,
+          [productId]: updatedDetails,
+        };
+      });
+    }
+
   };
 
 
@@ -626,7 +631,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                   {rows.map((row, index) => (
                                     <TableRow key={index} className="tablerowedit">
                                       <TableCell className="tablecelldetail">
-                                        <select name="colorId" value={row.colorId || ""} onChange={(e) => handleChange(index, e)} className="selectform">
+                                        <select name="colorId" value={row.colorId || ""} onChange={(e) => handleChange(index, undefined, "colorId", e.target.value)} className="selectform">
                                           <option value="" disabled>Màu sắc</option>
                                           {colors.map((color) => (
                                             <option key={color.colorId} value={color.colorId}>{color.name}</option>
@@ -634,7 +639,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                         </select>
                                       </TableCell>
                                       <TableCell className="tablecelldetail">
-                                        <select name="skintypeId" value={row.skintypeId || ""} onChange={(e) => handleChange(index, e)} className="selectform">
+                                        <select name="skintypeId" value={row.skintypeId || ""} onChange={(e) => handleChange(index, undefined, "skintypeId", e.target.value)} className="selectform">
                                           <option value="" disabled>Loại da</option>
                                           {skinTypes.map((type) => (
                                             <option key={type.skintypeId} value={type.skintypeId}>{type.name}</option>
@@ -642,7 +647,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                         </select>
                                       </TableCell>
                                       <TableCell className="tablecelldetail">
-                                        <select name="capacityId" value={row.capacityId || ""} onChange={(e) => handleChange(index, e)} className="selectform">
+                                        <select name="capacityId" value={row.capacityId || ""} onChange={(e) => handleChange(index, undefined, "capacityId", e.target.value)} className="selectform">
                                           <option value="" disabled>Dung tích</option>
                                           {capacities.map((capacity) => (
                                             <option key={capacity.capacityId} value={capacity.capacityId}>{capacity.value}</option>
@@ -650,7 +655,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                         </select>
                                       </TableCell>
                                       <TableCell className="tablecelldetail">
-                                        <select name="ingredientId" value={row.ingredientId || ""} onChange={(e) => handleChange(index, e)} className="selectformTP">
+                                        <select name="ingredientId" value={row.ingredientId || ""} onChange={(e) => handleChange(index, undefined, "ingredientId", e.target.value)} className="selectformTP">
                                           <option value="" disabled>Thành phần</option>
                                           {ingredients.map((ingredient) => (
                                             <option key={ingredient.ingredientId} value={ingredient.ingredientId}>{ingredient.name}</option>
@@ -658,7 +663,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                         </select>
                                       </TableCell>
                                       <TableCell className="tablecelldetail">
-                                        <select name="benefitId" value={row.benefitId || ""} onChange={(e) => handleChange(index, e)} className="selectform">
+                                        <select name="benefitId" value={row.benefitId || ""} onChange={(e) => handleChange(index, undefined, "benefitId", e.target.value)} className="selectform">
                                           <option value="" disabled>Lợi ích</option>
                                           {benefits.map((benefit) => (
                                             <option key={benefit.benefitId} value={benefit.benefitId}>{benefit.name}</option>
@@ -670,7 +675,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                           type="number"
                                           name="price"
                                           value={row.price || ""}
-                                          onChange={(e) => handleChange(index, e)}
+                                          onChange={(e) => handleChange(index, undefined, "price", e.target.value)}
                                           placeholder="Giá (VND)"
                                           required
                                         />
@@ -680,7 +685,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                           type="number"
                                           name="quantity"
                                           value={row.quantity || ""}
-                                          onChange={(e) => handleChange(index, e)}
+                                          onChange={(e) => handleChange(index, undefined, "quantity", e.target.value)}
                                           placeholder="Số lượng"
                                           required
                                         />
@@ -742,7 +747,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                           {editingRows[details.productDetailId] ? (
                                             <TextField
                                               value={details.price}
-                                              onChange={(e) => handleChange(details.productDetailId, "price", e.target.value)}
+                                              onChange={(e) => handleChange(undefined, details.productDetailId, "price", e.target.value)}
                                               type="number"
                                             />
                                           ) : (
@@ -753,7 +758,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                           {editingRows[details.productDetailId] ? (
                                             <TextField
                                               value={details.quantity}
-                                              onChange={(e) => handleChange(details.productDetailId, "quantity", e.target.value)}
+                                              onChange={(e) => handleChange(undefined, details.productDetailId, "quantity", e.target.value)}
                                               type="number"
                                             />
                                           ) : (
