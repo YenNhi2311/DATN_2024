@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from "sweetalert2";
 import "../../../assets/css/admin/formSkinType.css";
 
-const FormSkinType = ({ onClose, editData }) => {
+const FormSkinType = ({ handleCloseForm, editData }) => {
     // Khởi tạo state formData để lưu trữ thông tin form (skintypeId và name)
     const [formData, setFormData] = useState({ skintypeId: '', name: '' });
     // Khởi tạo state để xác định xem đang trong chế độ cập nhật hay thêm mới
@@ -16,7 +17,7 @@ const FormSkinType = ({ onClose, editData }) => {
         if (editData) {
             // Khi editData có giá trị, form sẽ chuyển sang chế độ cập nhật
             setFormData({ skintypeId: editData.skintypeId, name: editData.name });
-            setIsUpdating(true);  // Đặt chế độ là cập nhật
+            setIsUpdating(true);
         } else {
             // Nếu không có editData (chế độ thêm mới), form được reset lại
             setFormData({ skintypeId: '', name: '' });
@@ -28,7 +29,6 @@ const FormSkinType = ({ onClose, editData }) => {
     // Hàm xử lý thay đổi giá trị của form
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        // Cập nhật giá trị tương ứng với input trong formData
         setFormData({ ...formData, [name]: value });
     };
 
@@ -53,7 +53,6 @@ const FormSkinType = ({ onClose, editData }) => {
 
         try {
             const dataToSend = { name: formData.name }; // Chuẩn bị dữ liệu để gửi đi
-
             if (isUpdating) {
                 // Gọi API PUT để cập nhật loại da nếu đang trong chế độ cập nhật
                 await axios.put(`http://localhost:8080/api/skintypes/${formData.skintypeId}`, dataToSend);
@@ -64,7 +63,6 @@ const FormSkinType = ({ onClose, editData }) => {
                     confirmButtonText: "OK",
                 });
             } else {
-                // Gọi API POST để thêm mới loại da
                 await axios.post('http://localhost:8080/api/skintypes', dataToSend);
                 Swal.fire({
                     title: "Thành công!",
@@ -77,7 +75,7 @@ const FormSkinType = ({ onClose, editData }) => {
             // Reset form về trạng thái ban đầu sau khi thêm/cập nhật thành công
             setFormData({ skintypeId: '', name: '' });
             setIsUpdating(false); // Đặt lại chế độ thêm mới
-            onClose(true); // Đóng form và báo hiệu reload dữ liệu cho bảng bên ngoài
+            handleCloseForm(true) // Đóng form và báo hiệu reload dữ liệu cho bảng bên ngoài
         } catch (error) {
             console.error('Lỗi khi thêm/cập nhật loại da:', error);
             Swal.fire({
@@ -89,7 +87,6 @@ const FormSkinType = ({ onClose, editData }) => {
         }
     };
 
-    // JSX để render form
     return (
         <form onSubmit={handleSubmit}>
             <div className="row mb-4">
