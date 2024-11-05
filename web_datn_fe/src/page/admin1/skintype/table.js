@@ -1,3 +1,4 @@
+
 import {
     Box,
     Table,
@@ -187,9 +188,11 @@ const TableSkinType = () => {
                                 onChange={handleRowsPerPageOptionChange}
                                 label="Số hàng"
                             >
-                                <MenuItem value={24}>24/trang</MenuItem>
-                                <MenuItem value={36}>36/trang</MenuItem>
-                                <MenuItem value={48}>48/trang</MenuItem>
+                                <MenuItem value={10}>10/trang</MenuItem>
+                                <MenuItem value={15}>15/trang</MenuItem>
+                                <MenuItem value={20}>20/trang</MenuItem>
+                                <MenuItem value={25}>25/trang</MenuItem>
+                                <MenuItem value={30}>30/trang</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -239,7 +242,7 @@ const TableSkinType = () => {
                 </TableContainer>
 
                 <TablePagination
-                    rowsPerPageOptions={[24, 36, 48]}
+                    rowsPerPageOptions={[10, 15, 20, 25, 30]}
                     component="div"
                     count={filteredRows.length}
                     rowsPerPage={rowsPerPage}
@@ -260,15 +263,15 @@ const TableSkinType = () => {
                     <IconButton
                         edge="end"
                         style={{ float: 'right', right: 2, color: 'red', fontWeight: 'bolder' }}
-                        onClick={() => handleCloseForm(false)}
+                        onClose={() => handleCloseForm(false)}
                     >
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <FormSkinType 
-                        editData={editData} 
-                        handleCloseForm={handleCloseForm} 
+                    <FormSkinType
+                        editData={editData}
+                        handleCloseForm={handleCloseForm}
                     />
                 </DialogContent>
             </Dialog>
