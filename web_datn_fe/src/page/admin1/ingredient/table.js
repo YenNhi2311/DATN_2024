@@ -34,7 +34,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const TableIngredient = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    
+
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(24);
@@ -176,9 +176,11 @@ const TableIngredient = () => {
                                 onChange={handleRowsPerPageOptionChange}
                                 label="Số hàng"
                             >
-                                <MenuItem value={24}>24/trang</MenuItem>
-                                <MenuItem value={36}>36/trang</MenuItem>
-                                <MenuItem value={48}>48/trang</MenuItem>
+                                <MenuItem value={10}>10/trang</MenuItem>
+                                <MenuItem value={15}>15/trang</MenuItem>
+                                <MenuItem value={20}>20/trang</MenuItem>
+                                <MenuItem value={25}>25/trang</MenuItem>
+                                <MenuItem value={30}>30/trang</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -227,7 +229,7 @@ const TableIngredient = () => {
 
                 <div style={{ marginTop: '16px', alignSelf: 'center' }}>
                     <TablePagination
-                        rowsPerPageOptions={[24, 36, 48]}
+                        rowsPerPageOptions={[10, 15, 20, 25, 30]}
                         component="div"
                         count={filteredRows.length}
                         rowsPerPage={rowsPerPage}

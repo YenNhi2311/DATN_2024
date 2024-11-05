@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import { apiClient } from "../../../config/apiClient";
 import "../../../assets/css/productformform.css";
+import Swal from "sweetalert2";
 
 const ProductForm = ({
   initialValues,
@@ -18,15 +19,22 @@ const ProductForm = ({
   handleClose,
   categories,
   brands,
-  productId, // Thêm productId vào props
+  productId,
 }) => {
   const [formValues, setFormValues] = useState(initialValues);
-  const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [productData, setProductData] = useState(initialValues);
 
   useEffect(() => {
-    setProductData(initialValues);
+    setFormValues(initialValues); // Đảm bảo formValues được khởi tạo từ initialValues
   }, [initialValues]);
+
+  useEffect(() => {
+    console.log("Current productId:", productId);
+    if (!productId) {
+      console.log("Adding new product");
+    } else {
+      console.log("Updating existing product");
+    }
+  }, [productId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,23 +44,53 @@ const ProductForm = ({
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (productData.productId) {
-        // Cập nhật sản phẩm nếu có productId
-        await apiClient.put(`/api/products/${productData.productId}`, productData);
-      } else {
-        // Thêm mới sản phẩm nếu không có productId
-        await apiClient.post("/api/products", productData);
-      }
-      // onSave(); // Gọi hàm để làm mới dữ liệu sau khi lưu
-      // onClose(); // Đóng form
-    } catch (error) {
-      console.error("Lỗi khi lưu sản phẩm:", error);
+  const handleSubmit = (e) => {
+    e.preventDefault();  // Prevent default form submission
+    if (onSubmit) {
+      onSubmit(formValues);  // Call the onSubmit function passed via props
+    } else {
+      console.error("onSubmit function is not defined");
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     if (productId) {
+  //       // Cập nhật sản phẩm nếu productId tồn tại
+  //       await apiClient.put(`/api/products/${productId}`, {
+  //         name: formValues.name,
+  //         description: formValues.description,
+  //         categoryId: formValues.categoryId,
+  //         brandId: formValues.brandId,
+  //       });
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Cập nhật thành công!",
+  //         text: "Sản phẩm đã được cập nhật.",
+  //       });
+  //     } else {
+  //       // Thêm mới sản phẩm nếu productId không tồn tại
+  //       await apiClient.post("/api/products", {
+  //         name: formValues.name,
+  //         description: formValues.description,
+  //         categoryId: formValues.categoryId,
+  //         brandId: formValues.brandId,
+  //       });
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Thêm thành công!",
+  //         text: "Sản phẩm đã được thêm.",
+  //       });
+  //     }
+  //     onSubmit();
+  //     handleClose();
+  //   } catch (error) {
+  //     console.log(error)
+  //     console.error("Lỗi khi lưu sản phẩm:", error);
+  //     alert("Có lỗi xảy ra khi lưu sản phẩm. Vui lòng thử lại!");
+  //   }
+  // };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -77,9 +115,8 @@ const ProductForm = ({
             required
             sx={{ mt: 2 }}
             multiline
-            rows={4} // Thêm thuộc tính rows để điều chỉnh chiều cao
+            rows={4}
           />
-          {/* ComboBox cho danh mục sản phẩm */}
           <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
             <InputLabel id="category-label">Danh mục</InputLabel>
             <Select
@@ -98,7 +135,6 @@ const ProductForm = ({
             </Select>
           </FormControl>
 
-          {/* ComboBox cho thương hiệu */}
           <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
             <InputLabel id="brand-label">Thương hiệu</InputLabel>
             <Select
@@ -117,7 +153,7 @@ const ProductForm = ({
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           <Button variant="contained" color="primary" type="submit" sx={{ marginRight: 2 }}>
             Lưu
           </Button>

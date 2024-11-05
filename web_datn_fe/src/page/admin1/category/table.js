@@ -37,7 +37,7 @@ const TableCategory = () => {
 
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(24);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [sortValue, setSortValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editData, setEditData] = useState(null);
@@ -180,7 +180,7 @@ const TableCategory = () => {
                         </Select>
                     </FormControl>
 
-                    <FormControl variant="outlined" sx={{ minWidth: 120 }}> 
+                    <FormControl variant="outlined" sx={{ minWidth: 120 }}>
                         <InputLabel id="rowsPerPage-label">Hàng</InputLabel>
                         <Select
                             labelId="rowsPerPage-label"
@@ -188,9 +188,11 @@ const TableCategory = () => {
                             onChange={handleRowsPerPageOptionChange}
                             label="Rows"
                         >
-                            <MenuItem value={24}>24/trang</MenuItem>
-                            <MenuItem value={36}>36/trang</MenuItem>
-                            <MenuItem value={48}>48/trang</MenuItem>
+                            <MenuItem value={10}>10/trang</MenuItem>
+                            <MenuItem value={15}>15/trang</MenuItem>
+                            <MenuItem value={20}>20/trang</MenuItem>
+                            <MenuItem value={25}>25/trang</MenuItem>
+                            <MenuItem value={30}>30/trang</MenuItem>
                         </Select>
                     </FormControl>
 
@@ -218,18 +220,17 @@ const TableCategory = () => {
                                         <TableCell>{row.id}</TableCell>
                                         <TableCell>{row.name}</TableCell>
                                         <TableCell>
-                                                <img
-                                                    className="image"
-                                                    src={`http://localhost:8080/assets/img/${row.imageUrl}`}
-                                                    alt="Hình ảnh không hiển thị"
-                                                    style={{
-                                                        width: "80px",
-                                                        height: "80px",
-                                                        objectFit: "cover",
-                                                    }}
-                                                />
+                                            <img
+                                                className="image"
+                                                src={`http://localhost:8080/assets/img/${row.imageUrl}`}
+                                                alt="Hình ảnh không hiển thị"
+                                                style={{
+                                                    width: "80px",
+                                                    height: "80px",
+                                                    objectFit: "cover",
+                                                }}
+                                            />
                                         </TableCell>
-
                                         <TableCell>
                                             <IconButton
                                                 variant="contained"
@@ -251,10 +252,9 @@ const TableCategory = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-
                 <div style={{ marginTop: '16px', alignSelf: 'center' }}>
                     <TablePagination
-                        rowsPerPageOptions={[24, 36, 48]}
+                        rowsPerPageOptions={[10, 15, 20, 25, 30]}
                         component="div"
                         count={filteredRows.length}
                         rowsPerPage={rowsPerPage}
@@ -281,7 +281,6 @@ const TableCategory = () => {
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
-
                 <DialogContent className="mt-3">
                     <FormCategory
                         editData={editData}
@@ -292,5 +291,4 @@ const TableCategory = () => {
         </Box>
     );
 };
-
 export default TableCategory;

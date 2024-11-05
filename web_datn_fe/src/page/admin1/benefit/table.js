@@ -190,9 +190,11 @@ const TableBenefit = () => {
                                 onChange={handleRowsPerPageOptionChange}
                                 label="Số hàng"
                             >
-                                <MenuItem value={24}>24/trang</MenuItem>
-                                <MenuItem value={36}>36/trang</MenuItem>
-                                <MenuItem value={48}>48/trang</MenuItem>
+                                <MenuItem value={10}>10/trang</MenuItem>
+                                <MenuItem value={15}>15/trang</MenuItem>
+                                <MenuItem value={20}>20/trang</MenuItem>
+                                <MenuItem value={25}>25/trang</MenuItem>
+                                <MenuItem value={30}>30/trang</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -239,10 +241,9 @@ const TableBenefit = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-
             <div style={{ marginTop: '16px', alignSelf: 'center' }}>
                 <TablePagination
-                    rowsPerPageOptions={[24, 36, 48]}
+                    rowsPerPageOptions={[10, 15, 20, 25, 30]}
                     component="div"
                     count={filteredRows.length}
                     rowsPerPage={rowsPerPage}
@@ -251,7 +252,6 @@ const TableBenefit = () => {
                     onRowsPerPageChange={handleRowsPerPageOptionChange}
                 />
             </div>
-
             <Dialog
                 open={isFormOpen}
                 onClose={() => handleCloseForm(false)}
@@ -263,14 +263,14 @@ const TableBenefit = () => {
                     <IconButton
                         edge="end"
                         style={{ marginLeft: 'auto' }}
-                        onClick={() => handleCloseForm(false)}
+                        onClose={() => handleCloseForm(false)}
                     >
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
                     <FormSkinType
-                        onCloseAndReload={handleCloseForm}
+                        handleCloseForm={handleCloseForm}
                         initialData={editData}
                     />
                 </DialogContent>

@@ -34,17 +34,9 @@ const Sidebar = () => {
         <li className="nav-item">
           <Link className="nav-link" to="/admin/product">
             <i className="bi bi-file-plus"></i>
-            <span>Quản Lý Sản Phẩm</span>
+            <span>Quản Lý Sản Phẩm & Biến Thể</span>
           </Link>
         </li>
-
-        {/* Quản Lý Sản Phẩm Chi Tiết */}
-        {/* <li className="nav-item">
-          <Link className="nav-link" to="/admin/productdetail">
-            <i className="bi bi-file-text"></i>
-            <span>Quản Lý Sản Phẩm Chi Tiết</span>
-          </Link>
-        </li> */}
 
         {/* Quản Lý Loại Sản Phẩm */}
         <li className="nav-item">
@@ -96,7 +88,7 @@ const Sidebar = () => {
 
         {/* Quản Lý Hóa Đơn */}
         <li className="nav-item">
-          <Link className="nav-link" to="/detailed-product-list">
+          <Link className="nav-link" to="/admin/order">
             <i className="bi bi-layout-text-window-reverse"></i>
             <span>Quản Lý Hóa Đơn</span>
           </Link>

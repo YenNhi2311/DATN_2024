@@ -8,7 +8,7 @@ const Header = () => {
   return (
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
-        <a href="index.html" className="logo d-flex align-items-center">
+        <a href="/admin" className="logo d-flex align-items-center">
           <img src={logo} alt="Logo" style={{width:'90%',height:'90%'}}/>
           <span className="d-none d-lg-block"></span>
         </a>

@@ -16,6 +16,10 @@ import {
     TablePagination,
     TableRow,
     TextField,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
     useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -23,7 +27,7 @@ import Swal from "sweetalert2";
 import Header from "../../../component/chart/Header";
 import { apiClient } from "../../../config/apiClient";
 import { tokens } from "../../../theme";
-import BrandForm from "./form"; // Your form component
+import BrandForm from "./form";
 import { Edit, Delete } from '@mui/icons-material';
 
 const BrandLists = () => {
@@ -32,10 +36,12 @@ const BrandLists = () => {
 
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(15);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [sortValue, setSortValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+
 
     useEffect(() => {
         fetchBrands();
@@ -49,13 +55,13 @@ const BrandLists = () => {
                 name: item.name,
                 place: item.place,
                 img: item.img,
-            }));
+            })).sort((a, b) => b.id - a.id);
             setRows(formattedData);
         } catch (error) {
-            console.error("Error fetching brands:", error);
+            console.error("Lỗi khi nạp dữ liệu:", error);
             Swal.fire({
-                title: "Error",
-                text: "An error occurred while fetching brand data.",
+                title: "Lỗi",
+                text: "Đã xảy ra lỗi trong khi tải dữ liệu lên.",
                 icon: "error",
                 confirmButtonText: "OK",
             });
@@ -77,12 +83,12 @@ const BrandLists = () => {
 
     const handleDelete = async (id) => {
         const result = await Swal.fire({
-            title: "Confirm Deletion",
-            text: "Are you sure you want to delete this brand?",
+            title: "Xác nhận xóa",
+            text: "Bạn có chắc chắn muốn xóa thương hiệu này?",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Yes, delete it!",
-            cancelButtonText: "Cancel",
+            confirmButtonText: "Vâng, Xóa nó đi!",
+            cancelButtonText: "Hủy",
         });
 
         if (result.isConfirmed) {
@@ -90,21 +96,41 @@ const BrandLists = () => {
                 await apiClient.delete(`/api/brands/${id}`);
                 fetchBrands();
                 Swal.fire({
-                    title: "Deleted!",
-                    text: "Brand has been deleted successfully.",
+                    title: "Xóa!",
+                    text: "Thương hiệu đã được xóa thành công.",
                     icon: "success",
                     confirmButtonText: "OK",
                 });
             } catch (error) {
                 console.error("Error deleting brand:", error);
                 Swal.fire({
-                    title: "Error!",
-                    text: "An error occurred while deleting the brand. Please try again.",
+                    title: "Lỗi!",
+                    text: "Đã xảy ra lỗi trong khi xóa thương hiệu. Vui lòng kiểm tra lại sản phẩm có chứa thượng hiệu không?",
                     icon: "error",
                     confirmButtonText: "OK",
                 });
             }
         }
+    };
+
+    const handleSortChange = (event) => {
+        const value = event.target.value;
+        setSortValue(value);
+        const sortedData = [...rows].sort((a, b) => {
+            if (value === "asc") {
+                return a.name.localeCompare(b.name);
+            } else if (value === "desc") {
+                return b.name.localeCompare(a.name);
+            }
+            return 0;
+        });
+        setRows(sortedData);
+    };
+
+    const handleRowsPerPageOptionChange = (event) => {
+        const value = event.target.value;
+        setRowsPerPage(value);
+        setPage(0);
     };
 
     const filteredRows = rows.filter((row) =>
@@ -113,11 +139,11 @@ const BrandLists = () => {
 
     return (
         <Box>
-            <Header subtitle="Brand List" />
+            <Header subtitle="Danh sách thương hiệu" />
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
                 <TextField
                     variant="outlined"
-                    placeholder="Search"
+                    placeholder="Tìm kiếm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     sx={{ width: "300px" }}
@@ -129,12 +155,47 @@ const BrandLists = () => {
                         ),
                     }}
                 />
-                <Button variant="contained" onClick={() => handleOpenForm()}>
-                    Thêm Mới
-                </Button>
+
+                <div style={{ display: "flex", gap: "10px" }}>
+                    {/* Sort Dropdown */}
+                    <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+                        <InputLabel id="sort-label">Sắp xếp</InputLabel>
+                        <Select
+                            labelId="sort-label"
+                            value={sortValue}
+                            onChange={handleSortChange}
+                            label="Sắp xếp"
+                        >
+                            <MenuItem value="asc">Từ A-Z</MenuItem>
+                            <MenuItem value="desc">Từ Z-A</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* Rows per page */}
+                    <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+                        <InputLabel id="rowsPerPage-label">Hiển thị</InputLabel>
+                        <Select
+                            labelId="rowsPerPage-label"
+                            value={rowsPerPage}
+                            onChange={handleRowsPerPageOptionChange}
+                            label="Số hàng"
+                        >
+                            <MenuItem value={10}>10/trang</MenuItem>
+                            <MenuItem value={15}>15/trang</MenuItem>
+                            <MenuItem value={20}>20/trang</MenuItem>
+                            <MenuItem value={25}>25/trang</MenuItem>
+                            <MenuItem value={30}>30/trang</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* Add button */}
+                    <Button variant="contained" onClick={() => handleOpenForm()}>
+                        Thêm Mới
+                    </Button>
+                </div>
             </div>
 
-            {/* Bảng thương hiệu */}
+            {/* Brand table */}
             <TableContainer>
                 <Table stickyHeader>
                     <TableHead>
@@ -154,7 +215,7 @@ const BrandLists = () => {
                                 <TableCell>{row.place}</TableCell>
                                 <TableCell>
                                     <img
-                                        src={row.img}
+                                        src={`http://localhost:8080/assets/img/${row.img}`}
                                         alt={row.name}
                                         style={{
                                             width: "80px",
@@ -177,9 +238,9 @@ const BrandLists = () => {
                 </Table>
             </TableContainer>
 
-            {/* Phân trang */}
+            {/* Pagination */}
             <TablePagination
-                rowsPerPageOptions={[15, 30, 50]}
+                rowsPerPageOptions={[10, 15, 20, 25, 30]}
                 component="div"
                 count={filteredRows.length}
                 rowsPerPage={rowsPerPage}
@@ -191,7 +252,7 @@ const BrandLists = () => {
                 }}
             />
 
-            {/* Dialog cho form thêm/cập nhật thương hiệu */}
+            {/* Form Dialog */}
             <Dialog
                 open={isFormOpen}
                 onClose={() => handleCloseForm(false)}
@@ -211,10 +272,7 @@ const BrandLists = () => {
                 <DialogContent>
                     <BrandForm
                         initialValues={editData || { name: "", place: "", img: "" }}
-                        onSubmit={() => {
-                            handleCloseForm(true);
-                        }}
-                        handleClose={handleCloseForm}
+                        onClose={handleCloseForm}
                     />
                 </DialogContent>
             </Dialog>

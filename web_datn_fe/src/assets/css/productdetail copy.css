@@ -2,9 +2,7 @@
     background: rgba(23, 162, 184, 0.3);
 }
 
-
 /* Phần sản phẩm chi tiết */
-
 .product-wrapper {
     max-width: 95%;
     margin: 50px auto;
@@ -12,6 +10,7 @@
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     padding: 20px;
+
 }
 
 .pro-card {
@@ -41,9 +40,7 @@
     margin-bottom: 15px;
 }
 
-
 /* Điều chỉnh kích thước của img-item */
-
 .img-select {
     display: flex;
     gap: 10px;
@@ -74,6 +71,7 @@
     transform: scale(1.1);
     /* Phóng to hình ảnh khi hover */
 }
+
 
 .img-item:hover {
     opacity: 0.8;
@@ -160,21 +158,22 @@
     margin-bottom: 0px;
 }
 
-.product-price {
+.product-price-detail {
     font-size: 1rem;
     font-weight: 700;
 }
 
-.product-price span {
+.product-price-detail span {
     font-weight: 400;
 }
 
-.last-price span {
+.last-price-detail span {
     color: #f64749;
     text-decoration: line-through;
+
 }
 
-.new-price span {
+.new-price-detail span {
     color: #256eff;
     font-size: 2rem;
 }
@@ -193,6 +192,7 @@
     font-size: 0.9rem;
     padding: 0.3rem;
     opacity: 0.8;
+
 }
 
 .capacity-selection {
@@ -221,6 +221,7 @@
 .capacity-btn:hover {
     background-color: #f0f0f0;
 }
+
 
 .product-detail ul {
     margin: 1rem 0;
@@ -254,9 +255,9 @@
     margin-right: 0.2rem;
 }
 
-.purchase-info input,
-.purchase-info label {
+.purchase-info input, .purchase-info label {
     display: inline;
+
 }
 
 .purchase-info label {
@@ -321,9 +322,7 @@
     color: #fff;
 }
 
-
 /* Tabs Section */
-
 .wrapper {
     width: 100%;
     padding: 25px 30px 30px 30px;

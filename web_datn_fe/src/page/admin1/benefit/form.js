@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 import "../../../assets/css/admin/formBenefit.css";
 
-const FormBenefit = ({ onClose, editData }) => {
+const FormBenefit = ({ handleCloseForm, editData }) => {
     // Khởi tạo state formData để lưu trữ thông tin form (benefitId và name)
     const [formData, setFormData] = useState({ benefitId: '', name: '' });
     // Khởi tạo state để xác định xem đang trong chế độ cập nhật hay thêm mới
@@ -77,7 +77,7 @@ const FormBenefit = ({ onClose, editData }) => {
             // Reset form về trạng thái ban đầu sau khi thêm/cập nhật thành công
             setFormData({ benefitId: '', name: '' });
             setIsUpdating(false); // Đặt lại chế độ thêm mới
-            onClose(true); // Đóng form và báo hiệu reload dữ liệu cho bảng bên ngoài
+            handleCloseForm(true); // Đóng form và báo hiệu reload dữ liệu cho bảng bên ngoài
         } catch (error) {
             console.error('Lỗi khi thêm/cập nhật công dụng:', error);
             Swal.fire({

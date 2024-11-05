@@ -44,8 +44,8 @@ import FormBrand from "../src/page/admin1/brand/form.js";
 import TableBrand from "../src/page/admin1/brand/list.js";
 
 // {/* sản phẩm chi tiết*/}
-import FormProductDetail from "../src/page/admin1/productdetail/form.js";
-import TableProductDetail from "../src/page/admin1/productdetail/list.js";
+// import FormProductDetail from "../src/page/admin1/productdetail/form.js";
+// import TableProductDetail from "../src/page/admin1/productdetail/list.js";
 
 //  {/* loại */}
 import FormCategory from "../src/page/admin1/category/form.js";
@@ -68,6 +68,9 @@ import TableSCapacity from "../src/page/admin1/capacity/table.js";
 import FormIngredient from "../src/page/admin1/ingredient/form.js";
 import TableIngredient from "../src/page/admin1/ingredient/table.js";
 
+// Đơn Hàng
+import FormOrder from "../src/page/admin1/order/form.js";
+import TableOrder from "../src/page/admin1/order/table.js";
 
 //  {/* Công dụng*/}
 import FormBenefit from "./page/admin1/benefit/form.js";
@@ -76,7 +79,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-      <Route path="/login" element={<LoginRegister />} />
+        <Route path="/login" element={<LoginRegister />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-otp" element={<OTPVerification />} />
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -105,8 +108,8 @@ const App = () => {
           <Route path="/danhgia" element={<DanhGia />} />
           <Route path="/promotions" element={<KhuyenMaiList />} />
           {/* Thông Tin Người dùng */}
-          <Route path="/profile" element={<ProFile/>} />
-          <Route path="/change-password" element={<ChangePassword/>} />
+          <Route path="/profile" element={<ProFile />} />
+          <Route path="/change-password" element={<ChangePassword />} />
         </Route>
 
         <Route path="/admin/*" element={<Admin1Layout />}>
@@ -114,7 +117,7 @@ const App = () => {
 
           <Route path="formproduct" element={<FormProduct />} />
           <Route path="formproduct/:id" element={<FormProduct />} />
-          <Route path="bigformproduct/:id" element={<BigFormProduct/>}/>
+          <Route path="bigformproduct/:id" element={<BigFormProduct />} />
           <Route path="product" element={<TableProduct />} />
 
           {/* QL Thương hiệu */}
@@ -123,9 +126,9 @@ const App = () => {
           <Route path="brand" element={<TableBrand />} />
 
           {/* QL Sản phẩm chi tiết */}
-          <Route path="formproductdetail" element={<FormProductDetail />} />
+          {/* <Route path="formproductdetail" element={<FormProductDetail />} />
           <Route path="formproductdetail/:id" element={<FormProductDetail />} />
-          <Route path="productdetail" element={<TableProductDetail />} />
+          <Route path="productdetail" element={<TableProductDetail />} /> */}
 
           {/* QL loại */}
           <Route path="formcategory" element={<FormCategory />} />
@@ -136,6 +139,11 @@ const App = () => {
           <Route path="formcolor" element={<FormColor />} />
           <Route path="formcolor/:id" element={<FormColor />} />
           <Route path="color" element={<TableColor />} />
+
+          {/* QL đơn hàng */}
+          <Route path="formorder" element={<FormOrder />} />
+          <Route path="formorder/:id" element={<FormOrder />} />
+          <Route path="order" element={<TableOrder />} />
 
           {/* QL loại da */}
           <Route path="form-skin-type" element={<FormSkinType />} />
@@ -159,8 +167,8 @@ const App = () => {
           <Route path="benefit" element={<TableBenefit />} />
         </Route>
         {/* Routes quản trị */}
-       {/* QL Sản phẩm */}
-       
+        {/* QL Sản phẩm */}
+
       </Routes>
     </Router>
   );
