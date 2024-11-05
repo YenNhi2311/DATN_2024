@@ -36,9 +36,4 @@ public class CartItemEntity {
     @JoinColumn(name = "productDetail_id", nullable = false)
     private ProductDetailsEntity productDetail;
 
-    // Thêm quan hệ với ProductPromotionEntity
-    @ManyToOne
-    @JoinColumn(name = "productPromotion_id")
-    private ProductPromotionEntity productPromotion;
-
 }

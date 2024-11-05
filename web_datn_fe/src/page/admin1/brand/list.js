@@ -185,6 +185,14 @@ const BrandLists = () => {
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={(event, newPage) => setPage(newPage)}
+                sx={{
+                    "& .MuiTablePagination-displayedRows": {
+                      marginBottom: "0px",
+                    },
+                    "& .MuiTablePagination-selectLabel": {
+                      marginBottom: "0px",
+                    },
+                  }}
                 onRowsPerPageChange={(event) => {
                     setRowsPerPage(parseInt(event.target.value, 10));
                     setPage(0);

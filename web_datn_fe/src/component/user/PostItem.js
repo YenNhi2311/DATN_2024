@@ -138,10 +138,21 @@ const PostItem = ({ post, userId }) => {
         onMouseEnter={() => setShowActions(true)}
         onMouseLeave={() => setShowActions(false)}
       >
-        <p className="post-caption">{post.content}</p>
+        <p
+          className="post-caption"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+        {/* Phần hình ảnh... */}
+      </div>
+
+      <div
+        className="post-content"
+        onMouseEnter={() => setShowActions(true)}
+        onMouseLeave={() => setShowActions(false)}
+      >
+        {/* <p className="post-caption">{post.content}</p> */}
 
         <div className={`post-images post-images-${post?.imgposts?.length}`}>
-
           {post.imgposts?.slice(0, 7).map((imgpost, index) => (
             <div
               key={index}

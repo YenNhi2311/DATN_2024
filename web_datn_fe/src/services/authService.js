@@ -108,6 +108,9 @@ export const logoutUser = async (token) => {
     );
   }
 };
+
+
+
 export const getCartByUserId = async (userId) => {
   try {
     const response = await apiClient.get(`api/cart?userId=${userId}`);
@@ -272,17 +275,8 @@ export const getProductDetailById = async (productId) => {
     throw error;
   }
 };
-// Hàm lấy địa chỉ
-export const fetchAddresses = async () => {
-  const response = await apiClient.get("api/addresses");
-  return response.data;
-};
 
-// Hàm thêm địa chỉ
-export const addAddress = async (formData) => {
-  const response = await apiClient.post("api/addresses", formData);
-  return response.data;
-};
+
 // Hàm lấy lợi ích theo ID
 export const getBenefitById = async (benefitId) => {
   try {
@@ -317,9 +311,9 @@ export const getIngredientById = async (ingredientId) => {
 };
 
 // Hàm lấy các sản phẩm liên quan theo ID sản phẩm
-export const getRelatedProducts = async (productId) => {
+export const getProductsByCategoryId = async (categoryId) => {
   try {
-    const response = await apiClient.get(`api/home/products/related?id=${productId}`);
+    const response = await apiClient.get(`/api/home/products?categoryId=${categoryId}`);
     return response.data; // Trả về danh sách sản phẩm liên quan
   } catch (error) {
     console.error("Lỗi khi lấy sản phẩm liên quan:", error);
@@ -327,16 +321,7 @@ export const getRelatedProducts = async (productId) => {
   }
 };
 
-// Hàm lấy loại da theo ID
-export const getSkintypeById = async (skintypeId) => {
-  try {
-    const response = await apiClient.get(`api/home/skintype?id=${skintypeId}`);
-    return response.data; // Trả về thông tin loại da
-  } catch (error) {
-    console.error("Lỗi khi lấy loại da:", error);
-    throw error;
-  }
-};
+
 // Hàm lấy danh mục theo ID
 export const getCategoryById = async (categoryId) => {
   try {
@@ -344,6 +329,106 @@ export const getCategoryById = async (categoryId) => {
     return response.data; // Trả về thông tin danh mục
   } catch (error) {
     console.error("Lỗi khi lấy danh mục:", error);
+    throw error;
+  }
+};
+// Thêm hàm lấy danh sách khuyến mãi sản phẩm theo ID
+export const getProductPromotionId = async (productPromotionId) => {
+  try {
+    const response = await apiClient.get(`api/home/productpromotion?id=${productPromotionId}`);
+    return response.data; // Trả về danh sách khuyến mãi sản phẩm
+  } catch (error) {
+    console.error("Lỗi khi lấy khuyến mãi sản phẩm:", error);
+    throw error;
+  }
+};
+export const getProductByPromotionId = async (productId) => {
+  try {
+    const response = await apiClient.get(`api/home/product/promotions?id=${productId}`);
+    return response.data; // Trả về thông tin sản phẩm
+  } catch (error) {
+    console.error("Lỗi khi lấy thông tin sản phẩm:", error);
+    throw error;
+  }
+};
+export const fetchProductById = async () => {
+  try {
+    const response = await apiClient.get(`api/home/products`);
+    return response.data; // Trả về thông tin sản phẩm
+  } catch (error) {
+    console.error("Lỗi khi lấy thông tin sản phẩm:", error);
+    throw error;
+  }
+};// Hàm lấy lợi ích theo productID
+export const getBenefitsByProductId = async (productd) => {
+  try {
+    const response = await apiClient.get(`api/home/benefitsByProductId?productId=${productd}`);
+    return response.data; // Trả về thông tin lợi ích
+  } catch (error) {
+    console.error("Lỗi khi lấy lợi ích:", error);
+    throw error;
+  }
+};export const getCapacityProduct = async (productId) => {
+  try {
+    const response = await apiClient.get(`api/home/capacityProduct?productId=${productId}`);
+    return response.data; // Trả về thông tin dung tích
+  } catch (error) {
+    console.error("Lỗi khi lấy dung tích:", error);
+    throw error;
+  }
+};export const fetchSkintypes = async (skintypeId) => {
+  try {
+    const response = await apiClient.get(`api/home/skintypes`);
+    return response.data; // Trả về thông tin loại da
+  } catch (error) {
+    console.error("Lỗi khi lấy loại da:", error);
+    throw error;
+  }
+};
+
+export const getSkintypeProduct = async (productId) => {
+  try {
+    const response = await apiClient.get(`api/home/skintypeByProductId?productId=${productId}`);
+    return response.data; // Trả về thông tin loại da
+  } catch (error) {
+    console.error("Lỗi khi lấy loại da:", error);
+    throw error;
+  }
+};export const fechCategorys = async () => {
+  try {
+    const response = await apiClient.get(`api/home/categories`);
+    return response.data; // Trả về thông tin danh mục
+  } catch (error) {
+    console.error("Lỗi khi lấy danh mục:", error);
+    throw error;
+  }
+};
+// Hàm lấy màu sắc theo ID
+export const getColorById = async (colorId) => {
+  try {
+    const response = await apiClient.get(`/api/home/color?id=${colorId}`);
+    return response.data; // Giả sử API trả về dữ liệu dưới dạng { colorId, name, ... }
+  } catch (error) {
+    console.error('Error fetching color by ID:', error);
+    throw error; // Ném lỗi để xử lý tại nơi gọi
+  }
+};
+// Hàm lấy danh sách màu sắc theo ID sản phẩm
+export const getColorsByProductId = async (productId) => {
+  try {
+    const response = await apiClient.get(`/api/home/colorProduct?productId=${productId}`);
+    return response.data; // Giả sử API trả về danh sách màu sắc dưới dạng [{ colorId, name }, ...]
+  } catch (error) {
+    console.error('Error fetching colors by product ID:', error);
+    throw error; // Ném lỗi để xử lý tại nơi gọi
+  }
+};// Hàm lấy loại da theo ID
+export const getSkintypeById = async (skintypeId) => {
+  try {
+    const response = await apiClient.get(`api/home/skintype?id=${skintypeId}`);
+    return response.data; // Trả về thông tin loại da
+  } catch (error) {
+    console.error("Lỗi khi lấy loại da:", error);
     throw error;
   }
 };

@@ -90,33 +90,32 @@ public class UserService {
     }
   }
 
- public void updateUserPass(ChangePasswordRequest changePasswordRequest) {
+  public void updateUserPass(ChangePasswordRequest changePasswordRequest) {
     // Tìm người dùng theo ID
     Optional<UserEntity> existingUserOptional = userJPA.findById(Integer.parseInt(changePasswordRequest.getUserId()));
 
     if (existingUserOptional.isPresent()) {
-        UserEntity existingUser = existingUserOptional.get();
+      UserEntity existingUser = existingUserOptional.get();
 
-        // Kiểm tra mật khẩu mới
-        String newPassword = changePasswordRequest.getNewPassword();
-        if (newPassword != null && !newPassword.isEmpty()) {
-            // Mã hóa mật khẩu mới
-            String encodedPassword = passwordEncoder.encode(newPassword);
-            existingUser.setPassword(encodedPassword);
+      // Kiểm tra mật khẩu mới
+      String newPassword = changePasswordRequest.getNewPassword();
+      if (newPassword != null && !newPassword.isEmpty()) {
+        // Mã hóa mật khẩu mới
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        existingUser.setPassword(encodedPassword);
 
-            // Hủy token cũ sau khi mật khẩu đã thay đổi
-            authenService.revokeAllTokenByUser(existingUser);
+        // Hủy token cũ sau khi mật khẩu đã thay đổi
+        authenService.revokeAllTokenByUser(existingUser);
 
-            // Lưu lại người dùng với mật khẩu mới
-            userJPA.save(existingUser);
-        } else {
-            throw new RuntimeException("Mật khẩu không được để trống");
-        }
+        // Lưu lại người dùng với mật khẩu mới
+        userJPA.save(existingUser);
+      } else {
+        throw new RuntimeException("Mật khẩu không được để trống");
+      }
     } else {
-        throw new RuntimeException("Người dùng không tồn tại");
+      throw new RuntimeException("Người dùng không tồn tại");
     }
-}
-
+  }
 
   public void resetUserPass(UserEntity user) throws IOException {
     // Kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu không
@@ -150,5 +149,12 @@ public class UserService {
       token = token.substring(7);
     }
     return jwtService.extractUsername(token);
+  }
+
+  // Phương thức kiểm tra mật khẩu cũ của người dùng
+  public boolean verifyOldPassword(Integer userId, String oldPassword) {
+    UserEntity user = userJPA.findById(userId)
+        .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    return passwordEncoder.matches(oldPassword, user.getPassword());
   }
 }

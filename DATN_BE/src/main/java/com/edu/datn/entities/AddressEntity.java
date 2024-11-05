@@ -28,14 +28,23 @@ public class AddressEntity {
     @Column(name = "specific_address", nullable = false, length = 100)
     private String specificAddress;
 
-    @Column(name = "ward_commune", nullable = false, length = 100)
-    private String wardCommune;
+    @Column(name = "ward", nullable = false, length = 100) //id phường
+    private Long wardCommune;
 
-    @Column(name = "district", nullable = false, length = 100)
-    private String district;
+    @Column(name = "ward_name", nullable = false, length = 100)
+    private String wardName;
 
-    @Column(name = "province", nullable = false, length = 100)
-    private String province;
+    @Column(name = "district", nullable = false, length = 100) //id quận
+    private Long district;
+
+    @Column(name = "district_name", nullable = false, length = 100)
+    private String districtName;
+
+    @Column(name = "province", nullable = false, length = 100) //id tỉnh
+    private Long province;
+
+    @Column(name = "province_name", nullable = false, length = 100)
+    private String provinceName;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;

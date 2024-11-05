@@ -1,13 +1,14 @@
+import { DeleteOutline } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
-import "../assets/css/bootstrap.min.css";
-import "../assets/css/brand.css";
-import "../assets/css/category.css";
-import "../assets/css/shop.css";
-import "../assets/css/style.css";
+import "../assets/css/cart.css";
 import { useCart } from "../component/page/CartContext";
-import { deleteCartItem, getCartItemsByUserId, updateCartItem } from "../services/authService"; // Giả sử bạn đã định nghĩa các hàm này trong cartService
+import {
+  deleteCartItem,
+  getCartItemsByUserId,
+  updateCartItem,
+} from "../services/authService"; // Giả sử bạn đã định nghĩa các hàm này trong cartService
 
 const GioHang = () => {
   const { cartItems, setCartItems } = useCart();
@@ -18,7 +19,10 @@ const GioHang = () => {
     const selectedCartItems = cartItems.filter((item) =>
       selectedItems.has(item.cartItemId)
     );
-    localStorage.setItem("selectedCartItems", JSON.stringify(selectedCartItems));
+    localStorage.setItem(
+      "selectedCartItems",
+      JSON.stringify(selectedCartItems)
+    );
     window.location.href = "/ThanhToan";
   };
 
@@ -47,13 +51,13 @@ const GioHang = () => {
   };
 
   const fetchCartItems = async () => {
-
     if (!userId) {
       console.error("User ID is null. Cannot fetch cart items.");
       return;
     }
     try {
       const response = await getCartItemsByUserId(userId); // Sử dụng apiClient để lấy giỏ hàng
+      console.log(response.data);
       setCartItems(response.data);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -68,7 +72,12 @@ const GioHang = () => {
     }
   }, [userId]);
 
-  const updateCart = async (cartItemId, productDetailId, productPromotionId, newQuantity) => {
+  const updateCart = async (
+    cartItemId,
+    productDetailId,
+    productPromotionId,
+    newQuantity
+  ) => {
     if (newQuantity <= 0) return;
 
     const updatedItems = cartItems.map((item) =>
@@ -77,8 +86,14 @@ const GioHang = () => {
     setCartItems(updatedItems);
 
     try {
-      const promotionId = productPromotionId !== undefined ? productPromotionId : null;
-      await updateCartItem(cartItemId, productDetailId, promotionId, newQuantity); // Sử dụng apiClient để cập nhật số lượng
+      const promotionId =
+        productPromotionId !== undefined ? productPromotionId : null;
+      await updateCartItem(
+        cartItemId,
+        productDetailId,
+        promotionId,
+        newQuantity
+      ); // Sử dụng apiClient để cập nhật số lượng
       fetchCartItems();
     } catch (error) {
       console.error("Error updating quantity:", error);
@@ -149,21 +164,27 @@ const GioHang = () => {
         <div className="row">
           <div className="col-lg-9">
             <h4>Giỏ Hàng ({cartItems.length} sản phẩm)</h4>
-            <table className="table align-middle">
+            <table className="table">
               <thead>
                 <tr>
                   <th scope="col"></th>
                   <th scope="col">Sản phẩm</th>
-                  <th scope="col"></th>
+                  <th scope="col" style={{ width: "270px" }}></th>
                   <th scope="col">Giá tiền</th>
                   <th scope="col">Số lượng</th>
-                  <th scope="col">Thành tiền</th>
+                  <th scope="col" style={{ width: "85px" }}>
+                    Thành tiền
+                  </th>
                   <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>
                 {cartItems.map((item) => (
-                  <tr key={item.cartItemId} className="cart-item-row">
+                  <tr
+                    key={item.cartItemId}
+                    className="cart-item-row"
+                    style={{ verticalAlign: "middle" }}
+                  >
                     <td className="align-middle">
                       <input
                         type="checkbox"
@@ -173,32 +194,51 @@ const GioHang = () => {
                     </td>
                     <td className="align-middle">
                       <img
-                        src={require(`../assets/img/${item.productDetail?.img}`)}
+                        src={
+                          item.productDetail?.img == null
+                            ? "https://placehold.co/600x400"
+                            : `http://localhost:8080/assets/img/${item.productDetail?.img}`
+                        }
                         className="img-fluid"
                         alt={item.productDetail?.name || "Product Image"}
                         style={{ width: "80px", height: "80px" }}
                       />
                     </td>
-                    <div>  <td className="align-middle">
-                      <p className="font-weight-bold">
+                    <td
+                      className="align-middle"
+                      style={{
+                        textAlign: "left",
+                      }}
+                    >
+                      <p
+                        className="font-weight-bold"
+                        style={{ fontWeight: "bold", fontSize: "14px" }}
+                      >
                         {item.productDetail?.product?.name || "N/A"}
                         <span
                           className="text-danger"
                           style={{ fontWeight: "bold", marginLeft: "5px" }}
                         >
-                          {item.productPromotion?.promotion?.percent
-                            ? `(${item.productPromotion.promotion.percent.toFixed(0)}%)`
-                            : ""}
-                          
+                        {item.promotions?.length > 0
+          ? `(${item.promotions[0].percent.toFixed(0)}%)`
+          : ""}
                         </span>
-                       
                       </p>
+                      <span>{item.productDetail.capacity.value}ml</span>
+                      {","}
+                      <span style={{ marginLeft: "5px" }}>
+                        {item.productDetail.color.name}
+                      </span>
+                      <span style={{ marginLeft: "5px" }}>
+                        {item.productDetail.skintype.name}
+                      </span>
+                      <span style={{ marginLeft: "5px" }}>
+                        {item.productDetail.benefit.name}
+                      </span>
                     </td>
-                    <span className="text-left">{item.productDetail.capacity.value}ml</span>
-                    
-                    <span className="text-right">{item.productDetail.color.name}</span></div>
-                    <td className="align-middle">
-                      <p>
+
+                    <td>
+                      <p style={{ marginBottom: "0px" }}>
                         {item.discountedPrice && item.discountedPrice > 0
                           ? item.discountedPrice.toLocaleString()
                           : item.productDetail?.price
@@ -217,10 +257,10 @@ const GioHang = () => {
                           -
                         </button>
                         <input
-                          type="number"
+                          type="text"
                           value={item.quantity}
                           className="form-control text-center mx-2"
-                          style={{ width: "60px" }}
+                          style={{ width: "60px", marginBottom: "0px" }}
                           onChange={(e) => {
                             const newQuantity = parseInt(e.target.value);
                             if (!isNaN(newQuantity) && newQuantity > 0) {
@@ -242,7 +282,7 @@ const GioHang = () => {
                       </div>
                     </td>
                     <td className="align-middle">
-                      <p>
+                      <p style={{ marginBottom: "0px" }}>
                         {(
                           (item.discountedPrice || item.productDetail?.price) *
                           item.quantity
@@ -254,8 +294,9 @@ const GioHang = () => {
                       <button
                         className="btn btn-link text-danger"
                         onClick={() => handleRemove(item.cartItemId)}
+                        style={{ marginBottom: "0px", marginTop: "0px" }}
                       >
-                        ✖ Xóa
+                        <DeleteOutline />
                       </button>
                     </td>
                   </tr>
@@ -269,7 +310,7 @@ const GioHang = () => {
             </div>
           </div>
 
-          <div className="col-lg-3">
+          <div className="col-lg-3 mt-5">
             <div className="border p-4 rounded">
               <h5>Hóa đơn của bạn</h5>
               <div className="d-flex justify-content-between mb-2">

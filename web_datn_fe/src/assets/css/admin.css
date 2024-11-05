@@ -365,8 +365,9 @@
   }
   
   .logo img {
-    max-height: 26px;
+    max-height: 140px;
     margin-right: 6px;
+    margin-top: 10px;
   }
   
   .logo span {

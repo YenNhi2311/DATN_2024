@@ -53,7 +53,8 @@ public class SecurityConfig {
             req -> req
                 // Các endpoint không yêu cầu xác thực
                 .requestMatchers("/login/**", "/register/**", "/forgot-password/**", "/password-reset/**",
-                    "/api/home/**", "/api/cart/**", "/api/addresses/**", "/assets/img/**", "/ws/**", "/profile/**")
+                    "/api/home/**", "/api/**", "/api/cart/**", "/api/addresses/**", "/assets/img/**", "/ws/**",
+                    "/profile/**")
                 .permitAll()
                 // Các endpoint chỉ cho phép quyền ADMIN truy cập
                 .requestMatchers("/admin/**")

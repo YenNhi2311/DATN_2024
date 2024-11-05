@@ -1,157 +1,207 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
-import { toast, ToastContainer } from 'react-toastify';
-import Swal from 'sweetalert2';
+import { Form, Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import AddressModal from "../../component/web/AddressModel";
+import { apiClient } from "../../config/apiClient";
+import { getUserDataById } from "../../services/authService";
 
-const Address = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
+const Address = ({ isOpen, onClose }) => {
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const userData = getUserDataById();
+  const userId = userData ? userData.user_id : null;
+  const [selectedAddressIds, setSelectedAddressIds] = useState([]);
 
   useEffect(() => {
-    if (isOpen) {
-      const fetchAddresses = async () => {
-        try {
-          const response = await axios.get("http://localhost:8080/api/addresses");
-          console.log("Phản hồi từ API:", response.data);
-          if (response.data && response.data.length > 0) {
-            setAddresses(response.data);
-            const defaultAddress = response.data.find(addr => addr.status);
-            setSelectedAddressId(defaultAddress ? defaultAddress.addressId : response.data[0].addressId);
-          }
-        } catch (error) {
-          console.error("Lỗi khi lấy địa chỉ:", error);
-        }
-      };
-
+    if (userId) {
       fetchAddresses();
-    }
-  }, [isOpen]);
-
-  const handleAddressSelect = (id) => {
-    setSelectedAddressId(id);
-  };
-
-  const handleContinue = async () => {
-    console.log("Nút Tiếp tục đã được nhấn.");
-    console.log("selectedAddressId:", selectedAddressId);
-
-    if (selectedAddressId) {
-      const selectedAddress = addresses.find((addr) => addr.addressId === selectedAddressId);
-      if (selectedAddress) {
-        onAddressSelect(selectedAddress);
-
-        // Cập nhật địa chỉ mặc định
-        try {
-          await axios.put(`http://localhost:8080/api/addresses/default`, {
-            status: false,
-          });
-
-          await axios.put(`http://localhost:8080/api/addresses/${selectedAddressId}`, {
-            ...selectedAddress,
-            status: true,
-          });
-
-          console.log("Cập nhật địa chỉ mặc định thành công");
-        } catch (error) {
-          console.error("Lỗi khi cập nhật địa chỉ mặc định:", error.response ? error.response.data : error.message);
-        }
-
-        onClose(); // Đóng modal sau khi chọn xong
-      } else {
-        console.error("Không tìm thấy địa chỉ đã chọn.");
-      }
     } else {
-      console.error("Không có địa chỉ nào được chọn.");
+      Swal.fire({
+        icon: "warning",
+        title: "Cảnh báo!",
+        text: "Không tìm thấy thông tin người dùng.",
+      });
+    }
+  }, [userId]);
+
+  const fetchAddresses = async () => {
+    try {
+      const response = await apiClient.get("/api/ghn/addresses", {
+        headers: {
+          user_id: userId,
+          "Content-Type": "application/json",
+        },
+      });
+      setAddresses(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy địa chỉ:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi!",
+        text: "Không thể tải danh sách địa chỉ.",
+      });
     }
   };
 
-  const handleDeleteAddress = async () => {
-    if (!selectedAddressId) {
-      toast.error("Vui lòng chọn một địa chỉ để xóa.");
-      return;
-    }
+  const openModal = (address) => {
+    setSelectedAddress(address);
+    setIsModalOpen(true);
+  };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedAddress(null);
+  };
+
+  const handleAddAddress = async (newAddress) => {
+    await handleAddressRequest('post', '/api/ghn/addresses', newAddress);
+  };
+
+  const handleUpdateAddress = async (updatedAddress) => {
+    if (selectedAddress) {
+      await handleAddressRequest('put', `/api/ghn/addresses/${selectedAddress.id}`, updatedAddress);
+      closeModal();
+    }
+  };
+
+  const handleAddressRequest = async (method, url, addressData) => {
+    try {
+      const response = await apiClient[method](url, {
+        ...addressData,
+        userId: userId,
+      }, {
+        headers: {
+          user_id: userId,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (method === 'post') {
+        setAddresses((prevAddresses) => [...prevAddresses, response.data]);
+        Swal.fire("Thành công", "Địa chỉ mới đã được thêm.", "success");
+      } else if (method === 'put') {
+        setAddresses((prevAddresses) =>
+          prevAddresses.map((address) =>
+            address.id === selectedAddress.id ? { ...address, ...addressData } : address
+          )
+        );
+        Swal.fire("Thành công", "Địa chỉ đã được cập nhật.", "success");
+      }
+    } catch (error) {
+      console.error(`Lỗi khi ${method === 'post' ? 'thêm' : 'cập nhật'} địa chỉ:`, error);
+      Swal.fire("Lỗi", `Không thể ${method === 'post' ? 'thêm' : 'cập nhật'} địa chỉ mới.`, "error");
+    }
+  };
+
+  const handleDeleteSelectedAddresses = async () => {
     const result = await Swal.fire({
-      title: 'Bạn có chắc chắn muốn xóa địa chỉ này?',
+      title: 'Xác nhận xóa?',
+      text: "Bạn có chắc chắn muốn xóa các địa chỉ đã chọn?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Có',
-      cancelButtonText: 'Không'
+      cancelButtonText: 'Không',
     });
 
-    // Kiểm tra xem người dùng đã xác nhận hay chưa
     if (result.isConfirmed) {
       try {
-        // Gửi yêu cầu xóa địa chỉ
-        await axios.delete(`http://localhost:8080/api/addresses/${selectedAddressId}`);
-
-        // Cập nhật lại danh sách địa chỉ sau khi xóa
-        setAddresses(prevAddresses => prevAddresses.filter(address => address.addressId !== selectedAddressId));
-        setSelectedAddressId(null); // Đặt lại selectedAddressId sau khi xóa
-
-        // Hiển thị thông báo thành công
-        toast.success("Địa chỉ đã được xóa thành công.");
+        await Promise.all(selectedAddressIds.map(id =>
+          apiClient.delete(`/api/ghn/addresses`, {
+            data: { id },
+            headers: {
+              user_id: userId,
+              "Content-Type": "application/json",
+            },
+          })
+        ));
+        setAddresses((prevAddresses) =>
+          prevAddresses.filter((address) => !selectedAddressIds.includes(address.id))
+        );
+        setSelectedAddressIds([]);
+        Swal.fire("Thành công", "Các địa chỉ đã được xóa.", "success");
       } catch (error) {
-        console.error("Lỗi khi xóa địa chỉ:", error.response ? error.response.data : error.message);
-        toast.error("Đã xảy ra lỗi khi xóa địa chỉ.");
+        console.error("Lỗi khi xóa địa chỉ:", error);
+        Swal.fire("Lỗi", "Không thể xóa các địa chỉ.", "error");
       }
     }
   };
 
+  const handleRadioChange = (address) => {
+    setSelectedAddress(address);
+    const isSelected = selectedAddressIds.includes(address.id);
+    if (isSelected) {
+      setSelectedAddressIds(selectedAddressIds.filter(id => id !== address.id));
+    } else {
+      setSelectedAddressIds([...selectedAddressIds, address.id]);
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
     <Modal show={isOpen} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Địa chỉ nhận hàng</Modal.Title>
+          <Modal.Title>Địa chỉ nhận hàng</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {addresses.length > 0 ? (
-          <div className="address-list">
-            {addresses.map((address) => (
-              <div key={address.addressId} className="address-info">
-                <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+          {addresses.length > 0 ? (
+            addresses.map((address) => (
+              <div key={address.id} className="address-info">
                 <Form.Check
                   type="radio"
-                  id={`address-${address.addressId}`}
-                  name="address"
-                  label={
-                    <div>
-                      <p className="address-name">
-                        {address.name} - {address.phone}
-                      </p>
-                      <p className="address-detail">
-                        {address.specificAddress}, {address.wardCommune}, {address.district}, {address.province}
-                      </p>
-                    </div>
-                  }
-                  checked={selectedAddressId === address.addressId}
-                  onChange={() => handleAddressSelect(address.addressId)} // Sử dụng addressId
+                  checked={selectedAddress?.id === address.id}
+                  onChange={() => handleRadioChange(address)}
+                  
                 />
-                {address.status && (
-                  <div className="address-tags">
-                    <span className="default-tag">Địa chỉ mặc định</span>
-                  </div>
-                )}
+                <label>
+                  {address.name} - {address.phone}
+                  <p className="address-detail">
+                    {address.specificAddress}, {address.wardName}, {address.districtName}, {address.provinceName}
+                  </p>
+                  {address.status && (
+                    <div className="address-tags">
+                      <span className="default-tag">Địa chỉ mặc định</span>
+                    </div>
+                  )}
+                </label>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p>Đang tải địa chỉ...</p>
-        )}
+            ))
+          ) : (
+            <p>Chưa có địa chỉ nào.</p>
+          )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={onAddAddress}>
+        <Link className="add-address-btn" onClick={() => openModal(null)}>
           Thêm địa chỉ mới
-        </Button>
-        <Button variant="danger" onClick={handleDeleteAddress} disabled={!selectedAddressId}>
-          Xóa
-        </Button>
-        <Button variant="secondary" onClick={handleContinue}>
+        </Link>
+        <Link className="add-address-btn" onClick={() =>  { /* Handle continue action */ }}>
           Lưu Thay Đổi
-        </Button>
+        </Link>
+        <Link className="add-address-btn" onClick={() => openModal(selectedAddress)}>
+          Cập nhật
+        </Link>
+        <Link className="add-address-btn" onClick={handleDeleteSelectedAddresses}>
+          Xóa địa chỉ đã chọn
+        </Link>
       </Modal.Footer>
+
+      <AddressModal
+        show={isModalOpen}
+        handleClose={closeModal}
+        onSubmit={selectedAddress ? handleUpdateAddress : handleAddAddress}
+        initialData={selectedAddress ? {
+          name: selectedAddress.name,
+          phone: selectedAddress.phone,
+          specificAddress: selectedAddress.specificAddress,
+          provinceId: selectedAddress.province,
+          districtId: selectedAddress.district,
+          wardId: selectedAddress.ward,
+        } : {}}
+      />
     </Modal>
   );
 };

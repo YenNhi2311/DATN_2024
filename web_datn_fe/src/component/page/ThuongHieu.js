@@ -18,9 +18,18 @@ const ThuongHieu = () => {
     getBrands();
   }, []);
 
+
   const handleBrandSelection = (brandId) => {
-    navigate(`/shop/brand?brandId=${brandId}`);
-  };
+    window.scrollTo(0, 0);
+    // Lưu selectedBrandId vào localStorage
+    localStorage.setItem('selectedBrandId', brandId);
+
+    // Nếu không có selectedCategoryId, có thể xóa nó để không lọc theo category cũ
+    localStorage.removeItem('selectedCategoryId');
+
+    // Điều hướng đến trang shop
+    navigate(`/shop`);
+};
 
   return (
     <div className="container-fluid py-5">
@@ -52,7 +61,7 @@ const ThuongHieu = () => {
                     style={{ "--position": index + 1 }}
                   >
                     <img
-                      src={require(`../../assets/img/${brand.img}`)}
+                      src={(`http://localhost:8080/assets/img/${brand.img}`)}
                       alt={`Brand ${brand.name}`}
                       onClick={() => handleBrandSelection(brand.brandId)}
                     />
@@ -81,7 +90,7 @@ const ThuongHieu = () => {
                     style={{ "--position": index + 1 }}
                   >
                     <img
-                      src={require(`../../assets/img/${brand.img}`)}
+                      src={(`http://localhost:8080/assets/img/${brand.img}`)}
                       alt={`Brand ${brand.name}`}
                       onClick={() => handleBrandSelection(brand.brandId)}
                     />

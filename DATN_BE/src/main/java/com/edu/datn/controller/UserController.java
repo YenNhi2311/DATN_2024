@@ -81,38 +81,36 @@ public class UserController {
     public ResponseEntity<?> updatePassword(
             @RequestHeader("user_id") Integer userId,
             @RequestBody ChangePasswordRequest changePasswordRequest) {
-
-        // Kiểm tra nếu không có userId
+    
         if (userId == null) {
             return ResponseEntity.badRequest().body("Người dùng không tìm thấy");
         }
-
+    
+        String oldPassword = changePasswordRequest.getOldPassword();
+        String newPassword = changePasswordRequest.getNewPassword();
+    
+        if (newPassword == null || newPassword.isEmpty()) {
+            return ResponseEntity.badRequest().body("Mật khẩu không được để trống");
+        }
+    
         try {
-            // Kiểm tra mật khẩu mới có null hoặc trống
-            String newPassword = changePasswordRequest.getNewPassword();
-            if (newPassword == null || newPassword.isEmpty()) {
-                return ResponseEntity.badRequest().body("Mật khẩu không được để trống");
+            // Verify old password with current password in the database
+            boolean isOldPasswordCorrect = userService.verifyOldPassword(userId, oldPassword);
+            if (!isOldPasswordCorrect) {
+                return ResponseEntity.badRequest().body("Mật khẩu cũ không chính xác");
             }
-
-            // Cập nhật userId vào DTO trước khi gửi đến service
+    
             changePasswordRequest.setUserId(userId.toString());
-
-            // In ra để kiểm tra xem giá trị mật khẩu có đúng không
-            System.out.println("Received newPassword: " + newPassword);
-
-            // Gọi đến service để cập nhật mật khẩu
             userService.updateUserPass(changePasswordRequest);
-
-            // Nếu thành công
+    
             return ResponseEntity.ok("Mật khẩu đã được cập nhật thành công");
         } catch (EntityNotFoundException e) {
-            // Trường hợp người dùng không tồn tại
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại");
         } catch (Exception e) {
-            // Xử lý các lỗi hệ thống khác
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống: " + e.getMessage());
         }
     }
+    
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> getAllUsers() {

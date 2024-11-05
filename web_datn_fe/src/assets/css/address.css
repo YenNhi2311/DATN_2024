@@ -38,7 +38,7 @@
 }
 
 .modal-body {
-    margin-top: 20px;
+    margin-top: -5px;
 }
 
 .address-info {
@@ -79,11 +79,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 20px;
+    margin-top: -37px;
 }
 
 .add-address-btn {
-    background-color: #2e7d32;
+    background-color: #143dae;
     color: white;
     padding: 10px 20px;
     border-radius: 20px;

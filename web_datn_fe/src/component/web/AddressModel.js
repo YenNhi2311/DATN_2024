@@ -1,175 +1,272 @@
-import axios from "axios";
-import CryptoJS from "crypto-js";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import "../../assets/css/addressmodal.css"; // CSS của modal
+import Swal from "sweetalert2";
+import "../../assets/css/addressmodal.css";
+import { apiClient } from "../../config/apiClient";
+import { getUserDataById } from "../../services/authService";
 
-const AddressModal = ({ show, handleClose, onSubmit, editAddress }) => {
+const GHN_TOKEN = "aa348b98-8f64-11ef-98a2-5ee1cfd5578a";
+
+const AddressModal = ({ show, handleClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     phone: "",
-    fullName: "",
-    city: "",
-    district: "",
-    ward: "",
-    address: "",
-    addressType: "home", // 'home' or 'company'
+    name: "",
+    provinceId: "", // Use provinceId instead of province
+    districtId: "", // Use districtId instead of district
+    wardId: "",     // Use wardId instead of ward
+    specificAddress: "",
     setDefault: false,
   });
 
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const userData = getUserDataById();
+  const userId = userData ? userData.user_id : null;
+
   useEffect(() => {
-    if (editAddress) {
-      // Khi có editAddress, cập nhật formData
+    fetchProvinces();
+
+    if (initialData) {
       setFormData({
-        phone: editAddress.phone,
-        fullName: editAddress.name,
-        city: editAddress.province,
-        district: editAddress.district,
-        ward: editAddress.wardCommune,
-        address: editAddress.specificAddress,
-        addressType: "home", // Cập nhật nếu cần
-        setDefault: editAddress.status,
+        phone: initialData.phone,
+        name: initialData.name,
+        provinceId: initialData.provinceId || "",
+        districtId: initialData.districtId || "",
+        wardId: initialData.wardId || "",
+        specificAddress: initialData.specificAddress,
+        setDefault: initialData.setDefault || false,
       });
+      fetchDistricts(initialData.provinceId);
+      fetchWards(initialData.districtId);
     }
-  }, [editAddress]);
+  }, [initialData]);
+
+  const fetchProvinces = async () => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get("https://online-gateway.ghn.vn/shiip/public-api/master-data/province", {
+        headers: { "Content-Type": "application/json", "Token": GHN_TOKEN },
+      });
+      if (response.data && response.data.data) {
+        setProvinces(response.data.data);
+      } else {
+        Swal.fire("Error", "Không có dữ liệu tỉnh!", "error");
+      }
+    } catch (error) {
+      console.error("Error fetching provinces", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const fetchDistricts = async (provinceId) => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
+        headers: { "Content-Type": "application/json", "Token": GHN_TOKEN },
+      });
+      if (response.data && response.data.data) {
+        setDistricts(response.data.data);
+      } else {
+        Swal.fire("Error", "Không có dữ liệu quận/huyện!", "error");
+      }
+    } catch (error) {
+      // console.error("Error fetching districts", error);
+      console.error("Error fetching districts", error.response ? error.response.data : error.message);  
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const fetchWards = async (districtId) => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
+        headers: { "Content-Type": "application/json", "Token": GHN_TOKEN },
+      });
+      if (response.data && response.data.data) {
+        setWards(response.data.data);
+      } else {
+        Swal.fire("Error", "Không có dữ liệu phường/xã!", "error");
+      }
+    } catch (error) {
+      // console.error("Error fetching wards", error);
+      console.error("Error fetching wards", error.response ? error.response.data : error.message);  
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+    const { name, value } = e.target;
 
-  const handleSubmit = async () => {
-    try {
-      // Lấy userId từ localStorage
-      const userId = JSON.parse(CryptoJS.AES.decrypt(localStorage.getItem("userData"), "secret-key").toString(CryptoJS.enc.Utf8)).user_id;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-      // Gửi yêu cầu POST hoặc PUT tới API dựa trên việc chỉnh sửa hay thêm mới
-      const response = editAddress
-        ? await axios.put(`http://localhost:8080/api/addresses/${editAddress.addressId}`, {
-            specificAddress: formData.address,
-            wardCommune: formData.ward,
-            district: formData.district,
-            province: formData.city,
-            name: formData.fullName,
-            phone: formData.phone,
-            status: formData.setDefault, // Đặt trạng thái địa chỉ
-          })
-        : await axios.post(`http://localhost:8080/api/addresses/${userId}`, {
-            specificAddress: formData.address,
-            wardCommune: formData.ward,
-            district: formData.district,
-            province: formData.city,
-            name: formData.fullName,
-            phone: formData.phone,
-            status: formData.setDefault, // Đặt trạng thái địa chỉ
-          });
-
-      onSubmit(response.data); // Gửi dữ liệu địa chỉ khi thành công
-      handleClose(); // Đóng modal sau khi xử lý
-    } catch (error) {
-      console.error("Error saving address:", error);
-      // Xử lý lỗi nếu cần
+    if (name === "provinceId") {
+      fetchDistricts(value);
+      setFormData((prev) => ({ ...prev, districtId: "", wardId: "" })); // Reset district and ward
+    }
+    if (name === "districtId") {
+      fetchWards(value);
+      setFormData((prev) => ({ ...prev, wardId: "" })); // Reset ward
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const selectedProvince = provinces.find((p) => p.ProvinceID.toString() === formData.provinceId);
+    const selectedDistrict = districts.find((d) => d.DistrictID.toString() === formData.districtId);
+    const selectedWard = wards.find((w) => w.WardCode === formData.wardId);
+
+    const addressData = {
+      specificAddress: formData.specificAddress,
+      province: formData.provinceId,
+      provinceName: selectedProvince ? selectedProvince.ProvinceName : "",
+      district: formData.districtId,
+      districtName: selectedDistrict ? selectedDistrict.DistrictName : "",
+      ward: formData.wardId,
+      wardName: selectedWard ? selectedWard.WardName : "",
+      name: formData.name,
+      phone: formData.phone,
+      userId: userId,
+    };
+    console.log("Provinces:", provinces);
+    console.log("Districts:", districts);
+    console.log("Ward:", wards);
+    console.log("Selected Province:", selectedProvince);
+    console.log("Selected District:", selectedDistrict);
+    console.log("Selected Ward:", selectedWard);
+    console.log("Submitting Address Data:", addressData);
+    onSubmit(addressData);
+};
+
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>{editAddress ? "Sửa địa chỉ" : "Thêm địa chỉ mới"}</Modal.Title>
+        <Modal.Title>{initialData ? "Cập nhật địa chỉ" : "Thêm địa chỉ"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
-          <Form.Group controlId="fullName">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="formName">
+            <Form.Label>Tên người nhận</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Họ và tên"
-              name="fullName"
-              value={formData.fullName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
             />
           </Form.Group>
-          <Form.Group controlId="phone">
+
+          <Form.Group controlId="formPhone">
+            <Form.Label>Số điện thoại</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Số điện thoại"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
               required
             />
           </Form.Group>
-          <Form.Group controlId="city">
+
+          <Form.Group controlId="formProvince">
+            <Form.Label>Tỉnh/Thành phố</Form.Label>
             <Form.Control
               as="select"
-              name="city"
-              value={formData.city}
+              name="provinceId" // Giữ ID tỉnh để gửi
+              value={formData.provinceId}
               onChange={handleChange}
+              required
             >
-              <option>Chọn Tỉnh/ TP</option>
-              <option>Cần Thơ</option>
+              <option value="">Chọn tỉnh/thành phố</option>
+              {provinces.map((province) => (
+                <option key={province.ProvinceID} value={province.ProvinceID}>
+                  {province.ProvinceName}
+                </option>
+              ))}
             </Form.Control>
           </Form.Group>
-          <Form.Group controlId="district">
+
+          <Form.Group controlId="formDistrict">
+            <Form.Label>Quận/Huyện</Form.Label>
             <Form.Control
               as="select"
-              name="district"
-              value={formData.district}
+              name="districtId" // Giữ ID quận để gửi
+              value={formData.districtId}
               onChange={handleChange}
+              required
             >
-              <option>Chọn Quận/ Huyện</option>
-              <option>Cái Răng</option>
-              <option>Ninh Kiều</option>
+              <option value="">Chọn quận/huyện</option>
+              {districts.map((district) => (
+                <option key={district.DistrictID} value={district.DistrictID}>
+                  {district.DistrictName}
+                </option>
+              ))}
             </Form.Control>
           </Form.Group>
-          <Form.Group controlId="ward">
+
+          <Form.Group controlId="formWard">
+            <Form.Label>Phường/Xã</Form.Label>
             <Form.Control
               as="select"
-              name="ward"
-              value={formData.ward}
+              name="wardId" // Giữ ID phường để gửi
+              value={formData.wardId}
               onChange={handleChange}
+              required
             >
-              <option>Chọn Phường/ Xã</option>
-              <option>Lê Bình</option>
-              <option>Phú Thứ</option>
+              <option value="">Chọn phường/xã</option>
+              {wards.map((ward) => (
+                <option key={ward.WardCode} value={ward.WardCode}>
+                  {ward.WardName}
+                </option>
+              ))}
             </Form.Control>
           </Form.Group>
-          <Form.Group controlId="address">
+
+          <Form.Group controlId="formSpecificAddress">
+            <Form.Label>Địa chỉ cụ thể</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Số nhà + Tên đường"
-              name="address"
-              value={formData.address}
+              name="specificAddress"
+              value={formData.specificAddress}
               onChange={handleChange}
               required
             />
           </Form.Group>
-          <p className="text-danger">
-            Vui lòng chọn Tỉnh/TP, Quận/ Huyện và Phường/ xã trước khi nhập Số nhà + Tên Đường
-          </p>
-          <Form.Group controlId="setDefault">
+
+          <Form.Group controlId="formSetDefault">
             <Form.Check
-              type="switch"
-              label="Đặt làm địa chỉ mặc định"
+              type="checkbox"
               name="setDefault"
+              label="Đặt làm địa chỉ mặc định"
               checked={formData.setDefault}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, setDefault: e.target.checked })}
             />
           </Form.Group>
+
+          <Button variant="primary" type="submit" disabled={loading}>
+            {loading ? "Đang xử lý..." : "Lưu địa chỉ"}
+          </Button>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Hủy
-        </Button>
-        <Button variant="success" onClick={handleSubmit}>
-          {editAddress ? "Cập nhật địa chỉ" : "Lưu địa chỉ"}
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
+};
+
+AddressModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  initialData: PropTypes.object,
 };
 
 export default AddressModal;

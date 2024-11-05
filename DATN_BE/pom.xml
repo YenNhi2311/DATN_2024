@@ -95,6 +95,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+         <!-- chuyển từ entity sang model -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.0</version> <!-- Kiểm tra để sử dụng phiên bản mới nhất -->
+                </dependency>
     </dependencies>
     <build>
         <plugins>

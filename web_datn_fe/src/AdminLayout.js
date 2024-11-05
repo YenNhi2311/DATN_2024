@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { ColorModeContext, useMode } from "./theme";
-import "./Admin.css";
-import Topbar from "./page/admin/global/Topbar";
-import SidebarComponent from "./page/admin/global/Sidebar";
-import CryptoJS from "crypto-js";
+import "react-toastify/dist/ReactToastify.css";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "./assets/css/admin.css";
+import "./assets/css/bootstrap.min.css";
+import "./assets/css/card.css";
+import "./assets/css/category.css";
+import "./assets/css/style.css";
 import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
+import Header from "./page/admin1/part/header";
+import Sidebar from "./page/admin1/part/sidebar";
+import { useEffect, useState } from "react";
 
-function Admin() {
-  const [theme, colorMode] = useMode();
-  const [isSidebar, setIsSidebar] = useState(true);
+const Admin1Layout = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // Thêm trạng thái loading
 
@@ -49,21 +52,17 @@ function Admin() {
 
   // Nếu đang loading hoặc không phải admin, trả về null
   if (isLoading) return null;
-
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div className="app admin-container">
-          <SidebarComponent isSidebar={isSidebar} />
-          <main className="admin-content">
-            <Topbar setIsSidebar={setIsSidebar} />
-            <Outlet />
-          </main>
-        </div>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+    <div className="admin-layout">
+      <Header />
+      <div className="main-content">
+        <Sidebar />
+        <main id="main" className="main">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
-}
+};
 
-export default Admin;
+export default Admin1Layout;

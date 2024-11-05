@@ -22,8 +22,13 @@ const LoaiSP = () => {
   }, []);
 
   const handleCategorySelection = (categoryId) => {
-    navigate(`/shop/category?id=${categoryId}`);
+    // Lưu categoryId vào localStorage
+    localStorage.setItem('selectedCategoryId', categoryId);
+    localStorage.removeItem("selectedBrandId");
+    window.scrollTo(0, 0);
+    navigate(`/shop`);
   };
+  
 
   const PrevArrow = (props) => {
     const { onClick } = props;
@@ -80,7 +85,7 @@ const LoaiSP = () => {
       <Slider {...settings}>
         {categories.map((item) => (
           <div key={item.categoryId} className="category-item" onClick={() => handleCategorySelection(item.categoryId)}>
-            <img src={require(`../../assets/img/${item.img}`)} alt={item.name} />
+            <img src={(`http://localhost:8080/assets/img/${item.img}`)} alt={item.name} />
             <p>{item.name}</p>
             <p>{item.description}</p>
           </div>

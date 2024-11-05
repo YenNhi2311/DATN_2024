@@ -39,7 +39,7 @@ public class OrderEntity {
   private LocalDateTime payDate;
 
   @Column(name = "status", nullable = false)
-  private Byte status;
+  private String status;
 
   @Column(name = "shipping_fee", nullable = false)
   private Double shippingFee;
@@ -47,7 +47,7 @@ public class OrderEntity {
   @Column(name = "specific_address", nullable = false)
   private String specificAddress;
 
-  @Column(name = "ward_commune", nullable = false)
+  @Column(name = "ward", nullable = false)
   private String wardCommune;
 
   @Column(name = "district", nullable = false)

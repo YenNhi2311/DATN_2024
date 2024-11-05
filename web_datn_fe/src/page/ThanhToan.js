@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/css/address.css";
 import "../assets/css/addressmodal.css";
 import "../assets/css/bootstrap.min.css";
@@ -10,32 +10,38 @@ import "../assets/css/shop.css";
 import "../assets/css/style.css";
 import Address from "../component/web/Address";
 import AddressModal from "../component/web/AddressModel";
-import { addAddress, fetchAddresses as fetchAddressesFromService } from "../services/authService"; // Nhập các hàm cần thiết từ authService
+import { apiClient } from "../config/apiClient";
+import { getUserDataById } from "../services/authService";
 
 const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const shippingFee = 20000;
-  const userId = localStorage.getItem("userId");
   const [selectedCartItems, setSelectedCartItems] = useState([]);
   const [defaultAddress, setDefaultAddress] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
+  const userData = getUserDataById();
+  const userId = userData ? userData.user_id : null;
+  const shippingFee = 20000;
 
   useEffect(() => {
-    const storedItems = localStorage.getItem("selectedCartItems");
+     const storedItems = localStorage.getItem("selectedCartItems");
     if (storedItems) {
       setSelectedCartItems(JSON.parse(storedItems));
     }
-    fetchAddresses(); // Gọi hàm fetchAddresses để lấy địa chỉ
-  }, []);
+      fetchAddresses(); 
+  }, [userId]);
 
   const fetchAddresses = async () => {
     try {
-      const addressData = await fetchAddressesFromService(); // Sử dụng hàm fetchAddresses từ authService
-      const address = addressData.find((addr) => addr.status); // Tìm địa chỉ mặc định
-      setAddresses(addressData);
+      const response = await apiClient.get("/api/ghn/addresses", {
+        headers: {
+          user_id: userId,
+        },
+      });
+      const address = response.data.find((addr) => addr.status);
+      setAddresses(response.data);
       setDefaultAddress(address);
       setSelectedAddress(address);
     } catch (error) {
@@ -45,11 +51,13 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
 
   const handleAddressSubmit = async (formData) => {
     try {
-      const response = await addAddress(formData); // Sử dụng hàm addAddress từ authService
-      setAddresses((prevAddresses) => [...prevAddresses, response]);
-      setSelectedAddress(response);
+      const response = await apiClient.post("/api/ghn/addresses", formData, {
+        headers: { user_id: userId },
+      });
+      setAddresses((prevAddresses) => [...prevAddresses, response.data]);
+      setSelectedAddress(response.data);
       setIsAddressModalOpen(false);
-      fetchAddresses(); 
+      fetchAddresses();
     } catch (error) {
       console.error("Lỗi khi thêm địa chỉ:", error);
     }
@@ -58,6 +66,7 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
   const handleOpenModal = (event) => {
     event.preventDefault();
     setIsModalOpen(true);
+    
   };
 
   const handleCloseModal = () => {
@@ -117,12 +126,40 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
                                 className="img-fluid"
                                 alt={item.productDetail?.name || "Product Image"}
                                 style={{ width: "80px", height: "80px" }}
+
                               />
                             </th>
-                            <td className="py-3">{item.productDetail?.product?.name}</td>
-                            <td className="py-3">{item.discountedPrice.toLocaleString()}đ</td>
+                            <td className="py-3">
+                              {item.productDetail?.product?.name}
+                              <span
+                          className="text-danger"
+                          style={{ fontWeight: "bold", marginLeft: "5px" }}
+                        >
+                        {item.promotions?.length > 0
+          ? `(${item.promotions[0].percent.toFixed(0)}%)`
+          : ""}
+          <div></div>
+                        </span>
+                        <div>  <span>{item.productDetail.capacity.value}ml</span>
+                      {/* {","} */}
+                      <span style={{ marginLeft: "10px" }}>
+                        {item.productDetail.color.name}
+                      </span>
+                      <span style={{ marginLeft: "10px" }}>
+                        {item.productDetail.skintype.name}
+                      </span>
+                      <span style={{ marginLeft: "10px" }}>
+                        {item.productDetail.benefit.name}
+                      </span></div>
+                            
+                            </td>
+                            <td className="py-3">
+                              {item.discountedPrice}đ
+                            </td>
                             <td className="py-3">{item.quantity}</td>
-                            <td className="py-3">{(item.discountedPrice * item.quantity).toLocaleString()}đ</td>
+                            <td className="py-3">
+                              {(item.discountedPrice * item.quantity)}đ
+                            </td>
                           </tr>
                         ))}
                         <tr>
@@ -135,7 +172,7 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
                           <td className="py-3">
                             <div className="py-2 border-bottom border-top">
                               <p className="mb-0 text-dark">
-                                {calculateTotalPrice().toLocaleString()}đ
+                                {calculateTotalPrice()}đ
                               </p>
                             </div>
                           </td>
@@ -150,7 +187,7 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
                           <td className="py-3">
                             <div className="py-2 border-bottom border-top">
                               <p className="mb-0 text-dark">
-                                {shippingFee.toLocaleString()}đ
+                                {shippingFee}đ
                               </p>
                             </div>
                           </td>
@@ -165,7 +202,7 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
                           <td className="py-3">
                             <div className="py-2 border-bottom border-top">
                               <p className="mb-0 text-dark">
-                                {calculateTotal().toLocaleString()}đ
+                                {calculateTotal()}đ
                               </p>
                             </div>
                           </td>
@@ -187,9 +224,9 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
                               </ul>
                               <ul>{selectedAddress.specificAddress}</ul>
                               <ul>
-                                Phường {selectedAddress.wardCommune}, Quận{" "}
-                                {selectedAddress.district}, Tỉnh{" "}
-                                {selectedAddress.province}
+                               {selectedAddress.wardName}, 
+                                {selectedAddress.districtName}, 
+                                {selectedAddress.provinceName}
                               </ul>
                             </p>
                             <button className="change-btn" onClick={handleOpenModal}>
@@ -232,8 +269,8 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
         </div>
       </div>
 
-     {/* Address Modal */}
-     <Address
+      {/* Address Modal */}
+      <Address
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onAddAddress={handleOpenAddressModal}
@@ -245,7 +282,6 @@ const ThanhToan = ({ isOpen, onClose, onAddAddress, onAddressSelect }) => {
         onSubmit={handleAddressSubmit}
       />
     </>
-  
   );
 };
 

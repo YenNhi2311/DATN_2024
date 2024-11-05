@@ -2,9 +2,9 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is installed
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 // Importing components
-import Admin1Layout from "./Admin1Layout";
+import Admin1Layout from "./AdminLayout";
 import ChiTietSP from "./component/page/chitietSP";
-import ChiTietSPKM from "./component/page/chitietSPKM";
+
 import About from "./component/user/About";
 import Friends from "./component/user/Friends";
 import PhotosPage from "./component/user/PhotosPage";
@@ -15,8 +15,14 @@ import ChangePassword from "./page/account/ChangePassword.js";
 import ForgotPasswordPage from "./page/account/ForgotPasswordPage.js";
 import LoginRegister from "./page/account/LoginRegister";
 import OTPVerification from "./page/account/OTPVerification.js";
+import ProfileContainer from "./page/account/ProfileContainer";
 import ResetPassword from "./page/account/ResetPasswordPage.js";
 import ProFile from "./page/account/UpdateProfileForm.js";
+
+// Địa Chỉ
+import Address from "./component/web/Address.js";
+
+
 
 
 import Dashboard2 from "./page/admin1/pare";
@@ -25,8 +31,6 @@ import GioHang from "./page/GioHang";
 import KhuyenMaiList from "./page/khuyenmailist";
 import LienHe from "./page/lienHe";
 import Shop from "./page/Shop";
-import ShopLoai from "./page/ShopLoai";
-import ShopTH from "./page/ShopTH";
 import ChatMessage from "./page/social/ChatMessage";
 import HomeSocial from "./page/social/HomeSocial";
 import NotificationSocial from "./page/social/NotificationSocial";
@@ -95,11 +99,8 @@ const App = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/" element={<TrangChu />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/shop/category/:categoryId" element={<ShopLoai />} />
-          <Route path="/shop/brand/:brandId" element={<ShopTH />} />
+          <Route path="/shop" element={<Shop />} /> 
           <Route path="/product" element={<ChiTietSP />} />
-          <Route path="/productpromotion" element={<ChiTietSPKM />} />
           <Route path="/lienhe" element={<LienHe />} />
           <Route path="/cart" element={<GioHang />} />
           <Route path="/thanhtoan" element={<ThanhToan />} />
@@ -109,6 +110,8 @@ const App = () => {
           <Route path="/profile" element={<ProFile/>} />
           <Route path="/change-password" element={<ChangePassword/>} />
           <Route path="/profile-user" element={<ProfileContainer/>} />
+          <Route path="/address" element={<Address/>} />
+        
         </Route>
 
         <Route path="/admin/*" element={<Admin1Layout />}>

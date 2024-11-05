@@ -1,14 +1,15 @@
 package com.edu.datn.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.edu.datn.dto.PromotionDTO;
-import com.edu.datn.entities.ProductEntity;
 import com.edu.datn.entities.PromotionEntity;
 import com.edu.datn.jpa.ProductJPA;
 import com.edu.datn.jpa.PromotionJPA;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class PromotionService {
@@ -41,12 +42,10 @@ public class PromotionService {
 
   // Update an existing promotion
   public PromotionEntity updatePromotion(
-    Integer id,
-    PromotionDTO promotionDTO
-  ) {
+      Integer id,
+      PromotionDTO promotionDTO) {
     Optional<PromotionEntity> existingPromotion = promotionRepository.findById(
-      id
-    );
+        id);
     if (existingPromotion.isPresent()) {
       PromotionEntity promotion = existingPromotion.get();
       promotion.setName(promotionDTO.getName());

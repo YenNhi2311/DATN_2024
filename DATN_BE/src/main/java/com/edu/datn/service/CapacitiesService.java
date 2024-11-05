@@ -1,20 +1,42 @@
 package com.edu.datn.service;
 
-import com.edu.datn.dto.CapacitiesDTO;
-import com.edu.datn.entities.CapacitiesEntity;
-import com.edu.datn.jpa.CapacitiesJPA;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.edu.datn.dto.CapacitiesDTO;
+import com.edu.datn.entities.CapacitiesEntity;
+import com.edu.datn.entities.ProductDetailsEntity;
+import com.edu.datn.jpa.CapacitiesJPA;
+import com.edu.datn.jpa.ProductDetailsJPA;
 
 @Service
 public class CapacitiesService {
 
     @Autowired
     private CapacitiesJPA capacitiesRepository;
+    @Autowired
+    private ProductDetailsJPA productDetailsRepository;
+
+    // phi gọi nhìu dung tích từ productId
+    public List<CapacitiesDTO> getCapacitiesByProductId(Integer productId) {
+        List<ProductDetailsEntity> productDetails = productDetailsRepository.findByProductId(productId);
+        return productDetails.stream()
+                .map(productDetail -> productDetail.getCapacity())
+                .distinct() // Để loại bỏ dung tích trùng lặp
+                .map(this::convertToCapacityDTO)
+                .collect(Collectors.toList());
+    }
+
+    private CapacitiesDTO convertToCapacityDTO(CapacitiesEntity capacity) {
+        CapacitiesDTO dto = new CapacitiesDTO();
+        dto.setCapacityId(capacity.getCapacityId());
+        dto.setValue(capacity.getValue());
+        return dto;
+    }
 
     // Convert entity to DTO
     private CapacitiesDTO convertToDto(CapacitiesEntity capacity) {

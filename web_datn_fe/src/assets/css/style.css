@@ -254,7 +254,7 @@
 @media (min-width: 992px) {
     .hero-header2,
     .page-header2 {
-        margin-top: 80px !important;
+        margin-top: 55px !important;
     }
 }@media (min-width: 992px) {
     .hero-header4,
@@ -789,14 +789,27 @@
         .align-middle{
             vertical-align: middle; /* Center-align vertically */
           }
+          .name{
+            margin-bottom: -4px;
+          }
+          .category{
+            margin-bottom: 4px;
+          }
+          .start{
+            margin-bottom: 4px;
+          }
+          .txt-price{
+            margin-top: -8px;
+            margin-bottom: -12px;
+          }
         .flash-deal {
             display: flex;
             justify-content: space-between; /* Đẩy các phần tử sang hai bên */
             align-items: center; /* Canh giữa theo chiều dọc */
-            padding: 10px;
+            padding: 5px;
             background-color: #ff6b00; 
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 15px;
+            margin-bottom: 4px;
             color: white;
           }
           
@@ -962,7 +975,64 @@
     font-size: 15px;
 
 }
-.text-right {
-    margin: 0 20px; 
-    font-size: 15px;
-}
+.capacity-options {
+    display: flex;
+    gap: 10px;
+  }
+  .capacity-btn {
+    display: inline-block;
+    border: 1px solid #ccc; /* Light gray border */
+    padding: 8px 16px;
+    margin: 4px;
+    background-color: white; /* White background */
+    color: #333; /* Dark gray text */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .capacity-btn:hover {
+    border-color: #ff6600; /* Orange border on hover */
+    color: #ff6600; /* Orange text on hover */
+  }
+  
+  .capacity-btn.selected {
+    border-color: #ff6600; /* Orange border for selected */
+    background-color: #fff8f0; /* Light orange background for selected */
+    position: relative;
+  }
+  
+  .capacity-btn.selected::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    border-width: 0 8px 8px 0;
+    border-style: solid;
+    border-color: #ff6600 transparent transparent transparent; /* Orange triangle */
+  }
+  /* mũi tên chổ nổi bật */
+  .select-container {
+    position: relative;
+  }
+  
+  .select-container select {
+    appearance: none; /* Ẩn mũi tên mặc định */
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    padding-right: 30px; /* Thêm khoảng cách cho mũi tên */
+  }
+  
+  .arrow-down {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Vị trí mũi tên */
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #000; /* Màu sắc của mũi tên */
+    transform: translateY(-50%); /* Đặt mũi tên vào giữa */
+    pointer-events: none; /* Để không ảnh hưởng đến sự kiện click */
+  }

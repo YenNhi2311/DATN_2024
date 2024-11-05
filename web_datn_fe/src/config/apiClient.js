@@ -31,3 +31,15 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response.status === 401) {
+      // Xử lý khi token không hợp lệ
+      console.error("Token không hợp lệ, vui lòng đăng nhập lại.");
+      // Có thể điều hướng đến trang đăng nhập hoặc thực hiện hành động khác
+    }
+    return Promise.reject(error);
+  }
+);

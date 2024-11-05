@@ -1,6 +1,7 @@
 package com.edu.datn.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List; // Nếu bạn đang sử dụng List
 import java.util.stream.Collectors;
@@ -16,9 +17,12 @@ import com.edu.datn.entities.BrandsEntity;
 import com.edu.datn.entities.CategoriesEntity;
 import com.edu.datn.entities.ProductDetailsEntity;
 import com.edu.datn.entities.ProductEntity;
+import com.edu.datn.entities.PromotionEntity;
 import com.edu.datn.jpa.BrandJPA;
 import com.edu.datn.jpa.CategoriesJPA;
 import com.edu.datn.jpa.ProductJPA;
+import com.edu.datn.jpa.ProductPromotionJPA;
+import com.edu.datn.jpa.PromotionJPA;
 
 @Service
 public class ProductService {
@@ -32,6 +36,18 @@ public class ProductService {
     @Autowired
     private CategoriesJPA categoryRepository;
 
+    @Autowired
+    private ProductPromotionJPA productPromotionRepository;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private PromotionJPA promotionRepository;
+
+    // Phương thức lấy khuyến mãi từ productpromotion
+    public List<PromotionEntity> getPromotionsForProduct(Integer productId) {
+        return productPromotionRepository.findPromotionsByProductId(productId);
+    }
+
     public List<ProductWithDetailsDTO> getTop8BestSellingProducts(Pageable pageable) {
         List<Object[]> results = productRepository.findTop8BestSellingProducts(pageable);
         List<ProductWithDetailsDTO> topProducts = new ArrayList<>();
@@ -39,7 +55,7 @@ public class ProductService {
         for (Object[] result : results) {
             ProductEntity product = (ProductEntity) result[0];
             ProductDetailsEntity productDetail = (ProductDetailsEntity) result[1];
-            Integer totalSold = ((Long) result[2]).intValue(); // Chuyển từ Long sang Integer
+            Integer totalSold = ((Long) result[2]).intValue();
 
             // Tạo ProductDTO
             ProductDTO productDTO = new ProductDTO();
@@ -62,12 +78,35 @@ public class ProductService {
             detailsDTO.setIngredientId(productDetail.getIngredient().getIngredientId());
             detailsDTO.setBenefitId(productDetail.getBenefit().getBenefitId());
 
+            // Lấy danh sách khuyến mãi
+            List<PromotionEntity> promotions = getPromotionsForProduct(productDetail.getProductDetailId());
+
+            // Tính giá sau giảm
+            double discountedPrice = calculateDiscountedPrice(productDetail.getPrice(), promotions);
+
             // Tạo ProductWithDetailsDTO
-            ProductWithDetailsDTO combinedDTO = new ProductWithDetailsDTO(productDTO, detailsDTO, totalSold);
+            ProductWithDetailsDTO combinedDTO = new ProductWithDetailsDTO(productDTO, detailsDTO, promotions,
+                    discountedPrice, totalSold);
             topProducts.add(combinedDTO);
         }
 
         return topProducts;
+    }
+
+    // Phương thức tính toán giá đã giảm
+    private double calculateDiscountedPrice(double originalPrice, List<PromotionEntity> promotions) {
+        double discountedPrice = originalPrice;
+
+        for (PromotionEntity promotion : promotions) {
+            if (promotion.getEndDate().isAfter(LocalDateTime.now())) {
+                // Tính toán giá đã giảm với khuyến mãi hiệu lực
+                double discount = (originalPrice * promotion.getPercent()) / 100;
+                discountedPrice -= discount; // Áp dụng giảm giá
+                break; // Dừng lại nếu đã tìm thấy khuyến mãi hiệu lực
+            }
+        }
+
+        return discountedPrice;
     }
 
     public List<ProductDTO> getAllProducts() {

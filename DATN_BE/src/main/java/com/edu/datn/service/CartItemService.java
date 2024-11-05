@@ -38,10 +38,9 @@ public class CartItemService {
         cartItemJPA.deleteById(cartItemId);
     }
 
-    public CartItemEntity findByCartIdAndProductDetailIdAndProductPromotionId(int cartId, int productDetailId,
-            int productPromotionId) {
-        return cartItemJPA.findByCart_CartIdAndProductDetail_ProductDetailIdAndProductPromotion_ProductPromotionId(
-                cartId, productDetailId, productPromotionId);
+    public CartItemEntity findByCartIdAndProductDetailId(int cartId, int productDetailId) {
+        return cartItemJPA.findByCart_CartIdAndProductDetail_ProductDetailId(
+                cartId, productDetailId);
     }
 
     public List<CartItemEntity> findAllCartItems() {

@@ -12,6 +12,5 @@ public interface CartJPA extends JpaRepository<CartEntity, Integer> {
 
     List<CartEntity> findByUser_UserId(Integer userId);
 
-
     
 }
