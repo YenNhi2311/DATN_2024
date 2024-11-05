@@ -110,8 +110,13 @@ textarea {
     height: 80px;
 }
 
+.inputForm{
+    margin-bottom: 10px;
+}
+
 .inputForm2 {
     width: 300px;
+    margin-bottom: 10px;
 }
 
 .form-column {
