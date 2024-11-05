@@ -244,7 +244,7 @@ const TableOrder = () => {
                         </Select>
                     </FormControl>
                     <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-                        <InputLabel>Trạng thái mới</InputLabel>
+                        <InputLabel>Trạng thái</InputLabel>
                         <Select
                             labelId="status-label"
                             value={orderStatus}

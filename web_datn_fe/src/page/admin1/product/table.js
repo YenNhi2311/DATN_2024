@@ -400,13 +400,26 @@ const ProductLists = (initialValues = {}, onSubmit) => {
 
   const handleDelete = async (productDetailId) => {
     try {
-      await apiClient.delete(`/api/productdetails/${productDetailId}`);
-      fetchProductDetails(productId); // Tải lại dữ liệu sau khi xóa
-      Swal.fire({
-        icon: "success",
-        title: "Xóa thành công!",
-        text: "Chi tiết sản phẩm đã được xóa.",
+      const result = await Swal.fire({
+        title: "Bạn có chắc chắn muốn xóa?",
+        text: "Hành động này không thể hoàn tác!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy",
       });
+  
+      if (result.isConfirmed) {
+        await apiClient.delete(`/api/productdetails/${productDetailId}`);
+        fetchProductDetails(productId); // Tải lại dữ liệu sau khi xóa
+        Swal.fire({
+          icon: "success",
+          title: "Xóa thành công!",
+          text: "Chi tiết sản phẩm đã được xóa.",
+        });
+      }
     } catch (error) {
       console.error("Lỗi khi xóa chi tiết sản phẩm:", error);
       Swal.fire({
@@ -416,6 +429,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
       });
     }
   };
+  
 
   const handleEditClick = (productDetailId) => {
     setEditingRows((prevEditingRows) => ({

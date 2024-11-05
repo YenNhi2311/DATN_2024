@@ -90,7 +90,7 @@ const Sidebar = () => {
         <li className="nav-item">
           <Link className="nav-link" to="/admin/order">
             <i className="bi bi-layout-text-window-reverse"></i>
-            <span>Quản Lý Hóa Đơn</span>
+            <span>Quản Lý Đơn hàng</span>
           </Link>
         </li>
 
