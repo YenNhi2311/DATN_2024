@@ -37,7 +37,7 @@ const TableSCapacity = () => {
 
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(24);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [sortValue, setSortValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editData, setEditData] = useState(null);
@@ -150,7 +150,6 @@ const TableSCapacity = () => {
         <Box>
             <Header subtitle="Danh Sách dung tích" />
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-                {/* Thanh tìm kiếm */}
                 <TextField
                     variant="outlined"
                     placeholder="Tìm kiếm dung tích"
@@ -192,9 +191,11 @@ const TableSCapacity = () => {
                                 onChange={handleRowsPerPageOptionChange}
                                 label="Số hàng"
                             >
-                                <MenuItem value={24}>24/trang</MenuItem>
-                                <MenuItem value={36}>36/trang</MenuItem>
-                                <MenuItem value={48}>48/trang</MenuItem>
+                                <MenuItem value={10}>10/trang</MenuItem>
+                                <MenuItem value={15}>15/trang</MenuItem>
+                                <MenuItem value={20}>20/trang</MenuItem>
+                                <MenuItem value={25}>25/trang</MenuItem>
+                                <MenuItem value={30}>30/trang</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -228,14 +229,14 @@ const TableSCapacity = () => {
                                             onClick={() => handleOpenForm(row)} // Mở form với dữ liệu của dung tích đang chọn
                                             sx={{ marginRight: "10px" }}
                                         >
-                                            <Edit color="primary"/>
+                                            <Edit color="primary" />
                                         </IconButton>
                                         <IconButton
                                             variant="outlined"
                                             color="error"
                                             onClick={() => handleDelete(row.id)} // Gọi hàm xóa dung tích
                                         >
-                                            <Delete color="secondary"/>
+                                            <Delete color="secondary" />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
@@ -247,7 +248,7 @@ const TableSCapacity = () => {
             {/* Phần phân trang cố định */}
             <div style={{ marginTop: '16px', alignSelf: 'center' }}>
                 <TablePagination
-                    rowsPerPageOptions={[24, 36, 48]}
+                    rowsPerPageOptions={[10, 15, 20, 25, 30]}
                     component="div"
                     count={filteredRows.length}
                     rowsPerPage={rowsPerPage}
