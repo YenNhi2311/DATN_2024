@@ -8,8 +8,8 @@ const Header = () => {
   return (
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
-        <a href="index.html" className="logo d-flex align-items-center">
-          <img src={logo} alt="Logo" style={{width:'45%',height:'60%'}}/>
+        <a href="/admin" className="logo d-flex align-items-center">
+          <img src={logo} alt="Logo" style={{width:'90%',height:'90%'}}/>
           <span className="d-none d-lg-block"></span>
         </a>
 
@@ -33,7 +33,7 @@ const Header = () => {
           <li className="nav-item dropdown">
             <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
               <i className="bi bi-bell" />
-              {/* <span className="badge bg-primary badge-number">4</span> */}
+              <span className="badge bg-primary badge-number">4</span>
             </a>
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
               <li className="dropdown-header">
@@ -86,7 +86,7 @@ const Header = () => {
           <li className="nav-item dropdown">
             <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
               <i className="bi bi-chat-left-text" />
-              {/* <span className="badge bg-success badge-number">3</span> */}
+              <span className="badge bg-success badge-number">3</span>
             </a>
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
               <li className="dropdown-header">
