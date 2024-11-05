@@ -202,6 +202,7 @@
 .capacity-options {
     display: flex;
     gap: 10px;
+    margin-bottom: -17px;
 }
 
 .capacity-btn {
@@ -434,4 +435,37 @@ section .content p {
         transform: translate(var(--left), var(--top)) scale(0.1);
         opacity: 0;
     }
+}
+.btn-outline-primary {
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .text-danger {
+    font-weight: bold;
+  }
+  
+  h3 {
+    font-size: 1.6rem; /* Tăng kích thước chữ tiêu đề */
+  }
+  .quantity-selector {
+  display: flex;
+  align-items: center;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  min-width: 35px; /* Đảm bảo nút có kích thước tối thiểu */
+}
+
+.form-control {
+  text-align: center; /* Căn giữa nội dung trong input */
 }

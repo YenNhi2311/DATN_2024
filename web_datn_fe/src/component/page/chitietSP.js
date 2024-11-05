@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "../../assets/css/style.css";
 import { useCart } from "../../component/page/CartContext";
@@ -8,6 +8,7 @@ import { useCart } from "../../component/page/CartContext";
 import DanhGia from "../../component/page/DanhGia";
 import SPlienquan from "../../component/page/SPlienquan";
 import ThongTinsp from "../../component/page/ThongTinSP";
+import ShareIcon from "@mui/icons-material/Share";
 import {
   addToCart,
   getBenefitsByProductId,
@@ -24,6 +25,7 @@ import {
   getSkintypeProduct,
   updateCartItem
 } from "../../services/authService"; // Import các hàm API từ authService
+import ShareProductModal from "../user/ShareModal";
 
 const ChiTietSP = () => {
   const [capacities, setCapacities] = useState([]); // State để lưu dung tích
@@ -46,6 +48,10 @@ const ChiTietSP = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [filteredColors, setFilteredColors] = useState([]);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   const handleIncrease = () => {
     if (quantity < product.productDetails[selectedDetailIndex]?.productDetail.quantity) {
@@ -307,7 +313,7 @@ const ChiTietSP = () => {
               : null,
           ]);
 
-        
+
 
           // Thiết lập dữ liệu sản phẩm
           setProduct({
@@ -317,8 +323,8 @@ const ChiTietSP = () => {
             category: categoryData,
             capacity: productDetail.capacityId
               ? capacities.find(
-                  (c) => c.capacityId === productDetail.capacityId
-                )
+                (c) => c.capacityId === productDetail.capacityId
+              )
               : null,
             skintype: skintypeData,
             benefit: productDetail.benefitId
@@ -401,36 +407,36 @@ const ChiTietSP = () => {
     productPromotionId,
     quantity
   ) => {
-   
+
     const userData = localStorage.getItem("userData");
-  
+
     let userId;
-  
+
     // Kiểm tra nếu userData tồn tại và giải mã để lấy userId
     if (userData) {
       const decryptedData = CryptoJS.AES.decrypt(userData, "secret-key").toString(CryptoJS.enc.Utf8);
       const parsedData = JSON.parse(decryptedData);
       userId = parsedData.user_id;
     }
-  
+
     if (!userId) {
       alert("Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
       navigate("/login"); // Chuyển hướng đến trang đăng nhập
       return;
     }
-  
+
     try {
       const cartData = await getCartByUserId(userId);
-      
+
       // Kiểm tra sự tồn tại của cartData
       if (cartData.length === 0) {
         console.error("Không tìm thấy cartId cho người dùng.");
         return;
       }
-  
+
       const cartId = cartData[0].cartId;
       const cartItems = await getCartItemsByUserId(userId);
-  
+
       const existingCartItem = cartItems.find(
         (item) =>
           item.productDetail.productDetailId === productDetailId &&
@@ -438,7 +444,7 @@ const ChiTietSP = () => {
             ? item.productPromotion.productPromotionId === productPromotionId
             : productPromotionId === 0)
       );
-  
+
       if (existingCartItem) {
         const updatedQuantity = existingCartItem.quantity + quantity;
         await updateCartItem(
@@ -493,7 +499,7 @@ const ChiTietSP = () => {
   const discountedPrice = isPromotionActive
     ? originalPrice - originalPrice * (discountPercent / 100)
     : originalPrice;
-const Tietkiem=  originalPrice-discountedPrice;
+  const Tietkiem = originalPrice - discountedPrice;
   const barcode = product?.id ? generateBarcode(product.id) : "N/A";
   return (
     <div className="container">
@@ -517,12 +523,11 @@ const Tietkiem=  originalPrice-discountedPrice;
                 <div className="col-lg-6">
                   <div className="border-rounded">
                     <a href="#">
-                    <img
-  src={`http://localhost:8080/assets/img/${
-    product.productDetails?.[selectedDetailIndex]?.productDetail?.img || ""
-  }`}
-  alt={product.name}
-/>
+                      <img
+                        src={`http://localhost:8080/assets/img/${product.productDetails?.[selectedDetailIndex]?.productDetail?.img || ""
+                          }`}
+                        alt={product.name}
+                      />
 
                     </a>
                   </div>
@@ -537,9 +542,8 @@ const Tietkiem=  originalPrice-discountedPrice;
                     {[...Array(5)].map((_, index) => (
                       <i
                         key={index}
-                        className={`fa fa-star${
-                          index < 4 ? " text-secondary" : ""
-                        }`}
+                        className={`fa fa-star${index < 4 ? " text-secondary" : ""
+                          }`}
                       ></i>
                     ))}
                   </div>
@@ -584,7 +588,7 @@ const Tietkiem=  originalPrice-discountedPrice;
                   )}
 
                   <span className="txt_price" id="product-final_price"></span>
-                 
+
                   <div className="variant">
                     {" "}
                     <div className="capacity-selection">
@@ -597,12 +601,11 @@ const Tietkiem=  originalPrice-discountedPrice;
                           .sort((a, b) => a.value - b.value)
                           .map((cap, index) => (
                             <button
-                              className={`capacity-btn ${
-                                selectedCapacity &&
-                                selectedCapacity.id === cap.id
+                              className={`capacity-btn ${selectedCapacity &&
+                                  selectedCapacity.id === cap.id
                                   ? "selected"
                                   : ""
-                              }`}
+                                }`}
                               key={index}
                               onClick={() => handleCapacityClick(cap)}
                             >
@@ -619,12 +622,11 @@ const Tietkiem=  originalPrice-discountedPrice;
                           : skintypes
                         ).map((skin, index) => (
                           <button
-                            className={`capacity-btn ${
-                              selectedSkintype &&
-                              selectedSkintype.id === skin.id
+                            className={`capacity-btn ${selectedSkintype &&
+                                selectedSkintype.id === skin.id
                                 ? "selected"
                                 : ""
-                            }`}
+                              }`}
                             key={index}
                             onClick={() => {
                               handleSkintypeClick(skin);
@@ -644,12 +646,11 @@ const Tietkiem=  originalPrice-discountedPrice;
                           : benefits
                         ).map((benefit, index) => (
                           <button
-                            className={`capacity-btn ${
-                              selectedBenefit &&
-                              selectedBenefit.id === benefit.id
+                            className={`capacity-btn ${selectedBenefit &&
+                                selectedBenefit.id === benefit.id
                                 ? "selected"
                                 : ""
-                            }`}
+                              }`}
                             key={index}
                             onClick={() => {
                               handleBenefitClick(benefit);
@@ -669,11 +670,10 @@ const Tietkiem=  originalPrice-discountedPrice;
                           : colors
                         ).map((color, index) => (
                           <button
-                            className={`capacity-btn ${
-                              selectedColor && selectedColor.id === color.id
+                            className={`capacity-btn ${selectedColor && selectedColor.id === color.id
                                 ? "selected"
                                 : ""
-                            }`}
+                              }`}
                             key={index}
                             onClick={() => {
                               handleColorClick(color);
@@ -707,8 +707,8 @@ const Tietkiem=  originalPrice-discountedPrice;
                         if (
                           inputValue > 0 &&
                           inputValue <=
-                            product.productDetails[selectedDetailIndex]
-                              ?.productDetail.quantity
+                          product.productDetails[selectedDetailIndex]
+                            ?.productDetail.quantity
                         ) {
                           setQuantity(inputValue);
                         } else if (
@@ -728,7 +728,7 @@ const Tietkiem=  originalPrice-discountedPrice;
                         }
                       }}
                       min="1"
-                    
+
                     />
                     <button
                       className="btn btn-outline-primary"
@@ -752,8 +752,12 @@ const Tietkiem=  originalPrice-discountedPrice;
                     )}
                   </div>
                   <br></br>
-                  <a  className="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-4 text-white">
-                 Chia sẽ</a>
+                  <Link
+                    className="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-4 text-white"
+                    onClick={handleShowModal}
+                  >
+                    <ShareIcon />
+                  </Link>
                   <a
                     className="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-4 text-white"
                     onClick={() => {
@@ -773,31 +777,36 @@ const Tietkiem=  originalPrice-discountedPrice;
                     href="#"
                     className="btn btn-danger border border-secondary rounded-pill px-4 py-2 mb-4 text-white"
                   >
-            
+
                     Mua Ngay
                   </a>
                 </div>
               </div>
-<ThongTinsp />
-              
+              <ThongTinsp />
+
             </div>
           </div>
         </div>
       </div>
       <div className="container-fluid testimonial py-5">
-       <DanhGia />
-              </div>
-         
-            <br></br>
-            <br></br>
-            <br></br>
-            <div className="container-fluid related-products py-5">
-           
+        <DanhGia />
+      </div>
+
+      <br></br>
+      <br></br>
+      <br></br>
+      <div className="container-fluid related-products py-5">
+
         <SPlienquan />
 
-            </div>
-          </div>
-    
+      </div>
+      <ShareProductModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        product={product}
+      />
+    </div>
+
   );
 };
 

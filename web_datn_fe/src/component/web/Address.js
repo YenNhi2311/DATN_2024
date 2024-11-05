@@ -61,10 +61,37 @@ const Address = ({ isOpen, onClose }) => {
 
   const handleUpdateAddress = async (updatedAddress) => {
     if (selectedAddress) {
-      await handleAddressRequest('put', `/api/ghn/addresses/${selectedAddress.id}`, updatedAddress);
-      closeModal();
+      // Lấy dữ liệu từ selectedAddress, sử dụng null hoặc giá trị mặc định nếu không có
+      const {
+        province = {},
+        district = {},
+        ward = {},
+      } = selectedAddress;
+  
+      // Kiểm tra và giữ nguyên dữ liệu nếu không có thay đổi trong dữ liệu cập nhật
+      const newAddress = {
+        ...updatedAddress,
+        province: updatedAddress.provinceId || province,  // Sử dụng province hiện tại nếu không có provinceId mới
+        district: updatedAddress.districtId || district,  // Sử dụng district hiện tại nếu không có districtId mới
+        ward: updatedAddress.wardId || ward,  // Sử dụng ward hiện tại nếu không có wardId mới
+      };
+  
+      try {
+        await handleAddressRequest(
+          'put',
+          `/api/ghn/addresses/${selectedAddress.id}`, 
+          newAddress
+        );
+        closeModal(); // Đóng modal sau khi cập nhật thành công
+      } catch (error) {
+        console.error("Error updating address:", error);
+        // Xử lý lỗi nếu có
+      }
+    } else {
+      console.warn("selectedAddress is undefined");
     }
   };
+  
 
   const handleAddressRequest = async (method, url, addressData) => {
     try {

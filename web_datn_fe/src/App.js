@@ -2,9 +2,8 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is installed
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 // Importing components
-import Admin1Layout from "./Admin1Layout";
+import Admin1Layout from "../src/AdminLayout.js";
 import ChiTietSP from "./component/page/chitietSP";
-import ChiTietSPKM from "./component/page/chitietSPKM";
 import About from "./component/user/About";
 import Friends from "./component/user/Friends";
 import PhotosPage from "./component/user/PhotosPage";
@@ -17,6 +16,7 @@ import LoginRegister from "./page/account/LoginRegister";
 import OTPVerification from "./page/account/OTPVerification.js";
 import ProFile from "./page/account/UpdateProfileForm.js";
 import ChangePassword from "./page/account/ChangePassword.js";
+import ProfileContainer from "./page/account/ProfileContainer";
 
 import Dashboard2 from "./page/admin1/pare";
 import DanhGia from "./page/DanhGia";
@@ -24,8 +24,8 @@ import GioHang from "./page/GioHang";
 import KhuyenMaiList from "./page/khuyenmailist";
 import LienHe from "./page/lienHe";
 import Shop from "./page/Shop";
-import ShopLoai from "./page/ShopLoai";
-import ShopTH from "./page/ShopTH";
+
+
 import ChatMessage from "./page/social/ChatMessage";
 import HomeSocial from "./page/social/HomeSocial";
 import NotificationSocial from "./page/social/NotificationSocial";
@@ -98,10 +98,7 @@ const App = () => {
         <Route element={<MainLayout />}>
           <Route path="/" element={<TrangChu />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/shop/category/:categoryId" element={<ShopLoai />} />
-          <Route path="/shop/brand/:brandId" element={<ShopTH />} />
           <Route path="/product" element={<ChiTietSP />} />
-          <Route path="/productpromotion" element={<ChiTietSPKM />} />
           <Route path="/lienhe" element={<LienHe />} />
           <Route path="/cart/" element={<GioHang />} />
           <Route path="/thanhtoan" element={<ThanhToan />} />
@@ -110,6 +107,7 @@ const App = () => {
           {/* Thông Tin Người dùng */}
           <Route path="/profile" element={<ProFile />} />
           <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/profile-user" element={<ProfileContainer />} />
         </Route>
 
         <Route path="/admin/*" element={<Admin1Layout />}>

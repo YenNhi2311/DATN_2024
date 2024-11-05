@@ -12,7 +12,7 @@ const ShareProductModal = ({ show, handleClose, product }) => {
   const handleShare = async () => {
     const postData = {
       content: `${product?.name}: ${caption}`,
-      imgposts: [{ img: product.img }],
+      imgposts: [{ img: product?.img }],
       user: { id: getUserDataById().user_id },
     };
 
@@ -21,7 +21,7 @@ const ShareProductModal = ({ show, handleClose, product }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         Swal.fire({
           icon: "success",
           title: "Chia sẻ thành công!",
@@ -41,7 +41,7 @@ const ShareProductModal = ({ show, handleClose, product }) => {
       Swal.fire({
         icon: "error",
         title: "Lỗi!",
-        text: "Có lỗi xảy ra khi chia sẻ bài viết.",
+        text: "Có lỗi xảy ra khi chia sẻ bài viết hả?",
       });
     }
   };

@@ -796,12 +796,14 @@
             margin-bottom: 4px;
           }
           .start{
-            margin-bottom: 4px;
+            margin-bottom: 10px;
           }
           .txt-price{
-            margin-top: -8px;
-            margin-bottom: -12px;
+            margin-top: 0px;
+            margin-bottom: -15px;
           }
+     
+      
         .flash-deal {
             display: flex;
             justify-content: space-between; /* Đẩy các phần tử sang hai bên */
@@ -809,7 +811,7 @@
             padding: 5px;
             background-color: #ff6b00; 
             font-size: 15px;
-            margin-bottom: 4px;
+            margin-bottom: 10px;
             color: white;
           }
           

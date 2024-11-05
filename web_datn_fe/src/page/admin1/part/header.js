@@ -1,18 +1,80 @@
-import React from 'react';
-import logo from '../../../assets/img/logo-removebg-preview.png';
-
+import React, { useEffect, useState } from "react";
+import logo from "../../../assets/img/logo-removebg-preview.png";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
+import { getUserData } from "../../../services/authService";
 
 const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const checkLoginStatus = async () => {
+    const token = Cookies.get("access_token");
+    const encryptedUserData = localStorage.getItem("userData");
+
+    if (encryptedUserData) {
+      try {
+        const decryptedUserData = CryptoJS.AES.decrypt(
+          encryptedUserData,
+          "secret-key"
+        ).toString(CryptoJS.enc.Utf8);
+        const parsedData = JSON.parse(decryptedUserData);
+        const userId = parsedData.user_id;
+
+        if (userId) {
+          const data = await getUserData(userId, token);
+          setUserData(data);
+          setIsLoggedIn(true);
+        } else {
+          console.error("User ID is missing from the decrypted data");
+          setIsLoggedIn(false);
+          setUserData(null);
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error(
+          "Error during decryption or fetching user data:",
+          error.message
+        );
+        setIsLoggedIn(false);
+        setErrorMessage(
+          "Failed to decrypt user data or fetch user information."
+        );
+      }
+    } else {
+      console.error("No userData found in localStorage");
+      setIsLoggedIn(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus(); // Kiểm tra trạng thái đăng nhập
+  }, []);
+
+  const handleLogout = () => {
+    Cookies.remove("access_token");
+    localStorage.removeItem("userData");
+    setIsLoggedIn(false);
+    setUserData(null);
+    navigate("/");
+    window.location.reload();
+  };
+
+  const isAdmin = userData?.authorities?.some(
+    (auth) => auth.authority === "admin"
+  );
 
   return (
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
-        <a href="/admin" className="logo d-flex align-items-center">
-          <img src={logo} alt="Logo" style={{width:'90%',height:'90%'}}/>
+        <a href="index.html" className="logo d-flex align-items-center">
+          <img src={logo} alt="Logo" style={{ width: "40%", height: "60%" }} />
           <span className="d-none d-lg-block"></span>
         </a>
-
       </div>
 
       {/* <div className="search-bar">
@@ -22,158 +84,56 @@ const Header = () => {
         </form>
       </div> */}
 
-      <nav className="header-nav ms-auto">
-        <ul className="d-flex align-items-center">
-          <li className="nav-item d-block d-lg-none">
-            <a className="nav-link nav-icon search-bar-toggle" href="#">
-              <i className="bi bi-search" />
-            </a>
-          </li>
-
-          <li className="nav-item dropdown">
-            <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-              <i className="bi bi-bell" />
-              <span className="badge bg-primary badge-number">4</span>
-            </a>
-            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-              <li className="dropdown-header">
-                You have 4 new notifications
-                <a href="#"><span className="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="notification-item">
-                <i className="bi bi-exclamation-circle text-warning" />
-                <div>
-                  <h4>Lorem Ipsum</h4>
-                  <p>Quae dolorem earum veritatis oditseno</p>
-                  <p>30 min. ago</p>
-                </div>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="notification-item">
-                <i className="bi bi-x-circle text-danger" />
-                <div>
-                  <h4>Atque rerum nesciunt</h4>
-                  <p>Quae dolorem earum veritatis oditseno</p>
-                  <p>1 hr. ago</p>
-                </div>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="notification-item">
-                <i className="bi bi-check-circle text-success" />
-                <div>
-                  <h4>Sit rerum fuga</h4>
-                  <p>Quae dolorem earum veritatis oditseno</p>
-                  <p>2 hrs. ago</p>
-                </div>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="notification-item">
-                <i className="bi bi-info-circle text-primary" />
-                <div>
-                  <h4>Dicta reprehenderit</h4>
-                  <p>Quae dolorem earum veritatis oditseno</p>
-                  <p>4 hrs. ago</p>
-                </div>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="dropdown-footer">
-                <a href="#">Show all notifications</a>
-              </li>
-            </ul>
-          </li>
-
-          <li className="nav-item dropdown">
-            <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-              <i className="bi bi-chat-left-text" />
-              <span className="badge bg-success badge-number">3</span>
-            </a>
-            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-              <li className="dropdown-header">
-                You have 3 new messages
-                <a href="#"><span className="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="message-item">
-                <a href="#">
-                  <img src="assets/img/messages-1.jpg" alt="Maria Hudson" className="rounded-circle" />
-                  <div>
-                    <h4>Maria Hudson</h4>
-                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                    <p>4 hrs. ago</p>
-                  </div>
-                </a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="message-item">
-                <a href="#">
-                  <img src="assets/img/messages-2.jpg" alt="Anna Nelson" className="rounded-circle" />
-                  <div>
-                    <h4>Anna Nelson</h4>
-                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                    <p>6 hrs. ago</p>
-                  </div>
-                </a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="message-item">
-                <a href="#">
-                  <img src="assets/img/messages-3.jpg" alt="David Muldon" className="rounded-circle" />
-                  <div>
-                    <h4>David Muldon</h4>
-                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                    <p>8 hrs. ago</p>
-                  </div>
-                </a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li className="dropdown-footer">
-                <a href="#">Show all messages</a>
-              </li>
-            </ul>
-          </li>
-
-          <li className="nav-item dropdown pe-3">
-            <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-              <img src="assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
-              <span className="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
-            </a>
-            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-              <li className="dropdown-header">
-                <h6>Kevin Anderson</h6>
-                <span>Web Designer</span>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li>
-                <a className="dropdown-item d-flex align-items-center" href="users-profile.html">
-                  <i className="bi bi-person" />
-                  <span>My Profile</span>
-                </a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li>
-                <a className="dropdown-item d-flex align-items-center" href="users-profile.html">
-                  <i className="bi bi-gear" />
-                  <span>Account Settings</span>
-                </a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li>
-                <a className="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                  <i className="bi bi-question-circle" />
-                  <span>Need Help?</span>
-                </a>
-              </li>
-              <li><hr className="dropdown-divider" /></li>
-              <li>
-                <a className="dropdown-item d-flex align-items-center" href="#">
-                  <i className="bi bi-box-arrow-right" />
-                  <span>Sign Out</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
+      <nav
+        className="header-nav ms-auto"
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        <p style={{ marginBottom: "0px" }}>{userData?.fullname}</p>
+        <div className="nav-item dropdown my-auto me-0">
+          <Link to="#" className="nav-link" data-bs-toggle="dropdown">
+            {isLoggedIn && userData ? (
+              <div className="user-profile">
+                <img
+                  src={
+                    userData.img
+                      ? `http://localhost:8080/assets/img/${userData.img}`
+                      : "link-to-default-avatar.png"
+                  } // Thêm ảnh mặc định nếu không có ảnh người dùng
+                  alt="User Profile"
+                  className="user-avatar"
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "2px solid #ccc",
+                  }}
+                />
+              </div>
+            ) : (
+              <i className="fas fa-user text-blue fa-2x"></i>
+            )}
+          </Link>
+          <div className="dropdown-menu m-0 rounded-0">
+            <>
+              <Link to="/" className="dropdown-item">
+                Giao diện người dùng
+              </Link>
+              <Link to="/social" className="dropdown-item">
+                Mạng xã hội
+              </Link>
+              <Link to="/profile" className="dropdown-item">
+                Thông Tin
+              </Link>
+              <Link to="/change-password" className="dropdown-item">
+                Đổi Mật Khẩu
+              </Link>
+              <a className="dropdown-item" onClick={handleLogout}>
+                Đăng Xuất
+              </a>
+            </>
+          </div>
+        </div>
       </nav>
     </header>
   );
