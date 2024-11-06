@@ -1,10 +1,8 @@
 package com.edu.datn.controller;
 
-import com.edu.datn.dto.ProductDetailsDTO;
-import com.edu.datn.service.ProductDetailsService;
-import static com.edu.datn.utils.ImageUtils.*;
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.edu.datn.dto.ProductDetailsDTO;
+import com.edu.datn.service.ProductDetailsService;
+import static com.edu.datn.utils.ImageUtils.saveImage;
 
 @RestController
 @RequestMapping("/api/productdetails")
@@ -51,7 +53,6 @@ public class ProductDetailsController {
             @RequestParam("colorId") Integer colorId,
             @RequestParam("skintypeId") Integer skintypeId,
             @RequestParam("capacityId") Integer capacityId,
-            @RequestParam("ingredientId") Integer ingredientId,
             @RequestParam("benefitId") Integer benefitId) throws IOException {
 
         // Tạo một đối tượng ProductDetailsDTO
@@ -64,7 +65,6 @@ public class ProductDetailsController {
         productDetailsDTO.setColorId(colorId);
         productDetailsDTO.setSkintypeId(skintypeId);
         productDetailsDTO.setCapacityId(capacityId);
-        productDetailsDTO.setIngredientId(ingredientId);
         productDetailsDTO.setBenefitId(benefitId);
 
         if (imgFile != null && !imgFile.isEmpty()) {
@@ -91,7 +91,6 @@ public class ProductDetailsController {
             @RequestParam("colorId") Integer colorId,
             @RequestParam("skintypeId") Integer skintypeId,
             @RequestParam("capacityId") Integer capacityId,
-            @RequestParam("ingredientId") Integer ingredientId,
             @RequestParam("benefitId") Integer benefitId) throws IOException {
 
         // Tìm chi tiết sản phẩm hiện tại
@@ -108,7 +107,6 @@ public class ProductDetailsController {
         productDetailsDTO.setColorId(colorId);
         productDetailsDTO.setSkintypeId(skintypeId);
         productDetailsDTO.setCapacityId(capacityId);
-        productDetailsDTO.setIngredientId(ingredientId);
         productDetailsDTO.setBenefitId(benefitId);
 
         // Giữ lại hình ảnh cũ nếu không có hình ảnh mới

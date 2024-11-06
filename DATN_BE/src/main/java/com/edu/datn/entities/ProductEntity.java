@@ -36,6 +36,9 @@ public class ProductEntity {
   @Column(name = "description", nullable = false)
   private String description;
 
+  @Column(name = "`use`", nullable  = false)
+  private String use;
+
   @ManyToOne
   @JoinColumn(name = "category_id", nullable = false)
   private CategoriesEntity category;

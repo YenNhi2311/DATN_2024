@@ -63,11 +63,6 @@ import TableSkinType from "../src/page/admin1/skintype/table.js";
 import FormCapacity from "../src/page/admin1/capacity/form.js";
 import TableSCapacity from "../src/page/admin1/capacity/table.js";
 
-
-//  {/* thành phần*/}
-import FormIngredient from "../src/page/admin1/ingredient/form.js";
-import TableIngredient from "../src/page/admin1/ingredient/table.js";
-
 // Đơn Hàng
 import FormOrder from "../src/page/admin1/order/form.js";
 import TableOrder from "../src/page/admin1/order/table.js";
@@ -154,12 +149,6 @@ const App = () => {
           <Route path="formcapacity" element={<FormCapacity />} />
           <Route path="formcapacity/:id" element={<FormCapacity />} />
           <Route path="capacity" element={<TableSCapacity />} />
-
-
-          {/* QL thành phần */}
-          <Route path="formingredient" element={<FormIngredient />} />
-          <Route path="formingredient/:id" element={<FormIngredient />} />
-          <Route path="ingredient" element={<TableIngredient />} />
 
           {/* QL công dụng */}
           <Route path="formbenefit" element={<FormBenefit />} />

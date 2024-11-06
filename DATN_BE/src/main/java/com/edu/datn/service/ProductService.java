@@ -46,6 +46,7 @@ public class ProductService {
             productDTO.setProductId(product.getProductId());
             productDTO.setName(product.getName());
             productDTO.setDescription(product.getDescription());
+            productDTO.setUse(product.getUse());
             productDTO.setCategoryId(product.getCategory().getCategoryId());
             productDTO.setBrandId(product.getBrand().getBrandId());
 
@@ -59,7 +60,6 @@ public class ProductService {
             detailsDTO.setColorId(productDetail.getColor().getColorId());
             detailsDTO.setSkintypeId(productDetail.getSkintype().getSkintypeId());
             detailsDTO.setCapacityId(productDetail.getCapacity().getCapacityId());
-            detailsDTO.setIngredientId(productDetail.getIngredient().getIngredientId());
             detailsDTO.setBenefitId(productDetail.getBenefit().getBenefitId());
 
             // Tạo ProductWithDetailsDTO
@@ -105,6 +105,7 @@ public class ProductService {
                 entity.getProductId(),
                 entity.getName(),
                 entity.getDescription(),
+                entity.getUse(),
                 entity.getCategory() != null ? entity.getCategory().getCategoryId() : null,
                 entity.getBrand() != null ? entity.getBrand().getBrandId() : null);
     }
@@ -114,6 +115,7 @@ public class ProductService {
         entity.setProductId(productDto.getProductId());
         entity.setName(productDto.getName());
         entity.setDescription(productDto.getDescription());
+        entity.setUse(productDto.getUse());
 
         // Retrieve and set the category
         CategoriesEntity category = categoryRepository.findById(productDto.getCategoryId())

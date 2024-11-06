@@ -27,14 +27,12 @@
       colorId: initialValues.colorId || "",
       skintypeId: initialValues.skintypeId || "",
       capacityId: initialValues.capacityId || "",
-      ingredientId: initialValues.ingredientId || "",
       benefitId: initialValues.benefitId || "",
     });
 
     const [colors, setColors] = useState([]);
     const [skinTypes, setSkinTypes] = useState([]);
     const [capacities, setCapacities] = useState([]);
-    const [ingredients, setIngredients] = useState([]);
     const [benefits, setBenefits] = useState([]);
     const [products, setProducts] = useState([]);
     const [imageFile, setImageFile] = useState(null);
@@ -50,7 +48,6 @@
             apiClient.get("/api/colors"),
             apiClient.get("/api/skintypes"),
             apiClient.get("/api/capacities"),
-            apiClient.get("/api/ingredients"),
             apiClient.get("/api/benefits"),
             apiClient.get("/api/products"),
           ]);
@@ -127,7 +124,6 @@
         colorId: "",
         skintypeId: "",
         capacityId: "",
-        ingredientId: "",
         benefitId: "",
       });
       setImageFile(null);
@@ -341,25 +337,6 @@
                 {capacities.map((capacity) => (
                   <MenuItem key={capacity.capacityId} value={capacity.capacityId}>
                     {capacity.value}
-                  </MenuItem>
-                ))}
-              </TextField>
-
-              <TextField
-                select
-                label="Thành phần"
-                name="ingredientId"
-                value={formValues.ingredientId || ""}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-              >
-                {ingredients.map((ingredient) => (
-                  <MenuItem
-                    key={ingredient.ingredientId}
-                    value={ingredient.ingredientId}
-                  >
-                    {ingredient.name}
                   </MenuItem>
                 ))}
               </TextField>

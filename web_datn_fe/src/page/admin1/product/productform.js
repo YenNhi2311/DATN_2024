@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import { apiClient } from "../../../config/apiClient";
 import "../../../assets/css/productformform.css";
 import Swal from "sweetalert2";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const ProductForm = ({
   initialValues,
@@ -53,48 +55,19 @@ const ProductForm = ({
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     if (productId) {
-  //       // Cập nhật sản phẩm nếu productId tồn tại
-  //       await apiClient.put(`/api/products/${productId}`, {
-  //         name: formValues.name,
-  //         description: formValues.description,
-  //         categoryId: formValues.categoryId,
-  //         brandId: formValues.brandId,
-  //       });
-  //       Swal.fire({
-  //         icon: "success",
-  //         title: "Cập nhật thành công!",
-  //         text: "Sản phẩm đã được cập nhật.",
-  //       });
-  //     } else {
-  //       // Thêm mới sản phẩm nếu productId không tồn tại
-  //       await apiClient.post("/api/products", {
-  //         name: formValues.name,
-  //         description: formValues.description,
-  //         categoryId: formValues.categoryId,
-  //         brandId: formValues.brandId,
-  //       });
-  //       Swal.fire({
-  //         icon: "success",
-  //         title: "Thêm thành công!",
-  //         text: "Sản phẩm đã được thêm.",
-  //       });
-  //     }
-  //     onSubmit();
-  //     handleClose();
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.error("Lỗi khi lưu sản phẩm:", error);
-  //     alert("Có lỗi xảy ra khi lưu sản phẩm. Vui lòng thử lại!");
-  //   }
-  // };
+  const handleDescriptionChange = (event, editor) => {
+    const data = editor.getData();
+    handleChange({ target: { name: "description", value: data } });
+  };
+
+  const handleUseChange = (event, editor) => {
+    const data = editor.getData();
+    handleChange({ target: { name: "use", value: data } });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={2} sx={{ marginTop: "5px" }}>
+      <Grid container spacing={2} sx={{ marginTop: "5px", maxWidth: "1000px" }}>
         <Grid item xs={12}>
           <TextField
             fullWidth
@@ -105,18 +78,22 @@ const ProductForm = ({
             variant="outlined"
             required
           />
-          <TextField
-            fullWidth
-            label="Mô tả"
-            name="description"
-            value={formValues.description || ""}
-            onChange={handleChange}
-            variant="outlined"
-            required
-            sx={{ mt: 2 }}
-            multiline
-            rows={4}
-          />
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel shrink>Mô tả</InputLabel>
+            <CKEditor
+              editor={ClassicEditor}
+              data={formValues.description || ""}
+              onChange={handleDescriptionChange}
+            />
+          </FormControl>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel shrink>Hướng dẫn sử dụng</InputLabel>
+            <CKEditor
+              editor={ClassicEditor}
+              data={formValues.use || ""}
+              onChange={handleUseChange}  
+            />
+          </FormControl>
           <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
             <InputLabel id="category-label">Danh mục</InputLabel>
             <Select

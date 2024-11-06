@@ -23,7 +23,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { tokens } from "../../../theme";
 import Header from "../../../component/chart/Header";
 import { apiClient } from "../../../config/apiClient";
-import Form from "./form";
 import ProductForm from "./productform";
 import { Edit, Delete } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -35,12 +34,12 @@ const ProductLists = (initialValues = {}, onSubmit) => {
   const color = tokens(theme.palette.mode);
 
   const minRows = 1;
-  const maxRows = 5;
+  // const maxRows = 5;
 
   const [productRows, setProductRows] = useState([{}]);
 
   const [rows, setRows] = useState([{
-    colorId: "", skintypeId: "", capacityId: "", ingredientId: "", benefitId: "", price: "", quantity: "", imagePreview: ""
+    colorId: "", skintypeId: "", capacityId: "", benefitId: "", price: "", quantity: "", imagePreview: ""
   }]);
 
   const [categories, setCategories] = useState([]);
@@ -49,22 +48,17 @@ const ProductLists = (initialValues = {}, onSubmit) => {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [selected, setSelected] = useState([]);
   const [filters, setFilters] = useState({ name: "", place: "" });
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [setIsFormOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [expandedProduct, setExpandedProduct] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [productDetails, setProductDetails] = useState({});
-  const [products, setProducts] = useState([]);
+  const [setProducts] = useState([]);
   const [skintypes, setSkintypes] = useState([]);
 
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [editProductData, setEditProductData] = useState(null);
   const [productId, setProductId] = useState(null);
-  const [colorId, setColorId] = useState(null);
-  const [skintypeId, setSkinTypeId] = useState(null);
-  const [capacityId, setCapacityId] = useState(null);
-  const [ingredientId, setIngredientId] = useState(null);
-  const [benefitId, setBenefitId] = useState(null);
 
   const [editingRows, setEditingRows] = useState({});
 
@@ -129,19 +123,17 @@ const ProductLists = (initialValues = {}, onSubmit) => {
 
   const fetchAdditionalData = useCallback(async () => {
     try {
-      const [productsResponse, skintypesResponse, capacitiesResponse, colorsResponse, ingredientsResponse, benefitsResponse] = await Promise.all([
+      const [productsResponse, skintypesResponse, capacitiesResponse, colorsResponse, benefitsResponse] = await Promise.all([
         apiClient.get("/api/products"),
         apiClient.get("/api/skintypes"),
         apiClient.get("/api/capacities"),
         apiClient.get("/api/colors"),
-        apiClient.get("/api/ingredients"),
         apiClient.get("/api/benefits"),
       ]);
       setProducts(productsResponse.data);
       setSkintypes(skintypesResponse.data);
       setCapacities(capacitiesResponse.data);
       setColors(colorsResponse.data);
-      setIngredients(ingredientsResponse.data);
       setBenefits(benefitsResponse.data);
     } catch (error) {
       console.error("Lỗi tìm nạp dữ liệu bổ sung:", error);
@@ -225,7 +217,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
     colorId: initialValues.colorId || "",
     skintypeId: initialValues.skintypeId || "",
     capacityId: initialValues.capacityId || "",
-    ingredientId: initialValues.ingredientId || "",
     benefitId: initialValues.benefitId || "",
     img: initialValues.img || "",
   });
@@ -235,7 +226,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
   const [colors, setColors] = useState([]);
   const [skinTypes, setSkinTypes] = useState([]);
   const [capacities, setCapacities] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
   const [benefits, setBenefits] = useState([]);
 
 
@@ -247,15 +237,13 @@ const ProductLists = (initialValues = {}, onSubmit) => {
           apiClient.get("/api/colors"),
           apiClient.get("/api/skintypes"),
           apiClient.get("/api/capacities"),
-          apiClient.get("/api/ingredients"),
           apiClient.get("/api/benefits"),
         ]);
 
         setColors(responses[0].data);
         setSkinTypes(responses[1].data);
         setCapacities(responses[2].data);
-        setIngredients(responses[3].data);
-        setBenefits(responses[4].data);
+        setBenefits(responses[3].data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -272,7 +260,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
         colorId: editData.detail?.colorId || "",
         skintypeId: editData.detail?.skintypeId || "",
         capacityId: editData.detail?.capacityId || "",
-        ingredientId: editData.detail?.ingredientId || "",
         benefitId: editData.detail?.benefitId || "",
         img: editData.detail?.img || "",
       });
@@ -320,7 +307,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
     }
 
   };
-
 
   const handleImageChange = (index, e) => {
     const file = e.target.files[0];
@@ -387,9 +373,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
   };
 
   const handleAddRow = () => {
-    if (rows.length < maxRows) {
-      setRows([...rows, { colorId: "", skintypeId: "", capacityId: "", ingredientId: "", benefitId: "", price: "", quantity: "", imagePreview: "" }]);
-    }
+    setRows([...rows, { colorId: "", skintypeId: "", capacityId: "", benefitId: "", price: "", quantity: "", imagePreview: "" }]);
   };
 
   const handleRemoveRow = () => {
@@ -397,6 +381,10 @@ const ProductLists = (initialValues = {}, onSubmit) => {
       setRows(rows.slice(0, -1));
     }
   };
+
+  const handleRemoveSpecificRow = (indexToRemove) => {
+    setRows((prevRows) => prevRows.filter((_, index) => index !== indexToRemove));
+  };  
 
   const handleDelete = async (productDetailId) => {
     try {
@@ -410,7 +398,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
         confirmButtonText: "Xóa",
         cancelButtonText: "Hủy",
       });
-  
+
       if (result.isConfirmed) {
         await apiClient.delete(`/api/productdetails/${productDetailId}`);
         fetchProductDetails(productId); // Tải lại dữ liệu sau khi xóa
@@ -429,7 +417,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
       });
     }
   };
-  
+
 
   const handleEditClick = (productDetailId) => {
     setEditingRows((prevEditingRows) => ({
@@ -450,7 +438,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
       const colorId = productDetail.colorId;
       const skintypeId = productDetail.skintypeId;
       const capacityId = productDetail.capacityId;
-      const ingredientId = productDetail.ingredientId;
       const benefitId = productDetail.benefitId;
 
       // Chuyển đổi giá trị từ input
@@ -458,7 +445,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
       const quantityValue = parseInt(quantity, 10);
 
       // Kiểm tra nếu các ID là hợp lệ
-      if ([colorId, skintypeId, capacityId, ingredientId, benefitId].some(id => id === undefined || id === null)) {
+      if ([colorId, skintypeId, capacityId, benefitId].some(id => id === undefined || id === null)) {
         Swal.fire({
           icon: "error",
           title: "Lỗi!",
@@ -474,7 +461,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
       formData.append("colorId", colorId);
       formData.append("skintypeId", skintypeId);
       formData.append("capacityId", capacityId);
-      formData.append("ingredientId", ingredientId);
       formData.append("benefitId", benefitId);
 
       // Gửi yêu cầu cập nhật
@@ -511,6 +497,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
         await apiClient.put(`/api/products/${formValues.productId}`, {
           name: formValues.name,
           description: formValues.description,
+          use: formValues.use,
           categoryId: formValues.categoryId,
           brandId: formValues.brandId,
         });
@@ -523,6 +510,7 @@ const ProductLists = (initialValues = {}, onSubmit) => {
         await apiClient.post("/api/products", {
           name: formValues.name,
           description: formValues.description,
+          use: formValues.use,
           categoryId: formValues.categoryId,
           brandId: formValues.brandId,
         });
@@ -564,13 +552,12 @@ const ProductLists = (initialValues = {}, onSubmit) => {
             justifyContent: "end",
             display: "flex",
             textAlign: "right",
-          }}
-        >
+          }}>
           Thêm Mới Sản Phẩm
         </Button>
       </div>
 
-      <TableContainer sx={{ maxHeight: 1600, overflow: "hidden", width: 1150 }}>
+      <TableContainer sx={{ overflow: "hidden", width: 1150 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -630,15 +617,15 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                     <TableCell><strong>Màu sắc</strong></TableCell>
                                     <TableCell><strong>Loại da</strong></TableCell>
                                     <TableCell><strong>Dung tích</strong></TableCell>
-                                    <TableCell><strong>Thành phần</strong></TableCell>
                                     <TableCell><strong>Lợi ích</strong></TableCell>
                                     <TableCell><strong>Giá</strong></TableCell>
                                     <TableCell><strong>Số lượng</strong></TableCell>
                                     <TableCell>
-                                      <Button variant="contained" color="primary" onClick={handleAddRow} disabled={rows.length >= maxRows} className="btn-add-remove">Thêm dòng</Button>
+                                      <Button variant="contained" color="primary" onClick={handleAddRow} className="btn-add-remove">Thêm dòng</Button>
                                       <hr></hr>
-                                      <Button variant="contained" color="primary" onClick={handleRemoveRow} disabled={rows.length <= minRows} className="btn-add-remove">Xóa dòng</Button>
+                                      <Button variant="contained" color="error" onClick={handleRemoveRow} disabled={rows.length <= minRows} className="btn-add-remove">Xóa dòng</Button>
                                     </TableCell>
+                                    <TableCell><strong></strong></TableCell>
                                   </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -665,14 +652,6 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                           <option value="" disabled>Dung tích</option>
                                           {capacities.map((capacity) => (
                                             <option key={capacity.capacityId} value={capacity.capacityId}>{capacity.value}</option>
-                                          ))}
-                                        </select>
-                                      </TableCell>
-                                      <TableCell className="tablecelldetail">
-                                        <select name="ingredientId" value={row.ingredientId || ""} onChange={(e) => handleChange(index, undefined, "ingredientId", e.target.value)} className="selectformTP">
-                                          <option value="" disabled>Thành phần</option>
-                                          {ingredients.map((ingredient) => (
-                                            <option key={ingredient.ingredientId} value={ingredient.ingredientId}>{ingredient.name}</option>
                                           ))}
                                         </select>
                                       </TableCell>
@@ -719,6 +698,15 @@ const ProductLists = (initialValues = {}, onSubmit) => {
                                             onChange={(e) => handleImageChange(index, e)}
                                           />
                                         </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Button
+                                          variant="contained"
+                                          color="error"
+                                          onClick={() => handleRemoveSpecificRow(index)}
+                                        >
+                                          Xóa
+                                        </Button>
                                       </TableCell>
                                     </TableRow>
                                   ))}

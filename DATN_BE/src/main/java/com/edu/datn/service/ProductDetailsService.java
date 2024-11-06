@@ -4,14 +4,12 @@ import com.edu.datn.dto.ProductDetailsDTO;
 import com.edu.datn.entities.BenefitsEntity;
 import com.edu.datn.entities.CapacitiesEntity;
 import com.edu.datn.entities.ColorEntity;
-import com.edu.datn.entities.IngredientEntity;
 import com.edu.datn.entities.ProductDetailsEntity;
 import com.edu.datn.entities.ProductEntity;
 import com.edu.datn.entities.SkintypeEntity;
 import com.edu.datn.jpa.BenefitsJPA;
 import com.edu.datn.jpa.CapacitiesJPA;
 import com.edu.datn.jpa.ColorJPA;
-import com.edu.datn.jpa.IngredientJPA;
 import com.edu.datn.jpa.ProductDetailsJPA;
 import com.edu.datn.jpa.ProductJPA;
 import com.edu.datn.jpa.SkinTypeJPA;
@@ -41,9 +39,6 @@ public class ProductDetailsService {
 
     @Autowired
     private CapacitiesJPA capacitiesRepository;
-
-    @Autowired
-    private IngredientJPA ingredientRepository;
 
     @Autowired
     private BenefitsJPA benefitsRepository;
@@ -122,7 +117,6 @@ public class ProductDetailsService {
                 entity.getColor().getColorId(),
                 entity.getSkintype().getSkintypeId(),
                 entity.getCapacity().getCapacityId(),
-                entity.getIngredient().getIngredientId(),
                 entity.getBenefit().getBenefitId());
     }
 
@@ -161,11 +155,6 @@ public class ProductDetailsService {
                 .orElseThrow(() -> new RuntimeException("Capacity not found"));
         entity.setCapacity(capacity);
 
-        IngredientEntity ingredient = ingredientRepository
-                .findById(dto.getIngredientId())
-                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
-        entity.setIngredient(ingredient);
-
         BenefitsEntity benefit = benefitsRepository
                 .findById(dto.getBenefitId())
                 .orElseThrow(() -> new RuntimeException("Benefit not found"));
@@ -192,7 +181,6 @@ public class ProductDetailsService {
                 entity.getColor().getColorId(),
                 entity.getSkintype().getSkintypeId(),
                 entity.getCapacity().getCapacityId(),
-                entity.getIngredient().getIngredientId(),
                 entity.getBenefit().getBenefitId());
     }
 }

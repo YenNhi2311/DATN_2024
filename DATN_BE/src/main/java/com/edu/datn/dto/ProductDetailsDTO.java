@@ -18,7 +18,6 @@ public class ProductDetailsDTO {
     private Integer colorId;
     private Integer skintypeId;
     private Integer capacityId;
-    private Integer ingredientId;
     private Integer benefitId;
 
 }

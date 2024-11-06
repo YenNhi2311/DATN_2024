@@ -24,20 +24,15 @@
     height: 40px;
 }
 .selectform{
-    height: 30px;
-    width: 100px;
-    margin-top: -10px;
-    /* margin-left: -15px; */
-}
-.selectformTP{
+    height: 35px;
     width: 120px;
-    height: 30px;
-    margin-top: -10px;
-    margin-left: -15px;
+    border: '2px solid #ccc';
+    border-radius: '5px';
 }
+
 .inputForm2{
     width: 120px;
-    height: 30px;
+    height: 35px;
 }
 .btnAdddetail{
     margin-top: 10px;
@@ -49,4 +44,8 @@
 
 .btn-add-remove{
     width: 120px;
+}
+
+.btn-delete{
+    background-color: red;
 }
